@@ -1,0 +1,5 @@
+*.ui
+*.uo
+libmraylib.so
+main
+raylib_parser
