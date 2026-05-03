@@ -2,7 +2,7 @@
 
 (* The pipe operator, of course *)
 infix 8 |>;
-fun op |> (x, f) = f x;
+fun x |> f = f x;
 
 (* Almost always want to put a new line at the end *)
 fun println (s: string) =

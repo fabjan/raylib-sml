@@ -1,35 +1,97 @@
 (* Simple example that demonstrates the usage of the Raylib Bindings *)
 open core
 open raylib
+open Random
 
-val radius: int = 100;
-val velocity: int = 8;
+val velocity: int = 8*2;
+val WHITE:  int = 0xFFFFFFFF;
+val RED:    int = 0xFF5050FF;
+val GREEN:  int = 0xFF50FF50;
+val BLUE:   int = 0xFFFF5050;
+val YELLOW: int = 0xFF50FFFF;
+val PURPLE: int = 0xFFFF50FF;
+val CYAN:   int = 0xFFFFFF50;
+val COLORS: int list = [RED, GREEN, BLUE, YELLOW, PURPLE, CYAN]
+val radius: int = 20;
+val balls_count = 10;
+
+exception TODO of string
+
+val gen = newgen ();
+
+fun repeat (n: int) (x: 'a): 'a list =
+    let
+        fun repeat_impl (n: int) (acc: 'a list) =
+            if n <= 0
+            then acc
+            else repeat_impl (n - 1) (x :: acc)
+    in repeat_impl n [] end
+
+fun choice (xs: 'a list): 'a = List.nth (xs, Random.range (0, List.length xs) gen)
 
 fun collides_with_walls (x: int, y: int, w: int, h: int) =
     not (0 < x - radius andalso x + radius < w andalso 0 < y - radius andalso y + radius < h);
 
-fun loop ((x, dx): int * int, (y, dy): int * int) =
-    if WindowShouldClose () then ()
-    else let
+type ball = {
+    x: int,
+    y: int,
+    dx: int,
+    dy: int,
+    color: int
+}
+
+fun ball_update ({x, y, dx, dy, color}: ball): ball = 
+    let
         val w  = GetScreenWidth ()
         val h  = GetScreenHeight ()
+        val dy = dy + 1
         val nx = x + dx
         val ny = y + dy
+        val (x, dx, x_collision) = if collides_with_walls (nx, y, w, h) then (x, ~(dx*9) div 10, true) else (nx, dx, false)
+        val (y, dy, y_collision) = if collides_with_walls (x, ny, w, h) then (y, ~(dy*9) div 10, true) else (ny, dy, false)
+        val color = if x_collision orelse y_collision then choice COLORS else color
     in 
-        BeginDrawing ();
-        ClearBackground 0xFF181818;
-        DrawCircle x y (Real.fromInt radius) 0xFFFF5050;
-        EndDrawing ();
-        loop (
-            if collides_with_walls (nx, y, w, h) then (x, ~dx) else (nx, dx),
-            if collides_with_walls (x, ny, w, h) then (y, ~dy) else (ny, dy)
-        )
+        {x = x, y = y, dx = dx, dy = dy, color = color}
     end
+
+fun ball_render ({x, y, color, ...}: ball): unit =
+    DrawCircle x y (Real.fromInt radius) color
+
+fun ball_random (): ball =
+    let
+        val w  = GetScreenWidth ()
+        val h  = GetScreenHeight ()
+    in {x     = Random.range (radius, w - radius)  gen,
+        y     = Random.range (radius, h - radius)  gen,
+        dx    = Random.range (~velocity, velocity) gen,
+        dy    = Random.range (~velocity, velocity) gen,
+        color = choice COLORS}
+    end
+
+fun ball_random_at (x, y: int): ball =
+    let val {dx, dy, color, ...} = ball_random () in
+        {x = x, y = y, dx = dx, dy = dy, color = color}
+    end
+
+fun loop (bs: ball list) =
+    if WindowShouldClose () then ()
+    else
+        let
+            val bs = if IsMouseButtonPressed 0
+                     then ball_random_at (GetMouseX (), GetMouseY ()) :: bs
+                     else bs
+        in
+            BeginDrawing ();
+            ClearBackground 0xFF181818;
+            app ball_render bs;
+            EndDrawing ();
+            loop (map ball_update bs)
+        end
 
 val _ =
     (InitWindow 800 600 "Hello from Moscow ML my comrade";
      SetTargetFPS 60;
-     loop ((radius*2, velocity), (radius*2, velocity)));
+     loop [])
 (* Copyright 2026 Alexey Kutepov <reximkut@gmail.com>
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
