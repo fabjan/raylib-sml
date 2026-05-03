@@ -1,3 +1,4 @@
+(* Simple example that demonstrates the usage of the Raylib Bindings *)
 open core
 open raylib
 
