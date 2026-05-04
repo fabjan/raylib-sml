@@ -9,8 +9,8 @@ fun println (s: string) =
 
 fun quote_string (s: string): string =
     if String.isSubstring " " s
-    then String.concat ["\"", s, "\""]
-    else s;
+    then "\""^s^"\""
+    else s
 
 exception Cmd_Failed of string;
 

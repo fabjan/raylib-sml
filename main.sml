@@ -83,7 +83,19 @@ fun loop (bs: ball list) =
         in
             BeginDrawing ();
             ClearBackground 0xFF181818;
-            app ball_render bs;
+            case bs of
+                 [] => let 
+                   val label = "Click here!" 
+                   val label_height = 32
+                   val label_width = MeasureText label label_height
+                   val screen_width = GetScreenWidth ()
+                   val screen_height = GetScreenHeight ()
+                   val x = (screen_width - label_width) div 2
+                   val y = (screen_height - label_height) div 2
+                 in
+                   DrawText "Click here!" x y label_height WHITE
+                 end
+               | _ => app ball_render bs;
             EndDrawing ();
             loop (map ball_update bs)
         end
