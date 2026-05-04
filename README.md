@@ -18,5 +18,5 @@ Make sure you have [mosml](https://mosml.org) installed on your system and `$MOS
 
 ```console
 $ $MOSMLHOME/bin/mosml build.sml
-$ ./main
+$ ./example
 ```

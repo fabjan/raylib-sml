@@ -43,6 +43,6 @@ val _ =
               "-L./raylib-5.5_linux_amd64/lib/",
               "-l:libraylib.a",
               "-lm"];
-         cmd [mosmlhome^"/bin/mosmlc", "-o", "main", "core.sml", "raylib.sml", "main.sml"];
+         cmd [mosmlhome^"/bin/mosmlc", "-o", "example", "core.sml", "raylib.sml", "example.sml"];
          exit success
      end) handle Cmd_Failed cmd_line => exit failure
