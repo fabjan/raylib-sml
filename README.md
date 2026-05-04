@@ -17,6 +17,6 @@ The bindings are neither complete nor stable. Anything can change at any moment.
 Make sure you have [mosml](https://mosml.org) installed on your system and `$MOSMLHOME` envar pointing at the root of the instalation where folders like `bin/` and `include/` reside.
 
 ```console
-$ make
+$ $MOSMLHOME/bin/mosml build.sml
 $ ./main
 ```
