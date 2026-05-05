@@ -91,7 +91,7 @@ fun loop (bs: ball list) (tutorial: bool) =
     else
         let
             val (bs, tutorial) = 
-              if IsMouseButtonPressed 0
+              if IsMouseButtonPressed MOUSE_BUTTON_LEFT
               then (ball_random_at (GetMouseX (), GetMouseY ()) :: bs, false)
               else (bs, tutorial)
         in

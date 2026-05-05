@@ -2115,6 +2115,14 @@ static void ExportParsedData(const char *fileName, int format)
                 fprintf(outCFile, "\n");
             }
 
+            for (int i = 0; i < enumCount; ++i) {
+                fprintf(outFile, "type %s = int\n", enums[i].name);
+                for (int j = 0; j < enums[i].valueCount; ++j) {
+                    fprintf(outFile, "val %s: %s = %d\n", enums[i].valueName[j], enums[i].name, enums[i].valueInteger[j]);
+                }
+                fprintf(outFile, "\n");
+            }
+
             size_t mark = temp_save();
             size_t generated = 0;
             size_t skipped = 0;
