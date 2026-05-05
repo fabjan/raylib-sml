@@ -1,4 +1,4 @@
-(* Simple example that demonstrates the usage of the Raylib Bindings *)
+(* An example that demonstrates the usage of the Raylib Bindings *)
 open core
 open raylib
 open Random
@@ -14,6 +14,8 @@ val CYAN:   int = 0xFFFFFF50;
 val COLORS: int list = [RED, GREEN, BLUE, YELLOW, PURPLE, CYAN]
 val radius: int = 20;
 val balls_count = 10;
+val COR = (7, 10)
+val max_lifetime = 60*3;
 
 exception TODO of string
 
@@ -37,25 +39,35 @@ type ball = {
     y: int,
     dx: int,
     dy: int,
-    color: int
+    color: int,
+    lifetime: int
 }
 
-fun ball_update ({x, y, dx, dy, color}: ball): ball = 
+fun ball_update ({x, y, dx, dy, color, lifetime}: ball): ball option = 
     let
         val w  = GetScreenWidth ()
         val h  = GetScreenHeight ()
         val dy = dy + 1
         val nx = x + dx
         val ny = y + dy
-        val (x, dx, x_collision) = if collides_with_walls (nx, y, w, h) then (x, ~(dx*9) div 10, true) else (nx, dx, false)
-        val (y, dy, y_collision) = if collides_with_walls (x, ny, w, h) then (y, ~(dy*9) div 10, true) else (ny, dy, false)
+        val (numCOR, denCOR) = COR
+        val (x, dx, x_collision) = if collides_with_walls (nx, y, w, h) then (x, ~(dx*numCOR) div denCOR, true) else (nx, dx, false)
+        val (y, dy, y_collision) = if collides_with_walls (x, ny, w, h) then (y, ~(dy*numCOR) div denCOR, true) else (ny, dy, false)
         val color = if x_collision orelse y_collision then choice COLORS else color
+        val lifetime = lifetime + 1
     in 
-        {x = x, y = y, dx = dx, dy = dy, color = color}
+      if lifetime >= max_lifetime
+      then NONE
+      else SOME {x = x, y = y, dx = dx, dy = dy, color = color, lifetime = lifetime}
     end
 
-fun ball_render ({x, y, color, ...}: ball): unit =
+fun ball_render ({x, y, color, lifetime, ...}: ball): unit =
+  let
+    val alpha = 1.0 - (Real.fromInt lifetime)/(Real.fromInt max_lifetime)
+    val color = ColorAlpha color (Math.sqrt alpha)
+  in
     DrawCircle x y (Real.fromInt radius) color
+  end
 
 fun ball_random (): ball =
     let
@@ -65,45 +77,49 @@ fun ball_random (): ball =
         y     = Random.range (radius, h - radius)  gen,
         dx    = Random.range (~velocity, velocity) gen,
         dy    = Random.range (~velocity, velocity) gen,
+        lifetime = 0,
         color = choice COLORS}
     end
 
 fun ball_random_at (x, y: int): ball =
-    let val {dx, dy, color, ...} = ball_random () in
-        {x = x, y = y, dx = dx, dy = dy, color = color}
+    let val {dx, dy, color, lifetime, ...} = ball_random () in
+        {x = x, y = y, dx = dx, dy = dy, color = color, lifetime = lifetime}
     end
 
-fun loop (bs: ball list) =
+fun loop (bs: ball list) (tutorial: bool) =
     if WindowShouldClose () then ()
     else
         let
-            val bs = if IsMouseButtonPressed 0
-                     then ball_random_at (GetMouseX (), GetMouseY ()) :: bs
-                     else bs
+            val (bs, tutorial) = 
+              if IsMouseButtonPressed 0
+              then (ball_random_at (GetMouseX (), GetMouseY ()) :: bs, false)
+              else (bs, tutorial)
         in
             BeginDrawing ();
             ClearBackground 0xFF181818;
-            case bs of
-                 [] => let 
-                   val label = "Click here!" 
-                   val label_height = 32
-                   val label_width = MeasureText label label_height
-                   val screen_width = GetScreenWidth ()
-                   val screen_height = GetScreenHeight ()
-                   val x = (screen_width - label_width) div 2
-                   val y = (screen_height - label_height) div 2
-                 in
-                   DrawText "Click here!" x y label_height WHITE
-                 end
-               | _ => app ball_render bs;
+            if tutorial 
+            then 
+              let 
+                val label = "Click here!" 
+                val label_height = 32
+                val label_width = MeasureText label label_height
+                val screen_width = GetScreenWidth ()
+                val screen_height = GetScreenHeight ()
+                val x = (screen_width - label_width) div 2
+                val y = (screen_height - label_height) div 2
+              in
+                DrawText label x y label_height WHITE
+              end
+            else app ball_render bs;
             EndDrawing ();
-            loop (map ball_update bs)
+            loop (List.mapPartial ball_update bs) tutorial
         end
 
 val _ =
     (InitWindow 800 600 "Hello from Moscow ML my comrade";
      SetTargetFPS 60;
-     loop [])
+     loop [] true)
+
 (* Copyright 2026 Alexey Kutepov <reximkut@gmail.com>
  * 
  * Permission is hereby granted, free of charge, to any person obtaining
