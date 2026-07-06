@@ -2060,6 +2060,12 @@ static void ExportParsedData(const char *fileName, int format)
                     .c_to_value = "Val_image",
                 },
                 {
+                    .c_type     = "Vector2",
+                    .sml_type   = "raylib_vector2",
+                    .value_to_c = "Vector2_val",
+                    .c_to_value = "Val_vector2",
+                },
+                {
                     .c_type     = "Texture2D",
                     .sml_type   = "raylib_texture",
                     .value_to_c = "Texture_val",
@@ -2091,6 +2097,7 @@ static void ExportParsedData(const char *fileName, int format)
                 fprintf(outFile, "val dlh = dlopen { lib = \"%s\", flag = RTLD_LAZY, global = false }\n", dll_name);
                 fprintf(outFile, "\n");
                 fprintf(outFile, "prim_type void_pointer\n");
+                fprintf(outFile, "type raylib_vector2 = {x: real, y: real}\n");
                 fprintf(outFile, "type raylib_image = {data: void_pointer, width: int, height: int, mipmaps: int, format: int}\n");
                 fprintf(outFile, "type raylib_texture = {id: int, width: int, height: int, mipmaps: int, format: int}\n");
                 fprintf(outFile, "\n");
@@ -2130,6 +2137,23 @@ static void ExportParsedData(const char *fileName, int format)
                 fprintf(outCFile, "    return res;\n");
                 fprintf(outCFile, "}\n");
                 fprintf(outCFile, "\n");
+                // Moscow ML records are tuples with fields sorted by label
+                fprintf(outCFile, "static inline value Val_vector2(Vector2 v)\n");
+                fprintf(outCFile, "{\n");
+                fprintf(outCFile, "    value rec = alloc_tuple(2);\n");
+                fprintf(outCFile, "    modify(&Field(rec, 0), copy_double(v.x));\n");
+                fprintf(outCFile, "    modify(&Field(rec, 1), copy_double(v.y));\n");
+                fprintf(outCFile, "    return rec;\n");
+                fprintf(outCFile, "}\n");
+                fprintf(outCFile, "\n");
+                fprintf(outCFile, "static inline Vector2 Vector2_val(value v)\n");
+                fprintf(outCFile, "{\n");
+                fprintf(outCFile, "    Vector2 vec = {\n");
+                fprintf(outCFile, "       .x = Double_val(Field(v, 0)),\n");
+                fprintf(outCFile, "       .y = Double_val(Field(v, 1)),\n");
+                fprintf(outCFile, "    };\n");
+                fprintf(outCFile, "    return vec;\n");
+                fprintf(outCFile, "}\n");
                 // Moscow ML records are tuples with fields sorted by label
                 fprintf(outCFile, "static inline value Val_image(Image i)\n");
                 fprintf(outCFile, "{\n");
