@@ -61,12 +61,12 @@ fun ball_update ({x, y, dx, dy, color, lifetime}: ball): ball option =
       else SOME {x = x, y = y, dx = dx, dy = dy, color = color, lifetime = lifetime}
     end
 
-fun ball_render ({x, y, color, lifetime, ...}: ball): unit =
+fun ball_render (balltex: raylib_texture) ({x, y, color, lifetime, ...}: ball): unit =
   let
     val alpha = 1.0 - (Real.fromInt lifetime)/(Real.fromInt max_lifetime)
     val color = ColorAlpha color (Math.sqrt alpha)
   in
-    DrawCircle x y (Real.fromInt radius) color
+    DrawTexture balltex (x-radius) (y-radius) color
   end
 
 fun ball_random (): ball =
@@ -86,7 +86,7 @@ fun ball_random_at (x, y: int): ball =
         {x = x, y = y, dx = dx, dy = dy, color = color, lifetime = lifetime}
     end
 
-fun loop (bs: ball list) (tutorial: bool) =
+fun loop (balltex: raylib_texture) (bs: ball list) (tutorial: bool) =
     if WindowShouldClose () then ()
     else
         let
@@ -110,15 +110,20 @@ fun loop (bs: ball list) (tutorial: bool) =
               in
                 DrawText label x y label_height WHITE
               end
-            else app ball_render bs;
+            else app (ball_render balltex) bs;
             EndDrawing ();
-            loop (List.mapPartial ball_update bs) tutorial
+            loop balltex (List.mapPartial ball_update bs) tutorial
         end
 
 val _ =
-    (InitWindow 800 600 "Hello from Moscow ML my comrade";
-     SetTargetFPS 60;
-     loop [] true)
+    let
+        val _ = InitWindow 800 600 "Hello from Moscow ML my comrades";
+        val img = LoadImage "SoccerBallSmall.png"
+        val tex = LoadTextureFromImage img
+    in
+        SetTargetFPS 60;
+        loop tex [] true
+    end
 
 (* Copyright 2026 Alexey Kutepov <reximkut@gmail.com>
  * 
