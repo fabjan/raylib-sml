@@ -2050,8 +2050,8 @@ static void ExportParsedData(const char *fileName, int format)
                 {
                     .c_type     = "Color",
                     .sml_type   = "int",
-                    .value_to_c = "Color_val",
-                    .c_to_value = "Val_color",
+                    .value_to_c = "Colour_val",
+                    .c_to_value = "Val_colour",
                 },
             };
 
@@ -2085,6 +2085,7 @@ static void ExportParsedData(const char *fileName, int format)
                 fprintf(outCFile, "#include <string.h>\n");
                 fprintf(outCFile, "#include \"mlvalues.h\"\n");
                 fprintf(outCFile, "#include \"alloc.h\"\n");
+                fprintf(outCFile, "#include \"memory.h\"\n");
                 fprintf(outCFile, "#include \"raylib.h\"\n");
                 fprintf(outCFile, "\n");
                 fprintf(outCFile, "static inline value Val_string(const char *s)\n");
@@ -2095,12 +2096,12 @@ static void ExportParsedData(const char *fileName, int format)
                 fprintf(outCFile, "    return res;\n");
                 fprintf(outCFile, "}\n");
                 fprintf(outCFile, "\n");
-                fprintf(outCFile, "static inline value Val_color(Color c)\n");
+                fprintf(outCFile, "static inline value Val_colour(Color c)\n");
                 fprintf(outCFile, "{\n");
                 fprintf(outCFile, "    return Val_int(*(int*)&c);\n");
                 fprintf(outCFile, "}\n");
                 fprintf(outCFile, "\n");
-                fprintf(outCFile, "static inline Color Color_val(value v)\n");
+                fprintf(outCFile, "static inline Color Colour_val(value v)\n");
                 fprintf(outCFile, "{\n");
                 fprintf(outCFile, "    int c = Int_val(v);\n");
                 fprintf(outCFile, "    return *(Color*)&c;\n");
