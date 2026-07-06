@@ -1,6 +1,7 @@
 #include <string.h>
 #include "mlvalues.h"
 #include "alloc.h"
+#include "memory.h"
 #include "raylib.h"
 
 static inline value Val_string(const char *s)
@@ -11,12 +12,12 @@ static inline value Val_string(const char *s)
     return res;
 }
 
-static inline value Val_color(Color c)
+static inline value Val_colour(Color c)
 {
     return Val_int(*(int*)&c);
 }
 
-static inline Color Color_val(value v)
+static inline Color Colour_val(value v)
 {
     int c = Int_val(v);
     return *(Color*)&c;
@@ -27,6 +28,51 @@ static inline value Val_double(double x)
     value res = alloc_string(8);
     Store_double_val(res, x);
     return res;
+}
+
+static inline value Val_image(Image i)
+{
+    value rec = alloc_tuple(5);
+    modify(&Field(rec, 0), (value)i.data);
+    modify(&Field(rec, 1), Val_int(i.format));
+    modify(&Field(rec, 2), Val_int(i.height));
+    modify(&Field(rec, 3), Val_int(i.mipmaps));
+    modify(&Field(rec, 4), Val_int(i.width));
+    return rec;
+}
+
+static inline Image Image_val(value v)
+{
+    Image img = {
+       .data    = (void*)(Field(v, 0)),
+       .format  = Int_val(Field(v, 1)),
+       .height  = Int_val(Field(v, 2)),
+       .mipmaps = Int_val(Field(v, 3)),
+       .width   = Int_val(Field(v, 4)),
+    };
+    return img;
+}
+static inline value Val_texture(Texture2D t)
+{
+    value rec = alloc_tuple(5);
+    modify(&Field(rec, 0), Val_int(t.format));
+    modify(&Field(rec, 1), Val_int(t.height));
+    modify(&Field(rec, 2), Val_int(t.id));
+    modify(&Field(rec, 3), Val_int(t.mipmaps));
+    modify(&Field(rec, 4), Val_int(t.width));
+    return rec;
+}
+
+static inline Texture2D Texture_val(value v)
+{
+    Texture2D tex = {
+       .format  = Int_val(Field(v, 0)),
+       .height  = Int_val(Field(v, 1)),
+       .id      = Int_val(Field(v, 2)),
+       .mipmaps = Int_val(Field(v, 3)),
+       .width   = Int_val(Field(v, 4)),
+    };
+    return tex;
 }
 
 value raylib_InitWindow(value width, value height, value title)
@@ -143,13 +189,11 @@ value raylib_RestoreWindow(value unit)
     return Val_unit;
 }
 
-/*
 value raylib_SetWindowIcon(value image)
 {
-    SetWindowIcon(UNKNOWN(image));
+    SetWindowIcon(Image_val(image));
     return Val_unit;
 }
-*/
 
 /*
 value raylib_SetWindowIcons(value images, value count)
@@ -323,13 +367,11 @@ value raylib_GetClipboardText(value unit)
     return Val_string(result);
 }
 
-/*
 value raylib_GetClipboardImage(value unit)
 {
     Image result = GetClipboardImage();
-    return UNKNOWN(result);
+    return Val_image(result);
 }
-*/
 
 value raylib_EnableEventWaiting(value unit)
 {
@@ -381,7 +423,7 @@ value raylib_IsCursorOnScreen(value unit)
 
 value raylib_ClearBackground(value color)
 {
-    ClearBackground(Color_val(color));
+    ClearBackground(Colour_val(color));
     return Val_unit;
 }
 
@@ -574,7 +616,7 @@ value raylib_SetShaderValueMatrix(value shader, value locIndex, value mat)
 /*
 value raylib_SetShaderValueTexture(value shader, value locIndex, value texture)
 {
-    SetShaderValueTexture(UNKNOWN(shader), Int_val(locIndex), UNKNOWN(texture));
+    SetShaderValueTexture(UNKNOWN(shader), Int_val(locIndex), Texture_val(texture));
     return Val_unit;
 }
 */
@@ -1450,18 +1492,16 @@ value raylib_UpdateCameraPro(value camera, value movement, value rotation, value
 /*
 value raylib_SetShapesTexture(value texture, value source)
 {
-    SetShapesTexture(UNKNOWN(texture), UNKNOWN(source));
+    SetShapesTexture(Texture_val(texture), UNKNOWN(source));
     return Val_unit;
 }
 */
 
-/*
 value raylib_GetShapesTexture(value unit)
 {
     Texture2D result = GetShapesTexture();
-    return UNKNOWN(result);
+    return Val_texture(result);
 }
-*/
 
 /*
 value raylib_GetShapesTextureRectangle(value unit)
@@ -1473,28 +1513,28 @@ value raylib_GetShapesTextureRectangle(value unit)
 
 value raylib_DrawPixel(value posX, value posY, value color)
 {
-    DrawPixel(Int_val(posX), Int_val(posY), Color_val(color));
+    DrawPixel(Int_val(posX), Int_val(posY), Colour_val(color));
     return Val_unit;
 }
 
 /*
 value raylib_DrawPixelV(value position, value color)
 {
-    DrawPixelV(UNKNOWN(position), Color_val(color));
+    DrawPixelV(UNKNOWN(position), Colour_val(color));
     return Val_unit;
 }
 */
 
 value raylib_DrawLine(value startPosX, value startPosY, value endPosX, value endPosY, value color)
 {
-    DrawLine(Int_val(startPosX), Int_val(startPosY), Int_val(endPosX), Int_val(endPosY), Color_val(color));
+    DrawLine(Int_val(startPosX), Int_val(startPosY), Int_val(endPosX), Int_val(endPosY), Colour_val(color));
     return Val_unit;
 }
 
 /*
 value raylib_DrawLineV(value startPos, value endPos, value color)
 {
-    DrawLineV(UNKNOWN(startPos), UNKNOWN(endPos), Color_val(color));
+    DrawLineV(UNKNOWN(startPos), UNKNOWN(endPos), Colour_val(color));
     return Val_unit;
 }
 */
@@ -1502,7 +1542,7 @@ value raylib_DrawLineV(value startPos, value endPos, value color)
 /*
 value raylib_DrawLineEx(value startPos, value endPos, value thick, value color)
 {
-    DrawLineEx(UNKNOWN(startPos), UNKNOWN(endPos), Double_val(thick), Color_val(color));
+    DrawLineEx(UNKNOWN(startPos), UNKNOWN(endPos), Double_val(thick), Colour_val(color));
     return Val_unit;
 }
 */
@@ -1510,7 +1550,7 @@ value raylib_DrawLineEx(value startPos, value endPos, value thick, value color)
 /*
 value raylib_DrawLineStrip(value points, value pointCount, value color)
 {
-    DrawLineStrip(UNKNOWN(points), Int_val(pointCount), Color_val(color));
+    DrawLineStrip(UNKNOWN(points), Int_val(pointCount), Colour_val(color));
     return Val_unit;
 }
 */
@@ -1518,21 +1558,21 @@ value raylib_DrawLineStrip(value points, value pointCount, value color)
 /*
 value raylib_DrawLineBezier(value startPos, value endPos, value thick, value color)
 {
-    DrawLineBezier(UNKNOWN(startPos), UNKNOWN(endPos), Double_val(thick), Color_val(color));
+    DrawLineBezier(UNKNOWN(startPos), UNKNOWN(endPos), Double_val(thick), Colour_val(color));
     return Val_unit;
 }
 */
 
 value raylib_DrawCircle(value centerX, value centerY, value radius, value color)
 {
-    DrawCircle(Int_val(centerX), Int_val(centerY), Double_val(radius), Color_val(color));
+    DrawCircle(Int_val(centerX), Int_val(centerY), Double_val(radius), Colour_val(color));
     return Val_unit;
 }
 
 /*
 value raylib_DrawCircleSector(value center, value radius, value startAngle, value endAngle, value segments, value color)
 {
-    DrawCircleSector(UNKNOWN(center), Double_val(radius), Double_val(startAngle), Double_val(endAngle), Int_val(segments), Color_val(color));
+    DrawCircleSector(UNKNOWN(center), Double_val(radius), Double_val(startAngle), Double_val(endAngle), Int_val(segments), Colour_val(color));
     return Val_unit;
 }
 */
@@ -1540,55 +1580,55 @@ value raylib_DrawCircleSector(value center, value radius, value startAngle, valu
 /*
 value raylib_DrawCircleSectorLines(value center, value radius, value startAngle, value endAngle, value segments, value color)
 {
-    DrawCircleSectorLines(UNKNOWN(center), Double_val(radius), Double_val(startAngle), Double_val(endAngle), Int_val(segments), Color_val(color));
+    DrawCircleSectorLines(UNKNOWN(center), Double_val(radius), Double_val(startAngle), Double_val(endAngle), Int_val(segments), Colour_val(color));
     return Val_unit;
 }
 */
 
 value raylib_DrawCircleGradient(value centerX, value centerY, value radius, value inner, value outer)
 {
-    DrawCircleGradient(Int_val(centerX), Int_val(centerY), Double_val(radius), Color_val(inner), Color_val(outer));
+    DrawCircleGradient(Int_val(centerX), Int_val(centerY), Double_val(radius), Colour_val(inner), Colour_val(outer));
     return Val_unit;
 }
 
 /*
 value raylib_DrawCircleV(value center, value radius, value color)
 {
-    DrawCircleV(UNKNOWN(center), Double_val(radius), Color_val(color));
+    DrawCircleV(UNKNOWN(center), Double_val(radius), Colour_val(color));
     return Val_unit;
 }
 */
 
 value raylib_DrawCircleLines(value centerX, value centerY, value radius, value color)
 {
-    DrawCircleLines(Int_val(centerX), Int_val(centerY), Double_val(radius), Color_val(color));
+    DrawCircleLines(Int_val(centerX), Int_val(centerY), Double_val(radius), Colour_val(color));
     return Val_unit;
 }
 
 /*
 value raylib_DrawCircleLinesV(value center, value radius, value color)
 {
-    DrawCircleLinesV(UNKNOWN(center), Double_val(radius), Color_val(color));
+    DrawCircleLinesV(UNKNOWN(center), Double_val(radius), Colour_val(color));
     return Val_unit;
 }
 */
 
 value raylib_DrawEllipse(value centerX, value centerY, value radiusH, value radiusV, value color)
 {
-    DrawEllipse(Int_val(centerX), Int_val(centerY), Double_val(radiusH), Double_val(radiusV), Color_val(color));
+    DrawEllipse(Int_val(centerX), Int_val(centerY), Double_val(radiusH), Double_val(radiusV), Colour_val(color));
     return Val_unit;
 }
 
 value raylib_DrawEllipseLines(value centerX, value centerY, value radiusH, value radiusV, value color)
 {
-    DrawEllipseLines(Int_val(centerX), Int_val(centerY), Double_val(radiusH), Double_val(radiusV), Color_val(color));
+    DrawEllipseLines(Int_val(centerX), Int_val(centerY), Double_val(radiusH), Double_val(radiusV), Colour_val(color));
     return Val_unit;
 }
 
 /*
 value raylib_DrawRing(value center, value innerRadius, value outerRadius, value startAngle, value endAngle, value segments, value color)
 {
-    DrawRing(UNKNOWN(center), Double_val(innerRadius), Double_val(outerRadius), Double_val(startAngle), Double_val(endAngle), Int_val(segments), Color_val(color));
+    DrawRing(UNKNOWN(center), Double_val(innerRadius), Double_val(outerRadius), Double_val(startAngle), Double_val(endAngle), Int_val(segments), Colour_val(color));
     return Val_unit;
 }
 */
@@ -1596,21 +1636,21 @@ value raylib_DrawRing(value center, value innerRadius, value outerRadius, value 
 /*
 value raylib_DrawRingLines(value center, value innerRadius, value outerRadius, value startAngle, value endAngle, value segments, value color)
 {
-    DrawRingLines(UNKNOWN(center), Double_val(innerRadius), Double_val(outerRadius), Double_val(startAngle), Double_val(endAngle), Int_val(segments), Color_val(color));
+    DrawRingLines(UNKNOWN(center), Double_val(innerRadius), Double_val(outerRadius), Double_val(startAngle), Double_val(endAngle), Int_val(segments), Colour_val(color));
     return Val_unit;
 }
 */
 
 value raylib_DrawRectangle(value posX, value posY, value width, value height, value color)
 {
-    DrawRectangle(Int_val(posX), Int_val(posY), Int_val(width), Int_val(height), Color_val(color));
+    DrawRectangle(Int_val(posX), Int_val(posY), Int_val(width), Int_val(height), Colour_val(color));
     return Val_unit;
 }
 
 /*
 value raylib_DrawRectangleV(value position, value size, value color)
 {
-    DrawRectangleV(UNKNOWN(position), UNKNOWN(size), Color_val(color));
+    DrawRectangleV(UNKNOWN(position), UNKNOWN(size), Colour_val(color));
     return Val_unit;
 }
 */
@@ -1618,7 +1658,7 @@ value raylib_DrawRectangleV(value position, value size, value color)
 /*
 value raylib_DrawRectangleRec(value rec, value color)
 {
-    DrawRectangleRec(UNKNOWN(rec), Color_val(color));
+    DrawRectangleRec(UNKNOWN(rec), Colour_val(color));
     return Val_unit;
 }
 */
@@ -1626,7 +1666,7 @@ value raylib_DrawRectangleRec(value rec, value color)
 /*
 value raylib_DrawRectanglePro(value rec, value origin, value rotation, value color)
 {
-    DrawRectanglePro(UNKNOWN(rec), UNKNOWN(origin), Double_val(rotation), Color_val(color));
+    DrawRectanglePro(UNKNOWN(rec), UNKNOWN(origin), Double_val(rotation), Colour_val(color));
     return Val_unit;
 }
 */
@@ -1634,7 +1674,7 @@ value raylib_DrawRectanglePro(value rec, value origin, value rotation, value col
 /*
 value raylib_DrawRectangleGradientV(value posX, value posY, value width, value height, value top, value bottom)
 {
-    DrawRectangleGradientV(Int_val(posX), Int_val(posY), Int_val(width), Int_val(height), Color_val(top), Color_val(bottom));
+    DrawRectangleGradientV(Int_val(posX), Int_val(posY), Int_val(width), Int_val(height), Colour_val(top), Colour_val(bottom));
     return Val_unit;
 }
 */
@@ -1642,7 +1682,7 @@ value raylib_DrawRectangleGradientV(value posX, value posY, value width, value h
 /*
 value raylib_DrawRectangleGradientH(value posX, value posY, value width, value height, value left, value right)
 {
-    DrawRectangleGradientH(Int_val(posX), Int_val(posY), Int_val(width), Int_val(height), Color_val(left), Color_val(right));
+    DrawRectangleGradientH(Int_val(posX), Int_val(posY), Int_val(width), Int_val(height), Colour_val(left), Colour_val(right));
     return Val_unit;
 }
 */
@@ -1650,21 +1690,21 @@ value raylib_DrawRectangleGradientH(value posX, value posY, value width, value h
 /*
 value raylib_DrawRectangleGradientEx(value rec, value topLeft, value bottomLeft, value topRight, value bottomRight)
 {
-    DrawRectangleGradientEx(UNKNOWN(rec), Color_val(topLeft), Color_val(bottomLeft), Color_val(topRight), Color_val(bottomRight));
+    DrawRectangleGradientEx(UNKNOWN(rec), Colour_val(topLeft), Colour_val(bottomLeft), Colour_val(topRight), Colour_val(bottomRight));
     return Val_unit;
 }
 */
 
 value raylib_DrawRectangleLines(value posX, value posY, value width, value height, value color)
 {
-    DrawRectangleLines(Int_val(posX), Int_val(posY), Int_val(width), Int_val(height), Color_val(color));
+    DrawRectangleLines(Int_val(posX), Int_val(posY), Int_val(width), Int_val(height), Colour_val(color));
     return Val_unit;
 }
 
 /*
 value raylib_DrawRectangleLinesEx(value rec, value lineThick, value color)
 {
-    DrawRectangleLinesEx(UNKNOWN(rec), Double_val(lineThick), Color_val(color));
+    DrawRectangleLinesEx(UNKNOWN(rec), Double_val(lineThick), Colour_val(color));
     return Val_unit;
 }
 */
@@ -1672,7 +1712,7 @@ value raylib_DrawRectangleLinesEx(value rec, value lineThick, value color)
 /*
 value raylib_DrawRectangleRounded(value rec, value roundness, value segments, value color)
 {
-    DrawRectangleRounded(UNKNOWN(rec), Double_val(roundness), Int_val(segments), Color_val(color));
+    DrawRectangleRounded(UNKNOWN(rec), Double_val(roundness), Int_val(segments), Colour_val(color));
     return Val_unit;
 }
 */
@@ -1680,7 +1720,7 @@ value raylib_DrawRectangleRounded(value rec, value roundness, value segments, va
 /*
 value raylib_DrawRectangleRoundedLines(value rec, value roundness, value segments, value color)
 {
-    DrawRectangleRoundedLines(UNKNOWN(rec), Double_val(roundness), Int_val(segments), Color_val(color));
+    DrawRectangleRoundedLines(UNKNOWN(rec), Double_val(roundness), Int_val(segments), Colour_val(color));
     return Val_unit;
 }
 */
@@ -1688,7 +1728,7 @@ value raylib_DrawRectangleRoundedLines(value rec, value roundness, value segment
 /*
 value raylib_DrawRectangleRoundedLinesEx(value rec, value roundness, value segments, value lineThick, value color)
 {
-    DrawRectangleRoundedLinesEx(UNKNOWN(rec), Double_val(roundness), Int_val(segments), Double_val(lineThick), Color_val(color));
+    DrawRectangleRoundedLinesEx(UNKNOWN(rec), Double_val(roundness), Int_val(segments), Double_val(lineThick), Colour_val(color));
     return Val_unit;
 }
 */
@@ -1696,7 +1736,7 @@ value raylib_DrawRectangleRoundedLinesEx(value rec, value roundness, value segme
 /*
 value raylib_DrawTriangle(value v1, value v2, value v3, value color)
 {
-    DrawTriangle(UNKNOWN(v1), UNKNOWN(v2), UNKNOWN(v3), Color_val(color));
+    DrawTriangle(UNKNOWN(v1), UNKNOWN(v2), UNKNOWN(v3), Colour_val(color));
     return Val_unit;
 }
 */
@@ -1704,7 +1744,7 @@ value raylib_DrawTriangle(value v1, value v2, value v3, value color)
 /*
 value raylib_DrawTriangleLines(value v1, value v2, value v3, value color)
 {
-    DrawTriangleLines(UNKNOWN(v1), UNKNOWN(v2), UNKNOWN(v3), Color_val(color));
+    DrawTriangleLines(UNKNOWN(v1), UNKNOWN(v2), UNKNOWN(v3), Colour_val(color));
     return Val_unit;
 }
 */
@@ -1712,7 +1752,7 @@ value raylib_DrawTriangleLines(value v1, value v2, value v3, value color)
 /*
 value raylib_DrawTriangleFan(value points, value pointCount, value color)
 {
-    DrawTriangleFan(UNKNOWN(points), Int_val(pointCount), Color_val(color));
+    DrawTriangleFan(UNKNOWN(points), Int_val(pointCount), Colour_val(color));
     return Val_unit;
 }
 */
@@ -1720,7 +1760,7 @@ value raylib_DrawTriangleFan(value points, value pointCount, value color)
 /*
 value raylib_DrawTriangleStrip(value points, value pointCount, value color)
 {
-    DrawTriangleStrip(UNKNOWN(points), Int_val(pointCount), Color_val(color));
+    DrawTriangleStrip(UNKNOWN(points), Int_val(pointCount), Colour_val(color));
     return Val_unit;
 }
 */
@@ -1728,7 +1768,7 @@ value raylib_DrawTriangleStrip(value points, value pointCount, value color)
 /*
 value raylib_DrawPoly(value center, value sides, value radius, value rotation, value color)
 {
-    DrawPoly(UNKNOWN(center), Int_val(sides), Double_val(radius), Double_val(rotation), Color_val(color));
+    DrawPoly(UNKNOWN(center), Int_val(sides), Double_val(radius), Double_val(rotation), Colour_val(color));
     return Val_unit;
 }
 */
@@ -1736,7 +1776,7 @@ value raylib_DrawPoly(value center, value sides, value radius, value rotation, v
 /*
 value raylib_DrawPolyLines(value center, value sides, value radius, value rotation, value color)
 {
-    DrawPolyLines(UNKNOWN(center), Int_val(sides), Double_val(radius), Double_val(rotation), Color_val(color));
+    DrawPolyLines(UNKNOWN(center), Int_val(sides), Double_val(radius), Double_val(rotation), Colour_val(color));
     return Val_unit;
 }
 */
@@ -1744,7 +1784,7 @@ value raylib_DrawPolyLines(value center, value sides, value radius, value rotati
 /*
 value raylib_DrawPolyLinesEx(value center, value sides, value radius, value rotation, value lineThick, value color)
 {
-    DrawPolyLinesEx(UNKNOWN(center), Int_val(sides), Double_val(radius), Double_val(rotation), Double_val(lineThick), Color_val(color));
+    DrawPolyLinesEx(UNKNOWN(center), Int_val(sides), Double_val(radius), Double_val(rotation), Double_val(lineThick), Colour_val(color));
     return Val_unit;
 }
 */
@@ -1752,7 +1792,7 @@ value raylib_DrawPolyLinesEx(value center, value sides, value radius, value rota
 /*
 value raylib_DrawSplineLinear(value points, value pointCount, value thick, value color)
 {
-    DrawSplineLinear(UNKNOWN(points), Int_val(pointCount), Double_val(thick), Color_val(color));
+    DrawSplineLinear(UNKNOWN(points), Int_val(pointCount), Double_val(thick), Colour_val(color));
     return Val_unit;
 }
 */
@@ -1760,7 +1800,7 @@ value raylib_DrawSplineLinear(value points, value pointCount, value thick, value
 /*
 value raylib_DrawSplineBasis(value points, value pointCount, value thick, value color)
 {
-    DrawSplineBasis(UNKNOWN(points), Int_val(pointCount), Double_val(thick), Color_val(color));
+    DrawSplineBasis(UNKNOWN(points), Int_val(pointCount), Double_val(thick), Colour_val(color));
     return Val_unit;
 }
 */
@@ -1768,7 +1808,7 @@ value raylib_DrawSplineBasis(value points, value pointCount, value thick, value 
 /*
 value raylib_DrawSplineCatmullRom(value points, value pointCount, value thick, value color)
 {
-    DrawSplineCatmullRom(UNKNOWN(points), Int_val(pointCount), Double_val(thick), Color_val(color));
+    DrawSplineCatmullRom(UNKNOWN(points), Int_val(pointCount), Double_val(thick), Colour_val(color));
     return Val_unit;
 }
 */
@@ -1776,7 +1816,7 @@ value raylib_DrawSplineCatmullRom(value points, value pointCount, value thick, v
 /*
 value raylib_DrawSplineBezierQuadratic(value points, value pointCount, value thick, value color)
 {
-    DrawSplineBezierQuadratic(UNKNOWN(points), Int_val(pointCount), Double_val(thick), Color_val(color));
+    DrawSplineBezierQuadratic(UNKNOWN(points), Int_val(pointCount), Double_val(thick), Colour_val(color));
     return Val_unit;
 }
 */
@@ -1784,7 +1824,7 @@ value raylib_DrawSplineBezierQuadratic(value points, value pointCount, value thi
 /*
 value raylib_DrawSplineBezierCubic(value points, value pointCount, value thick, value color)
 {
-    DrawSplineBezierCubic(UNKNOWN(points), Int_val(pointCount), Double_val(thick), Color_val(color));
+    DrawSplineBezierCubic(UNKNOWN(points), Int_val(pointCount), Double_val(thick), Colour_val(color));
     return Val_unit;
 }
 */
@@ -1792,7 +1832,7 @@ value raylib_DrawSplineBezierCubic(value points, value pointCount, value thick, 
 /*
 value raylib_DrawSplineSegmentLinear(value p1, value p2, value thick, value color)
 {
-    DrawSplineSegmentLinear(UNKNOWN(p1), UNKNOWN(p2), Double_val(thick), Color_val(color));
+    DrawSplineSegmentLinear(UNKNOWN(p1), UNKNOWN(p2), Double_val(thick), Colour_val(color));
     return Val_unit;
 }
 */
@@ -1800,7 +1840,7 @@ value raylib_DrawSplineSegmentLinear(value p1, value p2, value thick, value colo
 /*
 value raylib_DrawSplineSegmentBasis(value p1, value p2, value p3, value p4, value thick, value color)
 {
-    DrawSplineSegmentBasis(UNKNOWN(p1), UNKNOWN(p2), UNKNOWN(p3), UNKNOWN(p4), Double_val(thick), Color_val(color));
+    DrawSplineSegmentBasis(UNKNOWN(p1), UNKNOWN(p2), UNKNOWN(p3), UNKNOWN(p4), Double_val(thick), Colour_val(color));
     return Val_unit;
 }
 */
@@ -1808,7 +1848,7 @@ value raylib_DrawSplineSegmentBasis(value p1, value p2, value p3, value p4, valu
 /*
 value raylib_DrawSplineSegmentCatmullRom(value p1, value p2, value p3, value p4, value thick, value color)
 {
-    DrawSplineSegmentCatmullRom(UNKNOWN(p1), UNKNOWN(p2), UNKNOWN(p3), UNKNOWN(p4), Double_val(thick), Color_val(color));
+    DrawSplineSegmentCatmullRom(UNKNOWN(p1), UNKNOWN(p2), UNKNOWN(p3), UNKNOWN(p4), Double_val(thick), Colour_val(color));
     return Val_unit;
 }
 */
@@ -1816,7 +1856,7 @@ value raylib_DrawSplineSegmentCatmullRom(value p1, value p2, value p3, value p4,
 /*
 value raylib_DrawSplineSegmentBezierQuadratic(value p1, value c2, value p3, value thick, value color)
 {
-    DrawSplineSegmentBezierQuadratic(UNKNOWN(p1), UNKNOWN(c2), UNKNOWN(p3), Double_val(thick), Color_val(color));
+    DrawSplineSegmentBezierQuadratic(UNKNOWN(p1), UNKNOWN(c2), UNKNOWN(p3), Double_val(thick), Colour_val(color));
     return Val_unit;
 }
 */
@@ -1824,7 +1864,7 @@ value raylib_DrawSplineSegmentBezierQuadratic(value p1, value c2, value p3, valu
 /*
 value raylib_DrawSplineSegmentBezierCubic(value p1, value c2, value c3, value p4, value thick, value color)
 {
-    DrawSplineSegmentBezierCubic(UNKNOWN(p1), UNKNOWN(c2), UNKNOWN(c3), UNKNOWN(p4), Double_val(thick), Color_val(color));
+    DrawSplineSegmentBezierCubic(UNKNOWN(p1), UNKNOWN(c2), UNKNOWN(c3), UNKNOWN(p4), Double_val(thick), Colour_val(color));
     return Val_unit;
 }
 */
@@ -1957,27 +1997,23 @@ value raylib_GetCollisionRec(value rec1, value rec2)
 }
 */
 
-/*
 value raylib_LoadImage(value fileName)
 {
     Image result = LoadImage(String_val(fileName));
-    return UNKNOWN(result);
+    return Val_image(result);
 }
-*/
 
-/*
 value raylib_LoadImageRaw(value fileName, value width, value height, value format, value headerSize)
 {
     Image result = LoadImageRaw(String_val(fileName), Int_val(width), Int_val(height), Int_val(format), Int_val(headerSize));
-    return UNKNOWN(result);
+    return Val_image(result);
 }
-*/
 
 /*
 value raylib_LoadImageAnim(value fileName, value frames)
 {
     Image result = LoadImageAnim(String_val(fileName), UNKNOWN(frames));
-    return UNKNOWN(result);
+    return Val_image(result);
 }
 */
 
@@ -1985,7 +2021,7 @@ value raylib_LoadImageAnim(value fileName, value frames)
 value raylib_LoadImageAnimFromMemory(value fileType, value fileData, value dataSize, value frames)
 {
     Image result = LoadImageAnimFromMemory(String_val(fileType), UNKNOWN(fileData), Int_val(dataSize), UNKNOWN(frames));
-    return UNKNOWN(result);
+    return Val_image(result);
 }
 */
 
@@ -1993,175 +2029,141 @@ value raylib_LoadImageAnimFromMemory(value fileType, value fileData, value dataS
 value raylib_LoadImageFromMemory(value fileType, value fileData, value dataSize)
 {
     Image result = LoadImageFromMemory(String_val(fileType), UNKNOWN(fileData), Int_val(dataSize));
-    return UNKNOWN(result);
+    return Val_image(result);
 }
 */
 
-/*
 value raylib_LoadImageFromTexture(value texture)
 {
-    Image result = LoadImageFromTexture(UNKNOWN(texture));
-    return UNKNOWN(result);
+    Image result = LoadImageFromTexture(Texture_val(texture));
+    return Val_image(result);
 }
-*/
 
-/*
 value raylib_LoadImageFromScreen(value unit)
 {
     Image result = LoadImageFromScreen();
-    return UNKNOWN(result);
+    return Val_image(result);
 }
-*/
 
-/*
 value raylib_IsImageValid(value image)
 {
-    bool result = IsImageValid(UNKNOWN(image));
+    bool result = IsImageValid(Image_val(image));
     return Val_bool(result);
 }
-*/
 
-/*
 value raylib_UnloadImage(value image)
 {
-    UnloadImage(UNKNOWN(image));
+    UnloadImage(Image_val(image));
     return Val_unit;
 }
-*/
 
-/*
 value raylib_ExportImage(value image, value fileName)
 {
-    bool result = ExportImage(UNKNOWN(image), String_val(fileName));
+    bool result = ExportImage(Image_val(image), String_val(fileName));
     return Val_bool(result);
 }
-*/
 
 /*
 value raylib_ExportImageToMemory(value image, value fileType, value fileSize)
 {
-    unsigned char * result = ExportImageToMemory(UNKNOWN(image), String_val(fileType), UNKNOWN(fileSize));
+    unsigned char * result = ExportImageToMemory(Image_val(image), String_val(fileType), UNKNOWN(fileSize));
     return UNKNOWN(result);
 }
 */
 
-/*
 value raylib_ExportImageAsCode(value image, value fileName)
 {
-    bool result = ExportImageAsCode(UNKNOWN(image), String_val(fileName));
+    bool result = ExportImageAsCode(Image_val(image), String_val(fileName));
     return Val_bool(result);
 }
-*/
 
-/*
 value raylib_GenImageColor(value width, value height, value color)
 {
-    Image result = GenImageColor(Int_val(width), Int_val(height), Color_val(color));
-    return UNKNOWN(result);
+    Image result = GenImageColor(Int_val(width), Int_val(height), Colour_val(color));
+    return Val_image(result);
 }
-*/
 
-/*
 value raylib_GenImageGradientLinear(value width, value height, value direction, value start, value end)
 {
-    Image result = GenImageGradientLinear(Int_val(width), Int_val(height), Int_val(direction), Color_val(start), Color_val(end));
-    return UNKNOWN(result);
+    Image result = GenImageGradientLinear(Int_val(width), Int_val(height), Int_val(direction), Colour_val(start), Colour_val(end));
+    return Val_image(result);
 }
-*/
 
-/*
 value raylib_GenImageGradientRadial(value width, value height, value density, value inner, value outer)
 {
-    Image result = GenImageGradientRadial(Int_val(width), Int_val(height), Double_val(density), Color_val(inner), Color_val(outer));
-    return UNKNOWN(result);
+    Image result = GenImageGradientRadial(Int_val(width), Int_val(height), Double_val(density), Colour_val(inner), Colour_val(outer));
+    return Val_image(result);
 }
-*/
 
-/*
 value raylib_GenImageGradientSquare(value width, value height, value density, value inner, value outer)
 {
-    Image result = GenImageGradientSquare(Int_val(width), Int_val(height), Double_val(density), Color_val(inner), Color_val(outer));
-    return UNKNOWN(result);
+    Image result = GenImageGradientSquare(Int_val(width), Int_val(height), Double_val(density), Colour_val(inner), Colour_val(outer));
+    return Val_image(result);
 }
-*/
 
 /*
 value raylib_GenImageChecked(value width, value height, value checksX, value checksY, value col1, value col2)
 {
-    Image result = GenImageChecked(Int_val(width), Int_val(height), Int_val(checksX), Int_val(checksY), Color_val(col1), Color_val(col2));
-    return UNKNOWN(result);
+    Image result = GenImageChecked(Int_val(width), Int_val(height), Int_val(checksX), Int_val(checksY), Colour_val(col1), Colour_val(col2));
+    return Val_image(result);
 }
 */
 
-/*
 value raylib_GenImageWhiteNoise(value width, value height, value factor)
 {
     Image result = GenImageWhiteNoise(Int_val(width), Int_val(height), Double_val(factor));
-    return UNKNOWN(result);
+    return Val_image(result);
 }
-*/
 
-/*
 value raylib_GenImagePerlinNoise(value width, value height, value offsetX, value offsetY, value scale)
 {
     Image result = GenImagePerlinNoise(Int_val(width), Int_val(height), Int_val(offsetX), Int_val(offsetY), Double_val(scale));
-    return UNKNOWN(result);
+    return Val_image(result);
 }
-*/
 
-/*
 value raylib_GenImageCellular(value width, value height, value tileSize)
 {
     Image result = GenImageCellular(Int_val(width), Int_val(height), Int_val(tileSize));
-    return UNKNOWN(result);
+    return Val_image(result);
 }
-*/
 
-/*
 value raylib_GenImageText(value width, value height, value text)
 {
     Image result = GenImageText(Int_val(width), Int_val(height), String_val(text));
-    return UNKNOWN(result);
+    return Val_image(result);
 }
-*/
 
-/*
 value raylib_ImageCopy(value image)
 {
-    Image result = ImageCopy(UNKNOWN(image));
-    return UNKNOWN(result);
+    Image result = ImageCopy(Image_val(image));
+    return Val_image(result);
 }
-*/
 
 /*
 value raylib_ImageFromImage(value image, value rec)
 {
-    Image result = ImageFromImage(UNKNOWN(image), UNKNOWN(rec));
-    return UNKNOWN(result);
+    Image result = ImageFromImage(Image_val(image), UNKNOWN(rec));
+    return Val_image(result);
 }
 */
 
-/*
 value raylib_ImageFromChannel(value image, value selectedChannel)
 {
-    Image result = ImageFromChannel(UNKNOWN(image), Int_val(selectedChannel));
-    return UNKNOWN(result);
+    Image result = ImageFromChannel(Image_val(image), Int_val(selectedChannel));
+    return Val_image(result);
 }
-*/
 
-/*
 value raylib_ImageText(value text, value fontSize, value color)
 {
-    Image result = ImageText(String_val(text), Int_val(fontSize), Color_val(color));
-    return UNKNOWN(result);
+    Image result = ImageText(String_val(text), Int_val(fontSize), Colour_val(color));
+    return Val_image(result);
 }
-*/
 
 /*
 value raylib_ImageTextEx(value font, value text, value fontSize, value spacing, value tint)
 {
-    Image result = ImageTextEx(UNKNOWN(font), String_val(text), Double_val(fontSize), Double_val(spacing), Color_val(tint));
-    return UNKNOWN(result);
+    Image result = ImageTextEx(UNKNOWN(font), String_val(text), Double_val(fontSize), Double_val(spacing), Colour_val(tint));
+    return Val_image(result);
 }
 */
 
@@ -2176,7 +2178,7 @@ value raylib_ImageFormat(value image, value newFormat)
 /*
 value raylib_ImageToPOT(value image, value fill)
 {
-    ImageToPOT(UNKNOWN(image), Color_val(fill));
+    ImageToPOT(UNKNOWN(image), Colour_val(fill));
     return Val_unit;
 }
 */
@@ -2200,7 +2202,7 @@ value raylib_ImageAlphaCrop(value image, value threshold)
 /*
 value raylib_ImageAlphaClear(value image, value color, value threshold)
 {
-    ImageAlphaClear(UNKNOWN(image), Color_val(color), Double_val(threshold));
+    ImageAlphaClear(UNKNOWN(image), Colour_val(color), Double_val(threshold));
     return Val_unit;
 }
 */
@@ -2208,7 +2210,7 @@ value raylib_ImageAlphaClear(value image, value color, value threshold)
 /*
 value raylib_ImageAlphaMask(value image, value alphaMask)
 {
-    ImageAlphaMask(UNKNOWN(image), UNKNOWN(alphaMask));
+    ImageAlphaMask(UNKNOWN(image), Image_val(alphaMask));
     return Val_unit;
 }
 */
@@ -2256,7 +2258,7 @@ value raylib_ImageResizeNN(value image, value newWidth, value newHeight)
 /*
 value raylib_ImageResizeCanvas(value image, value newWidth, value newHeight, value offsetX, value offsetY, value fill)
 {
-    ImageResizeCanvas(UNKNOWN(image), Int_val(newWidth), Int_val(newHeight), Int_val(offsetX), Int_val(offsetY), Color_val(fill));
+    ImageResizeCanvas(UNKNOWN(image), Int_val(newWidth), Int_val(newHeight), Int_val(offsetX), Int_val(offsetY), Colour_val(fill));
     return Val_unit;
 }
 */
@@ -2320,7 +2322,7 @@ value raylib_ImageRotateCCW(value image)
 /*
 value raylib_ImageColorTint(value image, value color)
 {
-    ImageColorTint(UNKNOWN(image), Color_val(color));
+    ImageColorTint(UNKNOWN(image), Colour_val(color));
     return Val_unit;
 }
 */
@@ -2360,7 +2362,7 @@ value raylib_ImageColorBrightness(value image, value brightness)
 /*
 value raylib_ImageColorReplace(value image, value color, value replace)
 {
-    ImageColorReplace(UNKNOWN(image), Color_val(color), Color_val(replace));
+    ImageColorReplace(UNKNOWN(image), Colour_val(color), Colour_val(replace));
     return Val_unit;
 }
 */
@@ -2368,7 +2370,7 @@ value raylib_ImageColorReplace(value image, value color, value replace)
 /*
 value raylib_LoadImageColors(value image)
 {
-    Color * result = LoadImageColors(UNKNOWN(image));
+    Color * result = LoadImageColors(Image_val(image));
     return UNKNOWN(result);
 }
 */
@@ -2376,7 +2378,7 @@ value raylib_LoadImageColors(value image)
 /*
 value raylib_LoadImagePalette(value image, value maxPaletteSize, value colorCount)
 {
-    Color * result = LoadImagePalette(UNKNOWN(image), Int_val(maxPaletteSize), UNKNOWN(colorCount));
+    Color * result = LoadImagePalette(Image_val(image), Int_val(maxPaletteSize), UNKNOWN(colorCount));
     return UNKNOWN(result);
 }
 */
@@ -2400,23 +2402,21 @@ value raylib_UnloadImagePalette(value colors)
 /*
 value raylib_GetImageAlphaBorder(value image, value threshold)
 {
-    Rectangle result = GetImageAlphaBorder(UNKNOWN(image), Double_val(threshold));
+    Rectangle result = GetImageAlphaBorder(Image_val(image), Double_val(threshold));
     return UNKNOWN(result);
 }
 */
 
-/*
 value raylib_GetImageColor(value image, value x, value y)
 {
-    Color result = GetImageColor(UNKNOWN(image), Int_val(x), Int_val(y));
-    return Val_color(result);
+    Color result = GetImageColor(Image_val(image), Int_val(x), Int_val(y));
+    return Val_colour(result);
 }
-*/
 
 /*
 value raylib_ImageClearBackground(value dst, value color)
 {
-    ImageClearBackground(UNKNOWN(dst), Color_val(color));
+    ImageClearBackground(UNKNOWN(dst), Colour_val(color));
     return Val_unit;
 }
 */
@@ -2424,7 +2424,7 @@ value raylib_ImageClearBackground(value dst, value color)
 /*
 value raylib_ImageDrawPixel(value dst, value posX, value posY, value color)
 {
-    ImageDrawPixel(UNKNOWN(dst), Int_val(posX), Int_val(posY), Color_val(color));
+    ImageDrawPixel(UNKNOWN(dst), Int_val(posX), Int_val(posY), Colour_val(color));
     return Val_unit;
 }
 */
@@ -2432,7 +2432,7 @@ value raylib_ImageDrawPixel(value dst, value posX, value posY, value color)
 /*
 value raylib_ImageDrawPixelV(value dst, value position, value color)
 {
-    ImageDrawPixelV(UNKNOWN(dst), UNKNOWN(position), Color_val(color));
+    ImageDrawPixelV(UNKNOWN(dst), UNKNOWN(position), Colour_val(color));
     return Val_unit;
 }
 */
@@ -2440,7 +2440,7 @@ value raylib_ImageDrawPixelV(value dst, value position, value color)
 /*
 value raylib_ImageDrawLine(value dst, value startPosX, value startPosY, value endPosX, value endPosY, value color)
 {
-    ImageDrawLine(UNKNOWN(dst), Int_val(startPosX), Int_val(startPosY), Int_val(endPosX), Int_val(endPosY), Color_val(color));
+    ImageDrawLine(UNKNOWN(dst), Int_val(startPosX), Int_val(startPosY), Int_val(endPosX), Int_val(endPosY), Colour_val(color));
     return Val_unit;
 }
 */
@@ -2448,7 +2448,7 @@ value raylib_ImageDrawLine(value dst, value startPosX, value startPosY, value en
 /*
 value raylib_ImageDrawLineV(value dst, value start, value end, value color)
 {
-    ImageDrawLineV(UNKNOWN(dst), UNKNOWN(start), UNKNOWN(end), Color_val(color));
+    ImageDrawLineV(UNKNOWN(dst), UNKNOWN(start), UNKNOWN(end), Colour_val(color));
     return Val_unit;
 }
 */
@@ -2456,7 +2456,7 @@ value raylib_ImageDrawLineV(value dst, value start, value end, value color)
 /*
 value raylib_ImageDrawLineEx(value dst, value start, value end, value thick, value color)
 {
-    ImageDrawLineEx(UNKNOWN(dst), UNKNOWN(start), UNKNOWN(end), Int_val(thick), Color_val(color));
+    ImageDrawLineEx(UNKNOWN(dst), UNKNOWN(start), UNKNOWN(end), Int_val(thick), Colour_val(color));
     return Val_unit;
 }
 */
@@ -2464,7 +2464,7 @@ value raylib_ImageDrawLineEx(value dst, value start, value end, value thick, val
 /*
 value raylib_ImageDrawCircle(value dst, value centerX, value centerY, value radius, value color)
 {
-    ImageDrawCircle(UNKNOWN(dst), Int_val(centerX), Int_val(centerY), Int_val(radius), Color_val(color));
+    ImageDrawCircle(UNKNOWN(dst), Int_val(centerX), Int_val(centerY), Int_val(radius), Colour_val(color));
     return Val_unit;
 }
 */
@@ -2472,7 +2472,7 @@ value raylib_ImageDrawCircle(value dst, value centerX, value centerY, value radi
 /*
 value raylib_ImageDrawCircleV(value dst, value center, value radius, value color)
 {
-    ImageDrawCircleV(UNKNOWN(dst), UNKNOWN(center), Int_val(radius), Color_val(color));
+    ImageDrawCircleV(UNKNOWN(dst), UNKNOWN(center), Int_val(radius), Colour_val(color));
     return Val_unit;
 }
 */
@@ -2480,7 +2480,7 @@ value raylib_ImageDrawCircleV(value dst, value center, value radius, value color
 /*
 value raylib_ImageDrawCircleLines(value dst, value centerX, value centerY, value radius, value color)
 {
-    ImageDrawCircleLines(UNKNOWN(dst), Int_val(centerX), Int_val(centerY), Int_val(radius), Color_val(color));
+    ImageDrawCircleLines(UNKNOWN(dst), Int_val(centerX), Int_val(centerY), Int_val(radius), Colour_val(color));
     return Val_unit;
 }
 */
@@ -2488,7 +2488,7 @@ value raylib_ImageDrawCircleLines(value dst, value centerX, value centerY, value
 /*
 value raylib_ImageDrawCircleLinesV(value dst, value center, value radius, value color)
 {
-    ImageDrawCircleLinesV(UNKNOWN(dst), UNKNOWN(center), Int_val(radius), Color_val(color));
+    ImageDrawCircleLinesV(UNKNOWN(dst), UNKNOWN(center), Int_val(radius), Colour_val(color));
     return Val_unit;
 }
 */
@@ -2496,7 +2496,7 @@ value raylib_ImageDrawCircleLinesV(value dst, value center, value radius, value 
 /*
 value raylib_ImageDrawRectangle(value dst, value posX, value posY, value width, value height, value color)
 {
-    ImageDrawRectangle(UNKNOWN(dst), Int_val(posX), Int_val(posY), Int_val(width), Int_val(height), Color_val(color));
+    ImageDrawRectangle(UNKNOWN(dst), Int_val(posX), Int_val(posY), Int_val(width), Int_val(height), Colour_val(color));
     return Val_unit;
 }
 */
@@ -2504,7 +2504,7 @@ value raylib_ImageDrawRectangle(value dst, value posX, value posY, value width, 
 /*
 value raylib_ImageDrawRectangleV(value dst, value position, value size, value color)
 {
-    ImageDrawRectangleV(UNKNOWN(dst), UNKNOWN(position), UNKNOWN(size), Color_val(color));
+    ImageDrawRectangleV(UNKNOWN(dst), UNKNOWN(position), UNKNOWN(size), Colour_val(color));
     return Val_unit;
 }
 */
@@ -2512,7 +2512,7 @@ value raylib_ImageDrawRectangleV(value dst, value position, value size, value co
 /*
 value raylib_ImageDrawRectangleRec(value dst, value rec, value color)
 {
-    ImageDrawRectangleRec(UNKNOWN(dst), UNKNOWN(rec), Color_val(color));
+    ImageDrawRectangleRec(UNKNOWN(dst), UNKNOWN(rec), Colour_val(color));
     return Val_unit;
 }
 */
@@ -2520,7 +2520,7 @@ value raylib_ImageDrawRectangleRec(value dst, value rec, value color)
 /*
 value raylib_ImageDrawRectangleLines(value dst, value rec, value thick, value color)
 {
-    ImageDrawRectangleLines(UNKNOWN(dst), UNKNOWN(rec), Int_val(thick), Color_val(color));
+    ImageDrawRectangleLines(UNKNOWN(dst), UNKNOWN(rec), Int_val(thick), Colour_val(color));
     return Val_unit;
 }
 */
@@ -2528,7 +2528,7 @@ value raylib_ImageDrawRectangleLines(value dst, value rec, value thick, value co
 /*
 value raylib_ImageDrawTriangle(value dst, value v1, value v2, value v3, value color)
 {
-    ImageDrawTriangle(UNKNOWN(dst), UNKNOWN(v1), UNKNOWN(v2), UNKNOWN(v3), Color_val(color));
+    ImageDrawTriangle(UNKNOWN(dst), UNKNOWN(v1), UNKNOWN(v2), UNKNOWN(v3), Colour_val(color));
     return Val_unit;
 }
 */
@@ -2536,7 +2536,7 @@ value raylib_ImageDrawTriangle(value dst, value v1, value v2, value v3, value co
 /*
 value raylib_ImageDrawTriangleEx(value dst, value v1, value v2, value v3, value c1, value c2, value c3)
 {
-    ImageDrawTriangleEx(UNKNOWN(dst), UNKNOWN(v1), UNKNOWN(v2), UNKNOWN(v3), Color_val(c1), Color_val(c2), Color_val(c3));
+    ImageDrawTriangleEx(UNKNOWN(dst), UNKNOWN(v1), UNKNOWN(v2), UNKNOWN(v3), Colour_val(c1), Colour_val(c2), Colour_val(c3));
     return Val_unit;
 }
 */
@@ -2544,7 +2544,7 @@ value raylib_ImageDrawTriangleEx(value dst, value v1, value v2, value v3, value 
 /*
 value raylib_ImageDrawTriangleLines(value dst, value v1, value v2, value v3, value color)
 {
-    ImageDrawTriangleLines(UNKNOWN(dst), UNKNOWN(v1), UNKNOWN(v2), UNKNOWN(v3), Color_val(color));
+    ImageDrawTriangleLines(UNKNOWN(dst), UNKNOWN(v1), UNKNOWN(v2), UNKNOWN(v3), Colour_val(color));
     return Val_unit;
 }
 */
@@ -2552,7 +2552,7 @@ value raylib_ImageDrawTriangleLines(value dst, value v1, value v2, value v3, val
 /*
 value raylib_ImageDrawTriangleFan(value dst, value points, value pointCount, value color)
 {
-    ImageDrawTriangleFan(UNKNOWN(dst), UNKNOWN(points), Int_val(pointCount), Color_val(color));
+    ImageDrawTriangleFan(UNKNOWN(dst), UNKNOWN(points), Int_val(pointCount), Colour_val(color));
     return Val_unit;
 }
 */
@@ -2560,7 +2560,7 @@ value raylib_ImageDrawTriangleFan(value dst, value points, value pointCount, val
 /*
 value raylib_ImageDrawTriangleStrip(value dst, value points, value pointCount, value color)
 {
-    ImageDrawTriangleStrip(UNKNOWN(dst), UNKNOWN(points), Int_val(pointCount), Color_val(color));
+    ImageDrawTriangleStrip(UNKNOWN(dst), UNKNOWN(points), Int_val(pointCount), Colour_val(color));
     return Val_unit;
 }
 */
@@ -2568,7 +2568,7 @@ value raylib_ImageDrawTriangleStrip(value dst, value points, value pointCount, v
 /*
 value raylib_ImageDraw(value dst, value src, value srcRec, value dstRec, value tint)
 {
-    ImageDraw(UNKNOWN(dst), UNKNOWN(src), UNKNOWN(srcRec), UNKNOWN(dstRec), Color_val(tint));
+    ImageDraw(UNKNOWN(dst), Image_val(src), UNKNOWN(srcRec), UNKNOWN(dstRec), Colour_val(tint));
     return Val_unit;
 }
 */
@@ -2576,7 +2576,7 @@ value raylib_ImageDraw(value dst, value src, value srcRec, value dstRec, value t
 /*
 value raylib_ImageDrawText(value dst, value text, value posX, value posY, value fontSize, value color)
 {
-    ImageDrawText(UNKNOWN(dst), String_val(text), Int_val(posX), Int_val(posY), Int_val(fontSize), Color_val(color));
+    ImageDrawText(UNKNOWN(dst), String_val(text), Int_val(posX), Int_val(posY), Int_val(fontSize), Colour_val(color));
     return Val_unit;
 }
 */
@@ -2584,31 +2584,27 @@ value raylib_ImageDrawText(value dst, value text, value posX, value posY, value 
 /*
 value raylib_ImageDrawTextEx(value dst, value font, value text, value position, value fontSize, value spacing, value tint)
 {
-    ImageDrawTextEx(UNKNOWN(dst), UNKNOWN(font), String_val(text), UNKNOWN(position), Double_val(fontSize), Double_val(spacing), Color_val(tint));
+    ImageDrawTextEx(UNKNOWN(dst), UNKNOWN(font), String_val(text), UNKNOWN(position), Double_val(fontSize), Double_val(spacing), Colour_val(tint));
     return Val_unit;
 }
 */
 
-/*
 value raylib_LoadTexture(value fileName)
 {
     Texture2D result = LoadTexture(String_val(fileName));
-    return UNKNOWN(result);
+    return Val_texture(result);
 }
-*/
 
-/*
 value raylib_LoadTextureFromImage(value image)
 {
-    Texture2D result = LoadTextureFromImage(UNKNOWN(image));
-    return UNKNOWN(result);
+    Texture2D result = LoadTextureFromImage(Image_val(image));
+    return Val_texture(result);
 }
-*/
 
 /*
 value raylib_LoadTextureCubemap(value image, value layout)
 {
-    TextureCubemap result = LoadTextureCubemap(UNKNOWN(image), Int_val(layout));
+    TextureCubemap result = LoadTextureCubemap(Image_val(image), Int_val(layout));
     return UNKNOWN(result);
 }
 */
@@ -2621,21 +2617,17 @@ value raylib_LoadRenderTexture(value width, value height)
 }
 */
 
-/*
 value raylib_IsTextureValid(value texture)
 {
-    bool result = IsTextureValid(UNKNOWN(texture));
+    bool result = IsTextureValid(Texture_val(texture));
     return Val_bool(result);
 }
-*/
 
-/*
 value raylib_UnloadTexture(value texture)
 {
-    UnloadTexture(UNKNOWN(texture));
+    UnloadTexture(Texture_val(texture));
     return Val_unit;
 }
-*/
 
 /*
 value raylib_IsRenderTextureValid(value target)
@@ -2656,7 +2648,7 @@ value raylib_UnloadRenderTexture(value target)
 /*
 value raylib_UpdateTexture(value texture, value pixels)
 {
-    UpdateTexture(UNKNOWN(texture), UNKNOWN(pixels));
+    UpdateTexture(Texture_val(texture), UNKNOWN(pixels));
     return Val_unit;
 }
 */
@@ -2664,7 +2656,7 @@ value raylib_UpdateTexture(value texture, value pixels)
 /*
 value raylib_UpdateTextureRec(value texture, value rec, value pixels)
 {
-    UpdateTextureRec(UNKNOWN(texture), UNKNOWN(rec), UNKNOWN(pixels));
+    UpdateTextureRec(Texture_val(texture), UNKNOWN(rec), UNKNOWN(pixels));
     return Val_unit;
 }
 */
@@ -2677,34 +2669,28 @@ value raylib_GenTextureMipmaps(value texture)
 }
 */
 
-/*
 value raylib_SetTextureFilter(value texture, value filter)
 {
-    SetTextureFilter(UNKNOWN(texture), Int_val(filter));
+    SetTextureFilter(Texture_val(texture), Int_val(filter));
     return Val_unit;
 }
-*/
 
-/*
 value raylib_SetTextureWrap(value texture, value wrap)
 {
-    SetTextureWrap(UNKNOWN(texture), Int_val(wrap));
+    SetTextureWrap(Texture_val(texture), Int_val(wrap));
     return Val_unit;
 }
-*/
 
-/*
 value raylib_DrawTexture(value texture, value posX, value posY, value tint)
 {
-    DrawTexture(UNKNOWN(texture), Int_val(posX), Int_val(posY), Color_val(tint));
+    DrawTexture(Texture_val(texture), Int_val(posX), Int_val(posY), Colour_val(tint));
     return Val_unit;
 }
-*/
 
 /*
 value raylib_DrawTextureV(value texture, value position, value tint)
 {
-    DrawTextureV(UNKNOWN(texture), UNKNOWN(position), Color_val(tint));
+    DrawTextureV(Texture_val(texture), UNKNOWN(position), Colour_val(tint));
     return Val_unit;
 }
 */
@@ -2712,7 +2698,7 @@ value raylib_DrawTextureV(value texture, value position, value tint)
 /*
 value raylib_DrawTextureEx(value texture, value position, value rotation, value scale, value tint)
 {
-    DrawTextureEx(UNKNOWN(texture), UNKNOWN(position), Double_val(rotation), Double_val(scale), Color_val(tint));
+    DrawTextureEx(Texture_val(texture), UNKNOWN(position), Double_val(rotation), Double_val(scale), Colour_val(tint));
     return Val_unit;
 }
 */
@@ -2720,7 +2706,7 @@ value raylib_DrawTextureEx(value texture, value position, value rotation, value 
 /*
 value raylib_DrawTextureRec(value texture, value source, value position, value tint)
 {
-    DrawTextureRec(UNKNOWN(texture), UNKNOWN(source), UNKNOWN(position), Color_val(tint));
+    DrawTextureRec(Texture_val(texture), UNKNOWN(source), UNKNOWN(position), Colour_val(tint));
     return Val_unit;
 }
 */
@@ -2728,7 +2714,7 @@ value raylib_DrawTextureRec(value texture, value source, value position, value t
 /*
 value raylib_DrawTexturePro(value texture, value source, value dest, value origin, value rotation, value tint)
 {
-    DrawTexturePro(UNKNOWN(texture), UNKNOWN(source), UNKNOWN(dest), UNKNOWN(origin), Double_val(rotation), Color_val(tint));
+    DrawTexturePro(Texture_val(texture), UNKNOWN(source), UNKNOWN(dest), UNKNOWN(origin), Double_val(rotation), Colour_val(tint));
     return Val_unit;
 }
 */
@@ -2736,33 +2722,33 @@ value raylib_DrawTexturePro(value texture, value source, value dest, value origi
 /*
 value raylib_DrawTextureNPatch(value texture, value nPatchInfo, value dest, value origin, value rotation, value tint)
 {
-    DrawTextureNPatch(UNKNOWN(texture), UNKNOWN(nPatchInfo), UNKNOWN(dest), UNKNOWN(origin), Double_val(rotation), Color_val(tint));
+    DrawTextureNPatch(Texture_val(texture), UNKNOWN(nPatchInfo), UNKNOWN(dest), UNKNOWN(origin), Double_val(rotation), Colour_val(tint));
     return Val_unit;
 }
 */
 
 value raylib_ColorIsEqual(value col1, value col2)
 {
-    bool result = ColorIsEqual(Color_val(col1), Color_val(col2));
+    bool result = ColorIsEqual(Colour_val(col1), Colour_val(col2));
     return Val_bool(result);
 }
 
 value raylib_Fade(value color, value alpha)
 {
-    Color result = Fade(Color_val(color), Double_val(alpha));
-    return Val_color(result);
+    Color result = Fade(Colour_val(color), Double_val(alpha));
+    return Val_colour(result);
 }
 
 value raylib_ColorToInt(value color)
 {
-    int result = ColorToInt(Color_val(color));
+    int result = ColorToInt(Colour_val(color));
     return Val_int(result);
 }
 
 /*
 value raylib_ColorNormalize(value color)
 {
-    Vector4 result = ColorNormalize(Color_val(color));
+    Vector4 result = ColorNormalize(Colour_val(color));
     return UNKNOWN(result);
 }
 */
@@ -2771,14 +2757,14 @@ value raylib_ColorNormalize(value color)
 value raylib_ColorFromNormalized(value normalized)
 {
     Color result = ColorFromNormalized(UNKNOWN(normalized));
-    return Val_color(result);
+    return Val_colour(result);
 }
 */
 
 /*
 value raylib_ColorToHSV(value color)
 {
-    Vector3 result = ColorToHSV(Color_val(color));
+    Vector3 result = ColorToHSV(Colour_val(color));
     return UNKNOWN(result);
 }
 */
@@ -2786,50 +2772,50 @@ value raylib_ColorToHSV(value color)
 value raylib_ColorFromHSV(value hue, value saturation, value value)
 {
     Color result = ColorFromHSV(Double_val(hue), Double_val(saturation), Double_val(value));
-    return Val_color(result);
+    return Val_colour(result);
 }
 
 value raylib_ColorTint(value color, value tint)
 {
-    Color result = ColorTint(Color_val(color), Color_val(tint));
-    return Val_color(result);
+    Color result = ColorTint(Colour_val(color), Colour_val(tint));
+    return Val_colour(result);
 }
 
 value raylib_ColorBrightness(value color, value factor)
 {
-    Color result = ColorBrightness(Color_val(color), Double_val(factor));
-    return Val_color(result);
+    Color result = ColorBrightness(Colour_val(color), Double_val(factor));
+    return Val_colour(result);
 }
 
 value raylib_ColorContrast(value color, value contrast)
 {
-    Color result = ColorContrast(Color_val(color), Double_val(contrast));
-    return Val_color(result);
+    Color result = ColorContrast(Colour_val(color), Double_val(contrast));
+    return Val_colour(result);
 }
 
 value raylib_ColorAlpha(value color, value alpha)
 {
-    Color result = ColorAlpha(Color_val(color), Double_val(alpha));
-    return Val_color(result);
+    Color result = ColorAlpha(Colour_val(color), Double_val(alpha));
+    return Val_colour(result);
 }
 
 value raylib_ColorAlphaBlend(value dst, value src, value tint)
 {
-    Color result = ColorAlphaBlend(Color_val(dst), Color_val(src), Color_val(tint));
-    return Val_color(result);
+    Color result = ColorAlphaBlend(Colour_val(dst), Colour_val(src), Colour_val(tint));
+    return Val_colour(result);
 }
 
 value raylib_ColorLerp(value color1, value color2, value factor)
 {
-    Color result = ColorLerp(Color_val(color1), Color_val(color2), Double_val(factor));
-    return Val_color(result);
+    Color result = ColorLerp(Colour_val(color1), Colour_val(color2), Double_val(factor));
+    return Val_colour(result);
 }
 
 /*
 value raylib_GetColor(value hexValue)
 {
     Color result = GetColor(UNKNOWN(hexValue));
-    return Val_color(result);
+    return Val_colour(result);
 }
 */
 
@@ -2837,14 +2823,14 @@ value raylib_GetColor(value hexValue)
 value raylib_GetPixelColor(value srcPtr, value format)
 {
     Color result = GetPixelColor(UNKNOWN(srcPtr), Int_val(format));
-    return Val_color(result);
+    return Val_colour(result);
 }
 */
 
 /*
 value raylib_SetPixelColor(value dstPtr, value color, value format)
 {
-    SetPixelColor(UNKNOWN(dstPtr), Color_val(color), Int_val(format));
+    SetPixelColor(UNKNOWN(dstPtr), Colour_val(color), Int_val(format));
     return Val_unit;
 }
 */
@@ -2882,7 +2868,7 @@ value raylib_LoadFontEx(value fileName, value fontSize, value codepoints, value 
 /*
 value raylib_LoadFontFromImage(value image, value key, value firstChar)
 {
-    Font result = LoadFontFromImage(UNKNOWN(image), Color_val(key), Int_val(firstChar));
+    Font result = LoadFontFromImage(Image_val(image), Colour_val(key), Int_val(firstChar));
     return UNKNOWN(result);
 }
 */
@@ -2915,7 +2901,7 @@ value raylib_LoadFontData(value fileData, value dataSize, value fontSize, value 
 value raylib_GenImageFontAtlas(value glyphs, value glyphRecs, value glyphCount, value fontSize, value padding, value packMethod)
 {
     Image result = GenImageFontAtlas(UNKNOWN(glyphs), UNKNOWN(glyphRecs), Int_val(glyphCount), Int_val(fontSize), Int_val(padding), Int_val(packMethod));
-    return UNKNOWN(result);
+    return Val_image(result);
 }
 */
 
@@ -2951,14 +2937,14 @@ value raylib_DrawFPS(value posX, value posY)
 
 value raylib_DrawText(value text, value posX, value posY, value fontSize, value color)
 {
-    DrawText(String_val(text), Int_val(posX), Int_val(posY), Int_val(fontSize), Color_val(color));
+    DrawText(String_val(text), Int_val(posX), Int_val(posY), Int_val(fontSize), Colour_val(color));
     return Val_unit;
 }
 
 /*
 value raylib_DrawTextEx(value font, value text, value position, value fontSize, value spacing, value tint)
 {
-    DrawTextEx(UNKNOWN(font), String_val(text), UNKNOWN(position), Double_val(fontSize), Double_val(spacing), Color_val(tint));
+    DrawTextEx(UNKNOWN(font), String_val(text), UNKNOWN(position), Double_val(fontSize), Double_val(spacing), Colour_val(tint));
     return Val_unit;
 }
 */
@@ -2966,7 +2952,7 @@ value raylib_DrawTextEx(value font, value text, value position, value fontSize, 
 /*
 value raylib_DrawTextPro(value font, value text, value position, value origin, value rotation, value fontSize, value spacing, value tint)
 {
-    DrawTextPro(UNKNOWN(font), String_val(text), UNKNOWN(position), UNKNOWN(origin), Double_val(rotation), Double_val(fontSize), Double_val(spacing), Color_val(tint));
+    DrawTextPro(UNKNOWN(font), String_val(text), UNKNOWN(position), UNKNOWN(origin), Double_val(rotation), Double_val(fontSize), Double_val(spacing), Colour_val(tint));
     return Val_unit;
 }
 */
@@ -2974,7 +2960,7 @@ value raylib_DrawTextPro(value font, value text, value position, value origin, v
 /*
 value raylib_DrawTextCodepoint(value font, value codepoint, value position, value fontSize, value tint)
 {
-    DrawTextCodepoint(UNKNOWN(font), Int_val(codepoint), UNKNOWN(position), Double_val(fontSize), Color_val(tint));
+    DrawTextCodepoint(UNKNOWN(font), Int_val(codepoint), UNKNOWN(position), Double_val(fontSize), Colour_val(tint));
     return Val_unit;
 }
 */
@@ -2982,7 +2968,7 @@ value raylib_DrawTextCodepoint(value font, value codepoint, value position, valu
 /*
 value raylib_DrawTextCodepoints(value font, value codepoints, value codepointCount, value position, value fontSize, value spacing, value tint)
 {
-    DrawTextCodepoints(UNKNOWN(font), UNKNOWN(codepoints), Int_val(codepointCount), UNKNOWN(position), Double_val(fontSize), Double_val(spacing), Color_val(tint));
+    DrawTextCodepoints(UNKNOWN(font), UNKNOWN(codepoints), Int_val(codepointCount), UNKNOWN(position), Double_val(fontSize), Double_val(spacing), Colour_val(tint));
     return Val_unit;
 }
 */
@@ -3228,7 +3214,7 @@ value raylib_TextToFloat(value text)
 /*
 value raylib_DrawLine3D(value startPos, value endPos, value color)
 {
-    DrawLine3D(UNKNOWN(startPos), UNKNOWN(endPos), Color_val(color));
+    DrawLine3D(UNKNOWN(startPos), UNKNOWN(endPos), Colour_val(color));
     return Val_unit;
 }
 */
@@ -3236,7 +3222,7 @@ value raylib_DrawLine3D(value startPos, value endPos, value color)
 /*
 value raylib_DrawPoint3D(value position, value color)
 {
-    DrawPoint3D(UNKNOWN(position), Color_val(color));
+    DrawPoint3D(UNKNOWN(position), Colour_val(color));
     return Val_unit;
 }
 */
@@ -3244,7 +3230,7 @@ value raylib_DrawPoint3D(value position, value color)
 /*
 value raylib_DrawCircle3D(value center, value radius, value rotationAxis, value rotationAngle, value color)
 {
-    DrawCircle3D(UNKNOWN(center), Double_val(radius), UNKNOWN(rotationAxis), Double_val(rotationAngle), Color_val(color));
+    DrawCircle3D(UNKNOWN(center), Double_val(radius), UNKNOWN(rotationAxis), Double_val(rotationAngle), Colour_val(color));
     return Val_unit;
 }
 */
@@ -3252,7 +3238,7 @@ value raylib_DrawCircle3D(value center, value radius, value rotationAxis, value 
 /*
 value raylib_DrawTriangle3D(value v1, value v2, value v3, value color)
 {
-    DrawTriangle3D(UNKNOWN(v1), UNKNOWN(v2), UNKNOWN(v3), Color_val(color));
+    DrawTriangle3D(UNKNOWN(v1), UNKNOWN(v2), UNKNOWN(v3), Colour_val(color));
     return Val_unit;
 }
 */
@@ -3260,7 +3246,7 @@ value raylib_DrawTriangle3D(value v1, value v2, value v3, value color)
 /*
 value raylib_DrawTriangleStrip3D(value points, value pointCount, value color)
 {
-    DrawTriangleStrip3D(UNKNOWN(points), Int_val(pointCount), Color_val(color));
+    DrawTriangleStrip3D(UNKNOWN(points), Int_val(pointCount), Colour_val(color));
     return Val_unit;
 }
 */
@@ -3268,7 +3254,7 @@ value raylib_DrawTriangleStrip3D(value points, value pointCount, value color)
 /*
 value raylib_DrawCube(value position, value width, value height, value length, value color)
 {
-    DrawCube(UNKNOWN(position), Double_val(width), Double_val(height), Double_val(length), Color_val(color));
+    DrawCube(UNKNOWN(position), Double_val(width), Double_val(height), Double_val(length), Colour_val(color));
     return Val_unit;
 }
 */
@@ -3276,7 +3262,7 @@ value raylib_DrawCube(value position, value width, value height, value length, v
 /*
 value raylib_DrawCubeV(value position, value size, value color)
 {
-    DrawCubeV(UNKNOWN(position), UNKNOWN(size), Color_val(color));
+    DrawCubeV(UNKNOWN(position), UNKNOWN(size), Colour_val(color));
     return Val_unit;
 }
 */
@@ -3284,7 +3270,7 @@ value raylib_DrawCubeV(value position, value size, value color)
 /*
 value raylib_DrawCubeWires(value position, value width, value height, value length, value color)
 {
-    DrawCubeWires(UNKNOWN(position), Double_val(width), Double_val(height), Double_val(length), Color_val(color));
+    DrawCubeWires(UNKNOWN(position), Double_val(width), Double_val(height), Double_val(length), Colour_val(color));
     return Val_unit;
 }
 */
@@ -3292,7 +3278,7 @@ value raylib_DrawCubeWires(value position, value width, value height, value leng
 /*
 value raylib_DrawCubeWiresV(value position, value size, value color)
 {
-    DrawCubeWiresV(UNKNOWN(position), UNKNOWN(size), Color_val(color));
+    DrawCubeWiresV(UNKNOWN(position), UNKNOWN(size), Colour_val(color));
     return Val_unit;
 }
 */
@@ -3300,7 +3286,7 @@ value raylib_DrawCubeWiresV(value position, value size, value color)
 /*
 value raylib_DrawSphere(value centerPos, value radius, value color)
 {
-    DrawSphere(UNKNOWN(centerPos), Double_val(radius), Color_val(color));
+    DrawSphere(UNKNOWN(centerPos), Double_val(radius), Colour_val(color));
     return Val_unit;
 }
 */
@@ -3308,7 +3294,7 @@ value raylib_DrawSphere(value centerPos, value radius, value color)
 /*
 value raylib_DrawSphereEx(value centerPos, value radius, value rings, value slices, value color)
 {
-    DrawSphereEx(UNKNOWN(centerPos), Double_val(radius), Int_val(rings), Int_val(slices), Color_val(color));
+    DrawSphereEx(UNKNOWN(centerPos), Double_val(radius), Int_val(rings), Int_val(slices), Colour_val(color));
     return Val_unit;
 }
 */
@@ -3316,7 +3302,7 @@ value raylib_DrawSphereEx(value centerPos, value radius, value rings, value slic
 /*
 value raylib_DrawSphereWires(value centerPos, value radius, value rings, value slices, value color)
 {
-    DrawSphereWires(UNKNOWN(centerPos), Double_val(radius), Int_val(rings), Int_val(slices), Color_val(color));
+    DrawSphereWires(UNKNOWN(centerPos), Double_val(radius), Int_val(rings), Int_val(slices), Colour_val(color));
     return Val_unit;
 }
 */
@@ -3324,7 +3310,7 @@ value raylib_DrawSphereWires(value centerPos, value radius, value rings, value s
 /*
 value raylib_DrawCylinder(value position, value radiusTop, value radiusBottom, value height, value slices, value color)
 {
-    DrawCylinder(UNKNOWN(position), Double_val(radiusTop), Double_val(radiusBottom), Double_val(height), Int_val(slices), Color_val(color));
+    DrawCylinder(UNKNOWN(position), Double_val(radiusTop), Double_val(radiusBottom), Double_val(height), Int_val(slices), Colour_val(color));
     return Val_unit;
 }
 */
@@ -3332,7 +3318,7 @@ value raylib_DrawCylinder(value position, value radiusTop, value radiusBottom, v
 /*
 value raylib_DrawCylinderEx(value startPos, value endPos, value startRadius, value endRadius, value sides, value color)
 {
-    DrawCylinderEx(UNKNOWN(startPos), UNKNOWN(endPos), Double_val(startRadius), Double_val(endRadius), Int_val(sides), Color_val(color));
+    DrawCylinderEx(UNKNOWN(startPos), UNKNOWN(endPos), Double_val(startRadius), Double_val(endRadius), Int_val(sides), Colour_val(color));
     return Val_unit;
 }
 */
@@ -3340,7 +3326,7 @@ value raylib_DrawCylinderEx(value startPos, value endPos, value startRadius, val
 /*
 value raylib_DrawCylinderWires(value position, value radiusTop, value radiusBottom, value height, value slices, value color)
 {
-    DrawCylinderWires(UNKNOWN(position), Double_val(radiusTop), Double_val(radiusBottom), Double_val(height), Int_val(slices), Color_val(color));
+    DrawCylinderWires(UNKNOWN(position), Double_val(radiusTop), Double_val(radiusBottom), Double_val(height), Int_val(slices), Colour_val(color));
     return Val_unit;
 }
 */
@@ -3348,7 +3334,7 @@ value raylib_DrawCylinderWires(value position, value radiusTop, value radiusBott
 /*
 value raylib_DrawCylinderWiresEx(value startPos, value endPos, value startRadius, value endRadius, value sides, value color)
 {
-    DrawCylinderWiresEx(UNKNOWN(startPos), UNKNOWN(endPos), Double_val(startRadius), Double_val(endRadius), Int_val(sides), Color_val(color));
+    DrawCylinderWiresEx(UNKNOWN(startPos), UNKNOWN(endPos), Double_val(startRadius), Double_val(endRadius), Int_val(sides), Colour_val(color));
     return Val_unit;
 }
 */
@@ -3356,7 +3342,7 @@ value raylib_DrawCylinderWiresEx(value startPos, value endPos, value startRadius
 /*
 value raylib_DrawCapsule(value startPos, value endPos, value radius, value slices, value rings, value color)
 {
-    DrawCapsule(UNKNOWN(startPos), UNKNOWN(endPos), Double_val(radius), Int_val(slices), Int_val(rings), Color_val(color));
+    DrawCapsule(UNKNOWN(startPos), UNKNOWN(endPos), Double_val(radius), Int_val(slices), Int_val(rings), Colour_val(color));
     return Val_unit;
 }
 */
@@ -3364,7 +3350,7 @@ value raylib_DrawCapsule(value startPos, value endPos, value radius, value slice
 /*
 value raylib_DrawCapsuleWires(value startPos, value endPos, value radius, value slices, value rings, value color)
 {
-    DrawCapsuleWires(UNKNOWN(startPos), UNKNOWN(endPos), Double_val(radius), Int_val(slices), Int_val(rings), Color_val(color));
+    DrawCapsuleWires(UNKNOWN(startPos), UNKNOWN(endPos), Double_val(radius), Int_val(slices), Int_val(rings), Colour_val(color));
     return Val_unit;
 }
 */
@@ -3372,7 +3358,7 @@ value raylib_DrawCapsuleWires(value startPos, value endPos, value radius, value 
 /*
 value raylib_DrawPlane(value centerPos, value size, value color)
 {
-    DrawPlane(UNKNOWN(centerPos), UNKNOWN(size), Color_val(color));
+    DrawPlane(UNKNOWN(centerPos), UNKNOWN(size), Colour_val(color));
     return Val_unit;
 }
 */
@@ -3380,7 +3366,7 @@ value raylib_DrawPlane(value centerPos, value size, value color)
 /*
 value raylib_DrawRay(value ray, value color)
 {
-    DrawRay(UNKNOWN(ray), Color_val(color));
+    DrawRay(UNKNOWN(ray), Colour_val(color));
     return Val_unit;
 }
 */
@@ -3434,7 +3420,7 @@ value raylib_GetModelBoundingBox(value model)
 /*
 value raylib_DrawModel(value model, value position, value scale, value tint)
 {
-    DrawModel(UNKNOWN(model), UNKNOWN(position), Double_val(scale), Color_val(tint));
+    DrawModel(UNKNOWN(model), UNKNOWN(position), Double_val(scale), Colour_val(tint));
     return Val_unit;
 }
 */
@@ -3442,7 +3428,7 @@ value raylib_DrawModel(value model, value position, value scale, value tint)
 /*
 value raylib_DrawModelEx(value model, value position, value rotationAxis, value rotationAngle, value scale, value tint)
 {
-    DrawModelEx(UNKNOWN(model), UNKNOWN(position), UNKNOWN(rotationAxis), Double_val(rotationAngle), UNKNOWN(scale), Color_val(tint));
+    DrawModelEx(UNKNOWN(model), UNKNOWN(position), UNKNOWN(rotationAxis), Double_val(rotationAngle), UNKNOWN(scale), Colour_val(tint));
     return Val_unit;
 }
 */
@@ -3450,7 +3436,7 @@ value raylib_DrawModelEx(value model, value position, value rotationAxis, value 
 /*
 value raylib_DrawModelWires(value model, value position, value scale, value tint)
 {
-    DrawModelWires(UNKNOWN(model), UNKNOWN(position), Double_val(scale), Color_val(tint));
+    DrawModelWires(UNKNOWN(model), UNKNOWN(position), Double_val(scale), Colour_val(tint));
     return Val_unit;
 }
 */
@@ -3458,7 +3444,7 @@ value raylib_DrawModelWires(value model, value position, value scale, value tint
 /*
 value raylib_DrawModelWiresEx(value model, value position, value rotationAxis, value rotationAngle, value scale, value tint)
 {
-    DrawModelWiresEx(UNKNOWN(model), UNKNOWN(position), UNKNOWN(rotationAxis), Double_val(rotationAngle), UNKNOWN(scale), Color_val(tint));
+    DrawModelWiresEx(UNKNOWN(model), UNKNOWN(position), UNKNOWN(rotationAxis), Double_val(rotationAngle), UNKNOWN(scale), Colour_val(tint));
     return Val_unit;
 }
 */
@@ -3466,7 +3452,7 @@ value raylib_DrawModelWiresEx(value model, value position, value rotationAxis, v
 /*
 value raylib_DrawModelPoints(value model, value position, value scale, value tint)
 {
-    DrawModelPoints(UNKNOWN(model), UNKNOWN(position), Double_val(scale), Color_val(tint));
+    DrawModelPoints(UNKNOWN(model), UNKNOWN(position), Double_val(scale), Colour_val(tint));
     return Val_unit;
 }
 */
@@ -3474,7 +3460,7 @@ value raylib_DrawModelPoints(value model, value position, value scale, value tin
 /*
 value raylib_DrawModelPointsEx(value model, value position, value rotationAxis, value rotationAngle, value scale, value tint)
 {
-    DrawModelPointsEx(UNKNOWN(model), UNKNOWN(position), UNKNOWN(rotationAxis), Double_val(rotationAngle), UNKNOWN(scale), Color_val(tint));
+    DrawModelPointsEx(UNKNOWN(model), UNKNOWN(position), UNKNOWN(rotationAxis), Double_val(rotationAngle), UNKNOWN(scale), Colour_val(tint));
     return Val_unit;
 }
 */
@@ -3482,7 +3468,7 @@ value raylib_DrawModelPointsEx(value model, value position, value rotationAxis, 
 /*
 value raylib_DrawBoundingBox(value box, value color)
 {
-    DrawBoundingBox(UNKNOWN(box), Color_val(color));
+    DrawBoundingBox(UNKNOWN(box), Colour_val(color));
     return Val_unit;
 }
 */
@@ -3490,7 +3476,7 @@ value raylib_DrawBoundingBox(value box, value color)
 /*
 value raylib_DrawBillboard(value camera, value texture, value position, value scale, value tint)
 {
-    DrawBillboard(UNKNOWN(camera), UNKNOWN(texture), UNKNOWN(position), Double_val(scale), Color_val(tint));
+    DrawBillboard(UNKNOWN(camera), Texture_val(texture), UNKNOWN(position), Double_val(scale), Colour_val(tint));
     return Val_unit;
 }
 */
@@ -3498,7 +3484,7 @@ value raylib_DrawBillboard(value camera, value texture, value position, value sc
 /*
 value raylib_DrawBillboardRec(value camera, value texture, value source, value position, value size, value tint)
 {
-    DrawBillboardRec(UNKNOWN(camera), UNKNOWN(texture), UNKNOWN(source), UNKNOWN(position), UNKNOWN(size), Color_val(tint));
+    DrawBillboardRec(UNKNOWN(camera), Texture_val(texture), UNKNOWN(source), UNKNOWN(position), UNKNOWN(size), Colour_val(tint));
     return Val_unit;
 }
 */
@@ -3506,7 +3492,7 @@ value raylib_DrawBillboardRec(value camera, value texture, value source, value p
 /*
 value raylib_DrawBillboardPro(value camera, value texture, value source, value position, value up, value size, value origin, value rotation, value tint)
 {
-    DrawBillboardPro(UNKNOWN(camera), UNKNOWN(texture), UNKNOWN(source), UNKNOWN(position), UNKNOWN(up), UNKNOWN(size), UNKNOWN(origin), Double_val(rotation), Color_val(tint));
+    DrawBillboardPro(UNKNOWN(camera), Texture_val(texture), UNKNOWN(source), UNKNOWN(position), UNKNOWN(up), UNKNOWN(size), UNKNOWN(origin), Double_val(rotation), Colour_val(tint));
     return Val_unit;
 }
 */
@@ -3658,7 +3644,7 @@ value raylib_GenMeshKnot(value radius, value size, value radSeg, value sides)
 /*
 value raylib_GenMeshHeightmap(value heightmap, value size)
 {
-    Mesh result = GenMeshHeightmap(UNKNOWN(heightmap), UNKNOWN(size));
+    Mesh result = GenMeshHeightmap(Image_val(heightmap), UNKNOWN(size));
     return UNKNOWN(result);
 }
 */
@@ -3666,7 +3652,7 @@ value raylib_GenMeshHeightmap(value heightmap, value size)
 /*
 value raylib_GenMeshCubicmap(value cubicmap, value cubeSize)
 {
-    Mesh result = GenMeshCubicmap(UNKNOWN(cubicmap), UNKNOWN(cubeSize));
+    Mesh result = GenMeshCubicmap(Image_val(cubicmap), UNKNOWN(cubeSize));
     return UNKNOWN(result);
 }
 */
@@ -3706,7 +3692,7 @@ value raylib_UnloadMaterial(value material)
 /*
 value raylib_SetMaterialTexture(value material, value mapType, value texture)
 {
-    SetMaterialTexture(UNKNOWN(material), Int_val(mapType), UNKNOWN(texture));
+    SetMaterialTexture(UNKNOWN(material), Int_val(mapType), Texture_val(texture));
     return Val_unit;
 }
 */

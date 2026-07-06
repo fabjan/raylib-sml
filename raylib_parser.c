@@ -2053,6 +2053,18 @@ static void ExportParsedData(const char *fileName, int format)
                     .value_to_c = "Colour_val",
                     .c_to_value = "Val_colour",
                 },
+                {
+                    .c_type     = "Image",
+                    .sml_type   = "raylib_image",
+                    .value_to_c = "Image_val",
+                    .c_to_value = "Val_image",
+                },
+                {
+                    .c_type     = "Texture2D",
+                    .sml_type   = "raylib_texture",
+                    .value_to_c = "Texture_val",
+                    .c_to_value = "Val_texture",
+                },
             };
 
             Type *get_c_type(const char *c_type)
@@ -2077,6 +2089,10 @@ static void ExportParsedData(const char *fileName, int format)
                 fprintf(outFile, "open Dynlib;\n");
                 fprintf(outFile, "\n");
                 fprintf(outFile, "val dlh = dlopen { lib = \"%s\", flag = RTLD_LAZY, global = false }\n", dll_name);
+                fprintf(outFile, "\n");
+                fprintf(outFile, "prim_type void_pointer\n");
+                fprintf(outFile, "type raylib_image = {data: void_pointer, width: int, height: int, mipmaps: int, format: int}\n");
+                fprintf(outFile, "type raylib_texture = {id: int, width: int, height: int, mipmaps: int, format: int}\n");
                 fprintf(outFile, "\n");
             }
 
@@ -2112,6 +2128,53 @@ static void ExportParsedData(const char *fileName, int format)
                 fprintf(outCFile, "    value res = alloc_string(8);\n");
                 fprintf(outCFile, "    Store_double_val(res, x);\n");
                 fprintf(outCFile, "    return res;\n");
+                fprintf(outCFile, "}\n");
+                fprintf(outCFile, "\n");
+                // Moscow ML records are tuples with fields sorted by label
+                fprintf(outCFile, "static inline value Val_image(Image i)\n");
+                fprintf(outCFile, "{\n");
+                fprintf(outCFile, "    value rec = alloc_tuple(5);\n");
+                fprintf(outCFile, "    modify(&Field(rec, 0), (value)i.data);\n");
+                fprintf(outCFile, "    modify(&Field(rec, 1), Val_int(i.format));\n");
+                fprintf(outCFile, "    modify(&Field(rec, 2), Val_int(i.height));\n");
+                fprintf(outCFile, "    modify(&Field(rec, 3), Val_int(i.mipmaps));\n");
+                fprintf(outCFile, "    modify(&Field(rec, 4), Val_int(i.width));\n");
+                fprintf(outCFile, "    return rec;\n");
+                fprintf(outCFile, "}\n");
+                fprintf(outCFile, "\n");
+                fprintf(outCFile, "static inline Image Image_val(value v)\n");
+                fprintf(outCFile, "{\n");
+                fprintf(outCFile, "    Image img = {\n");
+                fprintf(outCFile, "       .data    = (void*)(Field(v, 0)),\n");
+                fprintf(outCFile, "       .format  = Int_val(Field(v, 1)),\n");
+                fprintf(outCFile, "       .height  = Int_val(Field(v, 2)),\n");
+                fprintf(outCFile, "       .mipmaps = Int_val(Field(v, 3)),\n");
+                fprintf(outCFile, "       .width   = Int_val(Field(v, 4)),\n");
+                fprintf(outCFile, "    };\n");
+                fprintf(outCFile, "    return img;\n");
+                fprintf(outCFile, "}\n");
+                // Moscow ML records are tuples with fields sorted by label
+                fprintf(outCFile, "static inline value Val_texture(Texture2D t)\n");
+                fprintf(outCFile, "{\n");
+                fprintf(outCFile, "    value rec = alloc_tuple(5);\n");
+                fprintf(outCFile, "    modify(&Field(rec, 0), Val_int(t.format));\n");
+                fprintf(outCFile, "    modify(&Field(rec, 1), Val_int(t.height));\n");
+                fprintf(outCFile, "    modify(&Field(rec, 2), Val_int(t.id));\n");
+                fprintf(outCFile, "    modify(&Field(rec, 3), Val_int(t.mipmaps));\n");
+                fprintf(outCFile, "    modify(&Field(rec, 4), Val_int(t.width));\n");
+                fprintf(outCFile, "    return rec;\n");
+                fprintf(outCFile, "}\n");
+                fprintf(outCFile, "\n");
+                fprintf(outCFile, "static inline Texture2D Texture_val(value v)\n");
+                fprintf(outCFile, "{\n");
+                fprintf(outCFile, "    Texture2D tex = {\n");
+                fprintf(outCFile, "       .format  = Int_val(Field(v, 0)),\n");
+                fprintf(outCFile, "       .height  = Int_val(Field(v, 1)),\n");
+                fprintf(outCFile, "       .id      = Int_val(Field(v, 2)),\n");
+                fprintf(outCFile, "       .mipmaps = Int_val(Field(v, 3)),\n");
+                fprintf(outCFile, "       .width   = Int_val(Field(v, 4)),\n");
+                fprintf(outCFile, "    };\n");
+                fprintf(outCFile, "    return tex;\n");
                 fprintf(outCFile, "}\n");
                 fprintf(outCFile, "\n");
             }
