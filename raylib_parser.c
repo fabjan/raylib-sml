@@ -2040,6 +2040,8 @@ static void ExportParsedData(const char *fileName, int format)
                 {
                     .c_type     = "unsigned int",
                     .sml_type   = "word",
+                    .value_to_c = "Long_val",
+                    .c_to_value = "Val_long",
                 },
                 {
                     .c_type     = "bool",

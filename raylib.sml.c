@@ -154,32 +154,26 @@ value raylib_IsWindowResized(value unit)
     return Val_bool(result);
 }
 
-/*
 value raylib_IsWindowState(value arg)
 {
-    unsigned int _flag = UNKNOWN(arg);
+    unsigned int _flag = Long_val(arg);
     bool result = IsWindowState(_flag);
     return Val_bool(result);
 }
-*/
 
-/*
 value raylib_SetWindowState(value arg)
 {
-    unsigned int _flags = UNKNOWN(arg);
+    unsigned int _flags = Long_val(arg);
     SetWindowState(_flags);
     return Val_unit;
 }
-*/
 
-/*
 value raylib_ClearWindowState(value arg)
 {
-    unsigned int _flags = UNKNOWN(arg);
+    unsigned int _flags = Long_val(arg);
     ClearWindowState(_flags);
     return Val_unit;
 }
-*/
 
 value raylib_ToggleFullscreen(value unit)
 {
@@ -835,14 +829,12 @@ value raylib_WaitTime(value arg)
 }
 */
 
-/*
 value raylib_SetRandomSeed(value arg)
 {
-    unsigned int _seed = UNKNOWN(arg);
+    unsigned int _seed = Long_val(arg);
     SetRandomSeed(_seed);
     return Val_unit;
 }
-*/
 
 value raylib_GetRandomValue(value args)
 {
@@ -855,7 +847,7 @@ value raylib_GetRandomValue(value args)
 /*
 value raylib_LoadRandomSequence(value args)
 {
-    unsigned int _count = UNKNOWN(Field(args, 0));
+    unsigned int _count = Long_val(Field(args, 0));
     int _min = Int_val(Field(args, 1));
     int _max = Int_val(Field(args, 2));
     int * result = LoadRandomSequence(_count, _min, _max);
@@ -879,14 +871,12 @@ value raylib_TakeScreenshot(value arg)
     return Val_unit;
 }
 
-/*
 value raylib_SetConfigFlags(value arg)
 {
-    unsigned int _flags = UNKNOWN(arg);
+    unsigned int _flags = Long_val(arg);
     SetConfigFlags(_flags);
     return Val_unit;
 }
-*/
 
 value raylib_OpenURL(value arg)
 {
@@ -916,7 +906,7 @@ value raylib_SetTraceLogLevel(value arg)
 /*
 value raylib_MemAlloc(value arg)
 {
-    unsigned int _size = UNKNOWN(arg);
+    unsigned int _size = Long_val(arg);
     void * result = MemAlloc(_size);
     return UNKNOWN(result);
 }
@@ -926,7 +916,7 @@ value raylib_MemAlloc(value arg)
 value raylib_MemRealloc(value args)
 {
     void * _ptr = UNKNOWN(Field(args, 0));
-    unsigned int _size = UNKNOWN(Field(args, 1));
+    unsigned int _size = Long_val(Field(args, 1));
     void * result = MemRealloc(_ptr, _size);
     return UNKNOWN(result);
 }
@@ -1269,7 +1259,7 @@ value raylib_ComputeCRC32(value args)
     unsigned char * _data = UNKNOWN(Field(args, 0));
     int _dataSize = Int_val(Field(args, 1));
     unsigned int result = ComputeCRC32(_data, _dataSize);
-    return UNKNOWN(result);
+    return Val_long(result);
 }
 */
 
@@ -1623,23 +1613,19 @@ value raylib_GetTouchPointCount(value unit)
     return Val_int(result);
 }
 
-/*
 value raylib_SetGesturesEnabled(value arg)
 {
-    unsigned int _flags = UNKNOWN(arg);
+    unsigned int _flags = Long_val(arg);
     SetGesturesEnabled(_flags);
     return Val_unit;
 }
-*/
 
-/*
 value raylib_IsGestureDetected(value arg)
 {
-    unsigned int _gesture = UNKNOWN(arg);
+    unsigned int _gesture = Long_val(arg);
     bool result = IsGestureDetected(_gesture);
     return Val_bool(result);
 }
-*/
 
 value raylib_GetGestureDetected(value unit)
 {
@@ -3533,14 +3519,12 @@ value raylib_ColorLerp(value args)
     return Val_colour(result);
 }
 
-/*
 value raylib_GetColor(value arg)
 {
-    unsigned int _hexValue = UNKNOWN(arg);
+    unsigned int _hexValue = Long_val(arg);
     Color result = GetColor(_hexValue);
     return Val_colour(result);
 }
-*/
 
 /*
 value raylib_GetPixelColor(value args)
@@ -3929,14 +3913,12 @@ value raylib_TextIsEqual(value args)
     return Val_bool(result);
 }
 
-/*
 value raylib_TextLength(value arg)
 {
     const char * _text = String_val(arg);
     unsigned int result = TextLength(_text);
-    return UNKNOWN(result);
+    return Val_long(result);
 }
-*/
 
 /*
 value raylib_TextFormat(value args)
@@ -5356,9 +5338,9 @@ value raylib_GetMusicTimePlayed(value arg)
 /*
 value raylib_LoadAudioStream(value args)
 {
-    unsigned int _sampleRate = UNKNOWN(Field(args, 0));
-    unsigned int _sampleSize = UNKNOWN(Field(args, 1));
-    unsigned int _channels = UNKNOWN(Field(args, 2));
+    unsigned int _sampleRate = Long_val(Field(args, 0));
+    unsigned int _sampleSize = Long_val(Field(args, 1));
+    unsigned int _channels = Long_val(Field(args, 2));
     AudioStream result = LoadAudioStream(_sampleRate, _sampleSize, _channels);
     return UNKNOWN(result);
 }
