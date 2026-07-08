@@ -64,12 +64,12 @@ fun ball_update ({x, y, dx, dy, color, lifetime}: ball): ball option =
 fun ball_render (balltex: raylib_texture) ({x, y, color, lifetime, ...}: ball): unit =
   let
     val alpha = 1.0 - (Real.fromInt lifetime)/(Real.fromInt max_lifetime)
-    val color = ColorAlpha color (Math.sqrt alpha)
+    val color = ColorAlpha (color, (Math.sqrt alpha))
     val position = {x = Real.fromInt(x-radius), y = Real.fromInt(y-radius)}
     val rotation = alpha * 360.0
     val scale = Real.fromInt(radius)*2.0 / Real.fromInt(#width balltex)
   in
-    DrawTextureEx balltex position rotation scale color
+    DrawTextureEx (balltex, position, rotation, scale, color)
   end
 
 fun ball_random (): ball =
@@ -105,13 +105,13 @@ fun loop (balltex: raylib_texture) (bs: ball list) (tutorial: bool) =
               let 
                 val label = "Click here!" 
                 val label_height = 32
-                val label_width = MeasureText label label_height
+                val label_width = MeasureText (label, label_height)
                 val screen_width = GetScreenWidth ()
                 val screen_height = GetScreenHeight ()
                 val x = (screen_width - label_width) div 2
                 val y = (screen_height - label_height) div 2
               in
-                DrawText label x y label_height WHITE
+                DrawText (label, x, y, label_height, WHITE)
               end
             else app (ball_render balltex) bs;
             EndDrawing ();
@@ -120,7 +120,7 @@ fun loop (balltex: raylib_texture) (bs: ball list) (tutorial: bool) =
 
 val _ =
     let
-        val _ = InitWindow 800 600 "Hello from Moscow ML my comrades";
+        val _ = InitWindow (800, 600, "Hello from Moscow ML my comrades");
         val img = LoadImage "SoccerBall.png"
         val tex = LoadTextureFromImage img
     in

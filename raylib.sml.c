@@ -91,9 +91,12 @@ static inline Texture2D Texture_val(value v)
     return tex;
 }
 
-value raylib_InitWindow(value width, value height, value title)
+value raylib_InitWindow(value args)
 {
-    InitWindow(Int_val(width), Int_val(height), String_val(title));
+    int _width = Int_val(Field(args, 0));
+    int _height = Int_val(Field(args, 1));
+    const char * _title = String_val(Field(args, 2));
+    InitWindow(_width, _height, _title);
     return Val_unit;
 }
 
@@ -152,25 +155,28 @@ value raylib_IsWindowResized(value unit)
 }
 
 /*
-value raylib_IsWindowState(value flag)
+value raylib_IsWindowState(value arg)
 {
-    bool result = IsWindowState(UNKNOWN(flag));
+    unsigned int _flag = UNKNOWN(arg);
+    bool result = IsWindowState(_flag);
     return Val_bool(result);
 }
 */
 
 /*
-value raylib_SetWindowState(value flags)
+value raylib_SetWindowState(value arg)
 {
-    SetWindowState(UNKNOWN(flags));
+    unsigned int _flags = UNKNOWN(arg);
+    SetWindowState(_flags);
     return Val_unit;
 }
 */
 
 /*
-value raylib_ClearWindowState(value flags)
+value raylib_ClearWindowState(value arg)
 {
-    ClearWindowState(UNKNOWN(flags));
+    unsigned int _flags = UNKNOWN(arg);
+    ClearWindowState(_flags);
     return Val_unit;
 }
 */
@@ -205,59 +211,73 @@ value raylib_RestoreWindow(value unit)
     return Val_unit;
 }
 
-value raylib_SetWindowIcon(value image)
+value raylib_SetWindowIcon(value arg)
 {
-    SetWindowIcon(Image_val(image));
+    Image _image = Image_val(arg);
+    SetWindowIcon(_image);
     return Val_unit;
 }
 
 /*
-value raylib_SetWindowIcons(value images, value count)
+value raylib_SetWindowIcons(value args)
 {
-    SetWindowIcons(UNKNOWN(images), Int_val(count));
+    Image * _images = UNKNOWN(Field(args, 0));
+    int _count = Int_val(Field(args, 1));
+    SetWindowIcons(_images, _count);
     return Val_unit;
 }
 */
 
-value raylib_SetWindowTitle(value title)
+value raylib_SetWindowTitle(value arg)
 {
-    SetWindowTitle(String_val(title));
+    const char * _title = String_val(arg);
+    SetWindowTitle(_title);
     return Val_unit;
 }
 
-value raylib_SetWindowPosition(value x, value y)
+value raylib_SetWindowPosition(value args)
 {
-    SetWindowPosition(Int_val(x), Int_val(y));
+    int _x = Int_val(Field(args, 0));
+    int _y = Int_val(Field(args, 1));
+    SetWindowPosition(_x, _y);
     return Val_unit;
 }
 
-value raylib_SetWindowMonitor(value monitor)
+value raylib_SetWindowMonitor(value arg)
 {
-    SetWindowMonitor(Int_val(monitor));
+    int _monitor = Int_val(arg);
+    SetWindowMonitor(_monitor);
     return Val_unit;
 }
 
-value raylib_SetWindowMinSize(value width, value height)
+value raylib_SetWindowMinSize(value args)
 {
-    SetWindowMinSize(Int_val(width), Int_val(height));
+    int _width = Int_val(Field(args, 0));
+    int _height = Int_val(Field(args, 1));
+    SetWindowMinSize(_width, _height);
     return Val_unit;
 }
 
-value raylib_SetWindowMaxSize(value width, value height)
+value raylib_SetWindowMaxSize(value args)
 {
-    SetWindowMaxSize(Int_val(width), Int_val(height));
+    int _width = Int_val(Field(args, 0));
+    int _height = Int_val(Field(args, 1));
+    SetWindowMaxSize(_width, _height);
     return Val_unit;
 }
 
-value raylib_SetWindowSize(value width, value height)
+value raylib_SetWindowSize(value args)
 {
-    SetWindowSize(Int_val(width), Int_val(height));
+    int _width = Int_val(Field(args, 0));
+    int _height = Int_val(Field(args, 1));
+    SetWindowSize(_width, _height);
     return Val_unit;
 }
 
-value raylib_SetWindowOpacity(value opacity)
+value raylib_SetWindowOpacity(value arg)
 {
-    SetWindowOpacity(Double_val(opacity));
+    float _opacity = Double_val(arg);
+    SetWindowOpacity(_opacity);
     return Val_unit;
 }
 
@@ -311,39 +331,45 @@ value raylib_GetCurrentMonitor(value unit)
     return Val_int(result);
 }
 
-value raylib_GetMonitorPosition(value monitor)
+value raylib_GetMonitorPosition(value arg)
 {
-    Vector2 result = GetMonitorPosition(Int_val(monitor));
+    int _monitor = Int_val(arg);
+    Vector2 result = GetMonitorPosition(_monitor);
     return Val_vector2(result);
 }
 
-value raylib_GetMonitorWidth(value monitor)
+value raylib_GetMonitorWidth(value arg)
 {
-    int result = GetMonitorWidth(Int_val(monitor));
+    int _monitor = Int_val(arg);
+    int result = GetMonitorWidth(_monitor);
     return Val_int(result);
 }
 
-value raylib_GetMonitorHeight(value monitor)
+value raylib_GetMonitorHeight(value arg)
 {
-    int result = GetMonitorHeight(Int_val(monitor));
+    int _monitor = Int_val(arg);
+    int result = GetMonitorHeight(_monitor);
     return Val_int(result);
 }
 
-value raylib_GetMonitorPhysicalWidth(value monitor)
+value raylib_GetMonitorPhysicalWidth(value arg)
 {
-    int result = GetMonitorPhysicalWidth(Int_val(monitor));
+    int _monitor = Int_val(arg);
+    int result = GetMonitorPhysicalWidth(_monitor);
     return Val_int(result);
 }
 
-value raylib_GetMonitorPhysicalHeight(value monitor)
+value raylib_GetMonitorPhysicalHeight(value arg)
 {
-    int result = GetMonitorPhysicalHeight(Int_val(monitor));
+    int _monitor = Int_val(arg);
+    int result = GetMonitorPhysicalHeight(_monitor);
     return Val_int(result);
 }
 
-value raylib_GetMonitorRefreshRate(value monitor)
+value raylib_GetMonitorRefreshRate(value arg)
 {
-    int result = GetMonitorRefreshRate(Int_val(monitor));
+    int _monitor = Int_val(arg);
+    int result = GetMonitorRefreshRate(_monitor);
     return Val_int(result);
 }
 
@@ -359,15 +385,17 @@ value raylib_GetWindowScaleDPI(value unit)
     return Val_vector2(result);
 }
 
-value raylib_GetMonitorName(value monitor)
+value raylib_GetMonitorName(value arg)
 {
-    const char * result = GetMonitorName(Int_val(monitor));
+    int _monitor = Int_val(arg);
+    const char * result = GetMonitorName(_monitor);
     return Val_string(result);
 }
 
-value raylib_SetClipboardText(value text)
+value raylib_SetClipboardText(value arg)
 {
-    SetClipboardText(String_val(text));
+    const char * _text = String_val(arg);
+    SetClipboardText(_text);
     return Val_unit;
 }
 
@@ -431,9 +459,10 @@ value raylib_IsCursorOnScreen(value unit)
     return Val_bool(result);
 }
 
-value raylib_ClearBackground(value color)
+value raylib_ClearBackground(value arg)
 {
-    ClearBackground(Colour_val(color));
+    Color _color = Colour_val(arg);
+    ClearBackground(_color);
     return Val_unit;
 }
 
@@ -450,9 +479,10 @@ value raylib_EndDrawing(value unit)
 }
 
 /*
-value raylib_BeginMode2D(value camera)
+value raylib_BeginMode2D(value arg)
 {
-    BeginMode2D(UNKNOWN(camera));
+    Camera2D _camera = UNKNOWN(arg);
+    BeginMode2D(_camera);
     return Val_unit;
 }
 */
@@ -464,9 +494,10 @@ value raylib_EndMode2D(value unit)
 }
 
 /*
-value raylib_BeginMode3D(value camera)
+value raylib_BeginMode3D(value arg)
 {
-    BeginMode3D(UNKNOWN(camera));
+    Camera3D _camera = UNKNOWN(arg);
+    BeginMode3D(_camera);
     return Val_unit;
 }
 */
@@ -478,9 +509,10 @@ value raylib_EndMode3D(value unit)
 }
 
 /*
-value raylib_BeginTextureMode(value target)
+value raylib_BeginTextureMode(value arg)
 {
-    BeginTextureMode(UNKNOWN(target));
+    RenderTexture2D _target = UNKNOWN(arg);
+    BeginTextureMode(_target);
     return Val_unit;
 }
 */
@@ -492,9 +524,10 @@ value raylib_EndTextureMode(value unit)
 }
 
 /*
-value raylib_BeginShaderMode(value shader)
+value raylib_BeginShaderMode(value arg)
 {
-    BeginShaderMode(UNKNOWN(shader));
+    Shader _shader = UNKNOWN(arg);
+    BeginShaderMode(_shader);
     return Val_unit;
 }
 */
@@ -505,9 +538,10 @@ value raylib_EndShaderMode(value unit)
     return Val_unit;
 }
 
-value raylib_BeginBlendMode(value mode)
+value raylib_BeginBlendMode(value arg)
 {
-    BeginBlendMode(Int_val(mode));
+    int _mode = Int_val(arg);
+    BeginBlendMode(_mode);
     return Val_unit;
 }
 
@@ -517,9 +551,13 @@ value raylib_EndBlendMode(value unit)
     return Val_unit;
 }
 
-value raylib_BeginScissorMode(value x, value y, value width, value height)
+value raylib_BeginScissorMode(value args)
 {
-    BeginScissorMode(Int_val(x), Int_val(y), Int_val(width), Int_val(height));
+    int _x = Int_val(Field(args, 0));
+    int _y = Int_val(Field(args, 1));
+    int _width = Int_val(Field(args, 2));
+    int _height = Int_val(Field(args, 3));
+    BeginScissorMode(_x, _y, _width, _height);
     return Val_unit;
 }
 
@@ -530,9 +568,10 @@ value raylib_EndScissorMode(value unit)
 }
 
 /*
-value raylib_BeginVrStereoMode(value config)
+value raylib_BeginVrStereoMode(value arg)
 {
-    BeginVrStereoMode(UNKNOWN(config));
+    VrStereoConfig _config = UNKNOWN(arg);
+    BeginVrStereoMode(_config);
     return Val_unit;
 }
 */
@@ -544,168 +583,214 @@ value raylib_EndVrStereoMode(value unit)
 }
 
 /*
-value raylib_LoadVrStereoConfig(value device)
+value raylib_LoadVrStereoConfig(value arg)
 {
-    VrStereoConfig result = LoadVrStereoConfig(UNKNOWN(device));
+    VrDeviceInfo _device = UNKNOWN(arg);
+    VrStereoConfig result = LoadVrStereoConfig(_device);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_UnloadVrStereoConfig(value config)
+value raylib_UnloadVrStereoConfig(value arg)
 {
-    UnloadVrStereoConfig(UNKNOWN(config));
+    VrStereoConfig _config = UNKNOWN(arg);
+    UnloadVrStereoConfig(_config);
     return Val_unit;
 }
 */
 
 /*
-value raylib_LoadShader(value vsFileName, value fsFileName)
+value raylib_LoadShader(value args)
 {
-    Shader result = LoadShader(String_val(vsFileName), String_val(fsFileName));
+    const char * _vsFileName = String_val(Field(args, 0));
+    const char * _fsFileName = String_val(Field(args, 1));
+    Shader result = LoadShader(_vsFileName, _fsFileName);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_LoadShaderFromMemory(value vsCode, value fsCode)
+value raylib_LoadShaderFromMemory(value args)
 {
-    Shader result = LoadShaderFromMemory(String_val(vsCode), String_val(fsCode));
+    const char * _vsCode = String_val(Field(args, 0));
+    const char * _fsCode = String_val(Field(args, 1));
+    Shader result = LoadShaderFromMemory(_vsCode, _fsCode);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_IsShaderValid(value shader)
+value raylib_IsShaderValid(value arg)
 {
-    bool result = IsShaderValid(UNKNOWN(shader));
+    Shader _shader = UNKNOWN(arg);
+    bool result = IsShaderValid(_shader);
     return Val_bool(result);
 }
 */
 
 /*
-value raylib_GetShaderLocation(value shader, value uniformName)
+value raylib_GetShaderLocation(value args)
 {
-    int result = GetShaderLocation(UNKNOWN(shader), String_val(uniformName));
+    Shader _shader = UNKNOWN(Field(args, 0));
+    const char * _uniformName = String_val(Field(args, 1));
+    int result = GetShaderLocation(_shader, _uniformName);
     return Val_int(result);
 }
 */
 
 /*
-value raylib_GetShaderLocationAttrib(value shader, value attribName)
+value raylib_GetShaderLocationAttrib(value args)
 {
-    int result = GetShaderLocationAttrib(UNKNOWN(shader), String_val(attribName));
+    Shader _shader = UNKNOWN(Field(args, 0));
+    const char * _attribName = String_val(Field(args, 1));
+    int result = GetShaderLocationAttrib(_shader, _attribName);
     return Val_int(result);
 }
 */
 
 /*
-value raylib_SetShaderValue(value shader, value locIndex, value value, value uniformType)
+value raylib_SetShaderValue(value args)
 {
-    SetShaderValue(UNKNOWN(shader), Int_val(locIndex), UNKNOWN(value), Int_val(uniformType));
+    Shader _shader = UNKNOWN(Field(args, 0));
+    int _locIndex = Int_val(Field(args, 1));
+    const void * _value = UNKNOWN(Field(args, 2));
+    int _uniformType = Int_val(Field(args, 3));
+    SetShaderValue(_shader, _locIndex, _value, _uniformType);
     return Val_unit;
 }
 */
 
 /*
-value raylib_SetShaderValueV(value shader, value locIndex, value value, value uniformType, value count)
+value raylib_SetShaderValueV(value args)
 {
-    SetShaderValueV(UNKNOWN(shader), Int_val(locIndex), UNKNOWN(value), Int_val(uniformType), Int_val(count));
+    Shader _shader = UNKNOWN(Field(args, 0));
+    int _locIndex = Int_val(Field(args, 1));
+    const void * _value = UNKNOWN(Field(args, 2));
+    int _uniformType = Int_val(Field(args, 3));
+    int _count = Int_val(Field(args, 4));
+    SetShaderValueV(_shader, _locIndex, _value, _uniformType, _count);
     return Val_unit;
 }
 */
 
 /*
-value raylib_SetShaderValueMatrix(value shader, value locIndex, value mat)
+value raylib_SetShaderValueMatrix(value args)
 {
-    SetShaderValueMatrix(UNKNOWN(shader), Int_val(locIndex), UNKNOWN(mat));
+    Shader _shader = UNKNOWN(Field(args, 0));
+    int _locIndex = Int_val(Field(args, 1));
+    Matrix _mat = UNKNOWN(Field(args, 2));
+    SetShaderValueMatrix(_shader, _locIndex, _mat);
     return Val_unit;
 }
 */
 
 /*
-value raylib_SetShaderValueTexture(value shader, value locIndex, value texture)
+value raylib_SetShaderValueTexture(value args)
 {
-    SetShaderValueTexture(UNKNOWN(shader), Int_val(locIndex), Texture_val(texture));
+    Shader _shader = UNKNOWN(Field(args, 0));
+    int _locIndex = Int_val(Field(args, 1));
+    Texture2D _texture = Texture_val(Field(args, 2));
+    SetShaderValueTexture(_shader, _locIndex, _texture);
     return Val_unit;
 }
 */
 
 /*
-value raylib_UnloadShader(value shader)
+value raylib_UnloadShader(value arg)
 {
-    UnloadShader(UNKNOWN(shader));
+    Shader _shader = UNKNOWN(arg);
+    UnloadShader(_shader);
     return Val_unit;
 }
 */
 
 /*
-value raylib_GetScreenToWorldRay(value position, value camera)
+value raylib_GetScreenToWorldRay(value args)
 {
-    Ray result = GetScreenToWorldRay(Vector2_val(position), UNKNOWN(camera));
+    Vector2 _position = Vector2_val(Field(args, 0));
+    Camera _camera = UNKNOWN(Field(args, 1));
+    Ray result = GetScreenToWorldRay(_position, _camera);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_GetScreenToWorldRayEx(value position, value camera, value width, value height)
+value raylib_GetScreenToWorldRayEx(value args)
 {
-    Ray result = GetScreenToWorldRayEx(Vector2_val(position), UNKNOWN(camera), Int_val(width), Int_val(height));
+    Vector2 _position = Vector2_val(Field(args, 0));
+    Camera _camera = UNKNOWN(Field(args, 1));
+    int _width = Int_val(Field(args, 2));
+    int _height = Int_val(Field(args, 3));
+    Ray result = GetScreenToWorldRayEx(_position, _camera, _width, _height);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_GetWorldToScreen(value position, value camera)
+value raylib_GetWorldToScreen(value args)
 {
-    Vector2 result = GetWorldToScreen(UNKNOWN(position), UNKNOWN(camera));
+    Vector3 _position = UNKNOWN(Field(args, 0));
+    Camera _camera = UNKNOWN(Field(args, 1));
+    Vector2 result = GetWorldToScreen(_position, _camera);
     return Val_vector2(result);
 }
 */
 
 /*
-value raylib_GetWorldToScreenEx(value position, value camera, value width, value height)
+value raylib_GetWorldToScreenEx(value args)
 {
-    Vector2 result = GetWorldToScreenEx(UNKNOWN(position), UNKNOWN(camera), Int_val(width), Int_val(height));
+    Vector3 _position = UNKNOWN(Field(args, 0));
+    Camera _camera = UNKNOWN(Field(args, 1));
+    int _width = Int_val(Field(args, 2));
+    int _height = Int_val(Field(args, 3));
+    Vector2 result = GetWorldToScreenEx(_position, _camera, _width, _height);
     return Val_vector2(result);
 }
 */
 
 /*
-value raylib_GetWorldToScreen2D(value position, value camera)
+value raylib_GetWorldToScreen2D(value args)
 {
-    Vector2 result = GetWorldToScreen2D(Vector2_val(position), UNKNOWN(camera));
+    Vector2 _position = Vector2_val(Field(args, 0));
+    Camera2D _camera = UNKNOWN(Field(args, 1));
+    Vector2 result = GetWorldToScreen2D(_position, _camera);
     return Val_vector2(result);
 }
 */
 
 /*
-value raylib_GetScreenToWorld2D(value position, value camera)
+value raylib_GetScreenToWorld2D(value args)
 {
-    Vector2 result = GetScreenToWorld2D(Vector2_val(position), UNKNOWN(camera));
+    Vector2 _position = Vector2_val(Field(args, 0));
+    Camera2D _camera = UNKNOWN(Field(args, 1));
+    Vector2 result = GetScreenToWorld2D(_position, _camera);
     return Val_vector2(result);
 }
 */
 
 /*
-value raylib_GetCameraMatrix(value camera)
+value raylib_GetCameraMatrix(value arg)
 {
-    Matrix result = GetCameraMatrix(UNKNOWN(camera));
+    Camera _camera = UNKNOWN(arg);
+    Matrix result = GetCameraMatrix(_camera);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_GetCameraMatrix2D(value camera)
+value raylib_GetCameraMatrix2D(value arg)
 {
-    Matrix result = GetCameraMatrix2D(UNKNOWN(camera));
+    Camera2D _camera = UNKNOWN(arg);
+    Matrix result = GetCameraMatrix2D(_camera);
     return UNKNOWN(result);
 }
 */
 
-value raylib_SetTargetFPS(value fps)
+value raylib_SetTargetFPS(value arg)
 {
-    SetTargetFPS(Int_val(fps));
+    int _fps = Int_val(arg);
+    SetTargetFPS(_fps);
     return Val_unit;
 }
 
@@ -742,248 +827,295 @@ value raylib_PollInputEvents(value unit)
 }
 
 /*
-value raylib_WaitTime(value seconds)
+value raylib_WaitTime(value arg)
 {
-    WaitTime(UNKNOWN(seconds));
+    double _seconds = UNKNOWN(arg);
+    WaitTime(_seconds);
     return Val_unit;
 }
 */
 
 /*
-value raylib_SetRandomSeed(value seed)
+value raylib_SetRandomSeed(value arg)
 {
-    SetRandomSeed(UNKNOWN(seed));
+    unsigned int _seed = UNKNOWN(arg);
+    SetRandomSeed(_seed);
     return Val_unit;
 }
 */
 
-value raylib_GetRandomValue(value min, value max)
+value raylib_GetRandomValue(value args)
 {
-    int result = GetRandomValue(Int_val(min), Int_val(max));
+    int _min = Int_val(Field(args, 0));
+    int _max = Int_val(Field(args, 1));
+    int result = GetRandomValue(_min, _max);
     return Val_int(result);
 }
 
 /*
-value raylib_LoadRandomSequence(value count, value min, value max)
+value raylib_LoadRandomSequence(value args)
 {
-    int * result = LoadRandomSequence(UNKNOWN(count), Int_val(min), Int_val(max));
+    unsigned int _count = UNKNOWN(Field(args, 0));
+    int _min = Int_val(Field(args, 1));
+    int _max = Int_val(Field(args, 2));
+    int * result = LoadRandomSequence(_count, _min, _max);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_UnloadRandomSequence(value sequence)
+value raylib_UnloadRandomSequence(value arg)
 {
-    UnloadRandomSequence(UNKNOWN(sequence));
+    int * _sequence = UNKNOWN(arg);
+    UnloadRandomSequence(_sequence);
     return Val_unit;
 }
 */
 
-value raylib_TakeScreenshot(value fileName)
+value raylib_TakeScreenshot(value arg)
 {
-    TakeScreenshot(String_val(fileName));
+    const char * _fileName = String_val(arg);
+    TakeScreenshot(_fileName);
     return Val_unit;
 }
 
 /*
-value raylib_SetConfigFlags(value flags)
+value raylib_SetConfigFlags(value arg)
 {
-    SetConfigFlags(UNKNOWN(flags));
+    unsigned int _flags = UNKNOWN(arg);
+    SetConfigFlags(_flags);
     return Val_unit;
 }
 */
 
-value raylib_OpenURL(value url)
+value raylib_OpenURL(value arg)
 {
-    OpenURL(String_val(url));
+    const char * _url = String_val(arg);
+    OpenURL(_url);
     return Val_unit;
 }
 
 /*
-value raylib_TraceLog(value logLevel, value text, value args)
+value raylib_TraceLog(value args)
 {
-    TraceLog(Int_val(logLevel), String_val(text), UNKNOWN(args));
+    int _logLevel = Int_val(Field(args, 0));
+    const char * _text = String_val(Field(args, 1));
+    ... _args = UNKNOWN(Field(args, 2));
+    TraceLog(_logLevel, _text, _args);
     return Val_unit;
 }
 */
 
-value raylib_SetTraceLogLevel(value logLevel)
+value raylib_SetTraceLogLevel(value arg)
 {
-    SetTraceLogLevel(Int_val(logLevel));
+    int _logLevel = Int_val(arg);
+    SetTraceLogLevel(_logLevel);
     return Val_unit;
 }
 
 /*
-value raylib_MemAlloc(value size)
+value raylib_MemAlloc(value arg)
 {
-    void * result = MemAlloc(UNKNOWN(size));
+    unsigned int _size = UNKNOWN(arg);
+    void * result = MemAlloc(_size);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_MemRealloc(value ptr, value size)
+value raylib_MemRealloc(value args)
 {
-    void * result = MemRealloc(UNKNOWN(ptr), UNKNOWN(size));
+    void * _ptr = UNKNOWN(Field(args, 0));
+    unsigned int _size = UNKNOWN(Field(args, 1));
+    void * result = MemRealloc(_ptr, _size);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_MemFree(value ptr)
+value raylib_MemFree(value arg)
 {
-    MemFree(UNKNOWN(ptr));
+    void * _ptr = UNKNOWN(arg);
+    MemFree(_ptr);
     return Val_unit;
 }
 */
 
 /*
-value raylib_SetTraceLogCallback(value callback)
+value raylib_SetTraceLogCallback(value arg)
 {
-    SetTraceLogCallback(UNKNOWN(callback));
+    TraceLogCallback _callback = UNKNOWN(arg);
+    SetTraceLogCallback(_callback);
     return Val_unit;
 }
 */
 
 /*
-value raylib_SetLoadFileDataCallback(value callback)
+value raylib_SetLoadFileDataCallback(value arg)
 {
-    SetLoadFileDataCallback(UNKNOWN(callback));
+    LoadFileDataCallback _callback = UNKNOWN(arg);
+    SetLoadFileDataCallback(_callback);
     return Val_unit;
 }
 */
 
 /*
-value raylib_SetSaveFileDataCallback(value callback)
+value raylib_SetSaveFileDataCallback(value arg)
 {
-    SetSaveFileDataCallback(UNKNOWN(callback));
+    SaveFileDataCallback _callback = UNKNOWN(arg);
+    SetSaveFileDataCallback(_callback);
     return Val_unit;
 }
 */
 
 /*
-value raylib_SetLoadFileTextCallback(value callback)
+value raylib_SetLoadFileTextCallback(value arg)
 {
-    SetLoadFileTextCallback(UNKNOWN(callback));
+    LoadFileTextCallback _callback = UNKNOWN(arg);
+    SetLoadFileTextCallback(_callback);
     return Val_unit;
 }
 */
 
 /*
-value raylib_SetSaveFileTextCallback(value callback)
+value raylib_SetSaveFileTextCallback(value arg)
 {
-    SetSaveFileTextCallback(UNKNOWN(callback));
+    SaveFileTextCallback _callback = UNKNOWN(arg);
+    SetSaveFileTextCallback(_callback);
     return Val_unit;
 }
 */
 
 /*
-value raylib_LoadFileData(value fileName, value dataSize)
+value raylib_LoadFileData(value args)
 {
-    unsigned char * result = LoadFileData(String_val(fileName), UNKNOWN(dataSize));
+    const char * _fileName = String_val(Field(args, 0));
+    int * _dataSize = UNKNOWN(Field(args, 1));
+    unsigned char * result = LoadFileData(_fileName, _dataSize);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_UnloadFileData(value data)
+value raylib_UnloadFileData(value arg)
 {
-    UnloadFileData(UNKNOWN(data));
+    unsigned char * _data = UNKNOWN(arg);
+    UnloadFileData(_data);
     return Val_unit;
 }
 */
 
 /*
-value raylib_SaveFileData(value fileName, value data, value dataSize)
+value raylib_SaveFileData(value args)
 {
-    bool result = SaveFileData(String_val(fileName), UNKNOWN(data), Int_val(dataSize));
+    const char * _fileName = String_val(Field(args, 0));
+    void * _data = UNKNOWN(Field(args, 1));
+    int _dataSize = Int_val(Field(args, 2));
+    bool result = SaveFileData(_fileName, _data, _dataSize);
     return Val_bool(result);
 }
 */
 
 /*
-value raylib_ExportDataAsCode(value data, value dataSize, value fileName)
+value raylib_ExportDataAsCode(value args)
 {
-    bool result = ExportDataAsCode(UNKNOWN(data), Int_val(dataSize), String_val(fileName));
+    const unsigned char * _data = UNKNOWN(Field(args, 0));
+    int _dataSize = Int_val(Field(args, 1));
+    const char * _fileName = String_val(Field(args, 2));
+    bool result = ExportDataAsCode(_data, _dataSize, _fileName);
     return Val_bool(result);
 }
 */
 
 /*
-value raylib_LoadFileText(value fileName)
+value raylib_LoadFileText(value arg)
 {
-    char * result = LoadFileText(String_val(fileName));
+    const char * _fileName = String_val(arg);
+    char * result = LoadFileText(_fileName);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_UnloadFileText(value text)
+value raylib_UnloadFileText(value arg)
 {
-    UnloadFileText(UNKNOWN(text));
+    char * _text = UNKNOWN(arg);
+    UnloadFileText(_text);
     return Val_unit;
 }
 */
 
 /*
-value raylib_SaveFileText(value fileName, value text)
+value raylib_SaveFileText(value args)
 {
-    bool result = SaveFileText(String_val(fileName), UNKNOWN(text));
+    const char * _fileName = String_val(Field(args, 0));
+    char * _text = UNKNOWN(Field(args, 1));
+    bool result = SaveFileText(_fileName, _text);
     return Val_bool(result);
 }
 */
 
-value raylib_FileExists(value fileName)
+value raylib_FileExists(value arg)
 {
-    bool result = FileExists(String_val(fileName));
+    const char * _fileName = String_val(arg);
+    bool result = FileExists(_fileName);
     return Val_bool(result);
 }
 
-value raylib_DirectoryExists(value dirPath)
+value raylib_DirectoryExists(value arg)
 {
-    bool result = DirectoryExists(String_val(dirPath));
+    const char * _dirPath = String_val(arg);
+    bool result = DirectoryExists(_dirPath);
     return Val_bool(result);
 }
 
-value raylib_IsFileExtension(value fileName, value ext)
+value raylib_IsFileExtension(value args)
 {
-    bool result = IsFileExtension(String_val(fileName), String_val(ext));
+    const char * _fileName = String_val(Field(args, 0));
+    const char * _ext = String_val(Field(args, 1));
+    bool result = IsFileExtension(_fileName, _ext);
     return Val_bool(result);
 }
 
-value raylib_GetFileLength(value fileName)
+value raylib_GetFileLength(value arg)
 {
-    int result = GetFileLength(String_val(fileName));
+    const char * _fileName = String_val(arg);
+    int result = GetFileLength(_fileName);
     return Val_int(result);
 }
 
-value raylib_GetFileExtension(value fileName)
+value raylib_GetFileExtension(value arg)
 {
-    const char * result = GetFileExtension(String_val(fileName));
+    const char * _fileName = String_val(arg);
+    const char * result = GetFileExtension(_fileName);
     return Val_string(result);
 }
 
-value raylib_GetFileName(value filePath)
+value raylib_GetFileName(value arg)
 {
-    const char * result = GetFileName(String_val(filePath));
+    const char * _filePath = String_val(arg);
+    const char * result = GetFileName(_filePath);
     return Val_string(result);
 }
 
-value raylib_GetFileNameWithoutExt(value filePath)
+value raylib_GetFileNameWithoutExt(value arg)
 {
-    const char * result = GetFileNameWithoutExt(String_val(filePath));
+    const char * _filePath = String_val(arg);
+    const char * result = GetFileNameWithoutExt(_filePath);
     return Val_string(result);
 }
 
-value raylib_GetDirectoryPath(value filePath)
+value raylib_GetDirectoryPath(value arg)
 {
-    const char * result = GetDirectoryPath(String_val(filePath));
+    const char * _filePath = String_val(arg);
+    const char * result = GetDirectoryPath(_filePath);
     return Val_string(result);
 }
 
-value raylib_GetPrevDirectoryPath(value dirPath)
+value raylib_GetPrevDirectoryPath(value arg)
 {
-    const char * result = GetPrevDirectoryPath(String_val(dirPath));
+    const char * _dirPath = String_val(arg);
+    const char * result = GetPrevDirectoryPath(_dirPath);
     return Val_string(result);
 }
 
@@ -999,50 +1131,59 @@ value raylib_GetApplicationDirectory(value unit)
     return Val_string(result);
 }
 
-value raylib_MakeDirectory(value dirPath)
+value raylib_MakeDirectory(value arg)
 {
-    int result = MakeDirectory(String_val(dirPath));
+    const char * _dirPath = String_val(arg);
+    int result = MakeDirectory(_dirPath);
     return Val_int(result);
 }
 
-value raylib_ChangeDirectory(value dir)
+value raylib_ChangeDirectory(value arg)
 {
-    bool result = ChangeDirectory(String_val(dir));
+    const char * _dir = String_val(arg);
+    bool result = ChangeDirectory(_dir);
     return Val_bool(result);
 }
 
-value raylib_IsPathFile(value path)
+value raylib_IsPathFile(value arg)
 {
-    bool result = IsPathFile(String_val(path));
+    const char * _path = String_val(arg);
+    bool result = IsPathFile(_path);
     return Val_bool(result);
 }
 
-value raylib_IsFileNameValid(value fileName)
+value raylib_IsFileNameValid(value arg)
 {
-    bool result = IsFileNameValid(String_val(fileName));
+    const char * _fileName = String_val(arg);
+    bool result = IsFileNameValid(_fileName);
     return Val_bool(result);
 }
 
 /*
-value raylib_LoadDirectoryFiles(value dirPath)
+value raylib_LoadDirectoryFiles(value arg)
 {
-    FilePathList result = LoadDirectoryFiles(String_val(dirPath));
+    const char * _dirPath = String_val(arg);
+    FilePathList result = LoadDirectoryFiles(_dirPath);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_LoadDirectoryFilesEx(value basePath, value filter, value scanSubdirs)
+value raylib_LoadDirectoryFilesEx(value args)
 {
-    FilePathList result = LoadDirectoryFilesEx(String_val(basePath), String_val(filter), Bool_val(scanSubdirs));
+    const char * _basePath = String_val(Field(args, 0));
+    const char * _filter = String_val(Field(args, 1));
+    bool _scanSubdirs = Bool_val(Field(args, 2));
+    FilePathList result = LoadDirectoryFilesEx(_basePath, _filter, _scanSubdirs);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_UnloadDirectoryFiles(value files)
+value raylib_UnloadDirectoryFiles(value arg)
 {
-    UnloadDirectoryFiles(UNKNOWN(files));
+    FilePathList _files = UNKNOWN(arg);
+    UnloadDirectoryFiles(_files);
     return Val_unit;
 }
 */
@@ -1062,112 +1203,137 @@ value raylib_LoadDroppedFiles(value unit)
 */
 
 /*
-value raylib_UnloadDroppedFiles(value files)
+value raylib_UnloadDroppedFiles(value arg)
 {
-    UnloadDroppedFiles(UNKNOWN(files));
+    FilePathList _files = UNKNOWN(arg);
+    UnloadDroppedFiles(_files);
     return Val_unit;
 }
 */
 
 /*
-value raylib_GetFileModTime(value fileName)
+value raylib_GetFileModTime(value arg)
 {
-    long result = GetFileModTime(String_val(fileName));
+    const char * _fileName = String_val(arg);
+    long result = GetFileModTime(_fileName);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_CompressData(value data, value dataSize, value compDataSize)
+value raylib_CompressData(value args)
 {
-    unsigned char * result = CompressData(UNKNOWN(data), Int_val(dataSize), UNKNOWN(compDataSize));
+    const unsigned char * _data = UNKNOWN(Field(args, 0));
+    int _dataSize = Int_val(Field(args, 1));
+    int * _compDataSize = UNKNOWN(Field(args, 2));
+    unsigned char * result = CompressData(_data, _dataSize, _compDataSize);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_DecompressData(value compData, value compDataSize, value dataSize)
+value raylib_DecompressData(value args)
 {
-    unsigned char * result = DecompressData(UNKNOWN(compData), Int_val(compDataSize), UNKNOWN(dataSize));
+    const unsigned char * _compData = UNKNOWN(Field(args, 0));
+    int _compDataSize = Int_val(Field(args, 1));
+    int * _dataSize = UNKNOWN(Field(args, 2));
+    unsigned char * result = DecompressData(_compData, _compDataSize, _dataSize);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_EncodeDataBase64(value data, value dataSize, value outputSize)
+value raylib_EncodeDataBase64(value args)
 {
-    char * result = EncodeDataBase64(UNKNOWN(data), Int_val(dataSize), UNKNOWN(outputSize));
+    const unsigned char * _data = UNKNOWN(Field(args, 0));
+    int _dataSize = Int_val(Field(args, 1));
+    int * _outputSize = UNKNOWN(Field(args, 2));
+    char * result = EncodeDataBase64(_data, _dataSize, _outputSize);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_DecodeDataBase64(value data, value outputSize)
+value raylib_DecodeDataBase64(value args)
 {
-    unsigned char * result = DecodeDataBase64(UNKNOWN(data), UNKNOWN(outputSize));
+    const unsigned char * _data = UNKNOWN(Field(args, 0));
+    int * _outputSize = UNKNOWN(Field(args, 1));
+    unsigned char * result = DecodeDataBase64(_data, _outputSize);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_ComputeCRC32(value data, value dataSize)
+value raylib_ComputeCRC32(value args)
 {
-    unsigned int result = ComputeCRC32(UNKNOWN(data), Int_val(dataSize));
+    unsigned char * _data = UNKNOWN(Field(args, 0));
+    int _dataSize = Int_val(Field(args, 1));
+    unsigned int result = ComputeCRC32(_data, _dataSize);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_ComputeMD5(value data, value dataSize)
+value raylib_ComputeMD5(value args)
 {
-    unsigned int * result = ComputeMD5(UNKNOWN(data), Int_val(dataSize));
+    unsigned char * _data = UNKNOWN(Field(args, 0));
+    int _dataSize = Int_val(Field(args, 1));
+    unsigned int * result = ComputeMD5(_data, _dataSize);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_ComputeSHA1(value data, value dataSize)
+value raylib_ComputeSHA1(value args)
 {
-    unsigned int * result = ComputeSHA1(UNKNOWN(data), Int_val(dataSize));
+    unsigned char * _data = UNKNOWN(Field(args, 0));
+    int _dataSize = Int_val(Field(args, 1));
+    unsigned int * result = ComputeSHA1(_data, _dataSize);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_LoadAutomationEventList(value fileName)
+value raylib_LoadAutomationEventList(value arg)
 {
-    AutomationEventList result = LoadAutomationEventList(String_val(fileName));
+    const char * _fileName = String_val(arg);
+    AutomationEventList result = LoadAutomationEventList(_fileName);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_UnloadAutomationEventList(value list)
+value raylib_UnloadAutomationEventList(value arg)
 {
-    UnloadAutomationEventList(UNKNOWN(list));
+    AutomationEventList _list = UNKNOWN(arg);
+    UnloadAutomationEventList(_list);
     return Val_unit;
 }
 */
 
 /*
-value raylib_ExportAutomationEventList(value list, value fileName)
+value raylib_ExportAutomationEventList(value args)
 {
-    bool result = ExportAutomationEventList(UNKNOWN(list), String_val(fileName));
+    AutomationEventList _list = UNKNOWN(Field(args, 0));
+    const char * _fileName = String_val(Field(args, 1));
+    bool result = ExportAutomationEventList(_list, _fileName);
     return Val_bool(result);
 }
 */
 
 /*
-value raylib_SetAutomationEventList(value list)
+value raylib_SetAutomationEventList(value arg)
 {
-    SetAutomationEventList(UNKNOWN(list));
+    AutomationEventList * _list = UNKNOWN(arg);
+    SetAutomationEventList(_list);
     return Val_unit;
 }
 */
 
-value raylib_SetAutomationEventBaseFrame(value frame)
+value raylib_SetAutomationEventBaseFrame(value arg)
 {
-    SetAutomationEventBaseFrame(Int_val(frame));
+    int _frame = Int_val(arg);
+    SetAutomationEventBaseFrame(_frame);
     return Val_unit;
 }
 
@@ -1184,40 +1350,46 @@ value raylib_StopAutomationEventRecording(value unit)
 }
 
 /*
-value raylib_PlayAutomationEvent(value event)
+value raylib_PlayAutomationEvent(value arg)
 {
-    PlayAutomationEvent(UNKNOWN(event));
+    AutomationEvent _event = UNKNOWN(arg);
+    PlayAutomationEvent(_event);
     return Val_unit;
 }
 */
 
-value raylib_IsKeyPressed(value key)
+value raylib_IsKeyPressed(value arg)
 {
-    bool result = IsKeyPressed(Int_val(key));
+    int _key = Int_val(arg);
+    bool result = IsKeyPressed(_key);
     return Val_bool(result);
 }
 
-value raylib_IsKeyPressedRepeat(value key)
+value raylib_IsKeyPressedRepeat(value arg)
 {
-    bool result = IsKeyPressedRepeat(Int_val(key));
+    int _key = Int_val(arg);
+    bool result = IsKeyPressedRepeat(_key);
     return Val_bool(result);
 }
 
-value raylib_IsKeyDown(value key)
+value raylib_IsKeyDown(value arg)
 {
-    bool result = IsKeyDown(Int_val(key));
+    int _key = Int_val(arg);
+    bool result = IsKeyDown(_key);
     return Val_bool(result);
 }
 
-value raylib_IsKeyReleased(value key)
+value raylib_IsKeyReleased(value arg)
 {
-    bool result = IsKeyReleased(Int_val(key));
+    int _key = Int_val(arg);
+    bool result = IsKeyReleased(_key);
     return Val_bool(result);
 }
 
-value raylib_IsKeyUp(value key)
+value raylib_IsKeyUp(value arg)
 {
-    bool result = IsKeyUp(Int_val(key));
+    int _key = Int_val(arg);
+    bool result = IsKeyUp(_key);
     return Val_bool(result);
 }
 
@@ -1233,45 +1405,56 @@ value raylib_GetCharPressed(value unit)
     return Val_int(result);
 }
 
-value raylib_SetExitKey(value key)
+value raylib_SetExitKey(value arg)
 {
-    SetExitKey(Int_val(key));
+    int _key = Int_val(arg);
+    SetExitKey(_key);
     return Val_unit;
 }
 
-value raylib_IsGamepadAvailable(value gamepad)
+value raylib_IsGamepadAvailable(value arg)
 {
-    bool result = IsGamepadAvailable(Int_val(gamepad));
+    int _gamepad = Int_val(arg);
+    bool result = IsGamepadAvailable(_gamepad);
     return Val_bool(result);
 }
 
-value raylib_GetGamepadName(value gamepad)
+value raylib_GetGamepadName(value arg)
 {
-    const char * result = GetGamepadName(Int_val(gamepad));
+    int _gamepad = Int_val(arg);
+    const char * result = GetGamepadName(_gamepad);
     return Val_string(result);
 }
 
-value raylib_IsGamepadButtonPressed(value gamepad, value button)
+value raylib_IsGamepadButtonPressed(value args)
 {
-    bool result = IsGamepadButtonPressed(Int_val(gamepad), Int_val(button));
+    int _gamepad = Int_val(Field(args, 0));
+    int _button = Int_val(Field(args, 1));
+    bool result = IsGamepadButtonPressed(_gamepad, _button);
     return Val_bool(result);
 }
 
-value raylib_IsGamepadButtonDown(value gamepad, value button)
+value raylib_IsGamepadButtonDown(value args)
 {
-    bool result = IsGamepadButtonDown(Int_val(gamepad), Int_val(button));
+    int _gamepad = Int_val(Field(args, 0));
+    int _button = Int_val(Field(args, 1));
+    bool result = IsGamepadButtonDown(_gamepad, _button);
     return Val_bool(result);
 }
 
-value raylib_IsGamepadButtonReleased(value gamepad, value button)
+value raylib_IsGamepadButtonReleased(value args)
 {
-    bool result = IsGamepadButtonReleased(Int_val(gamepad), Int_val(button));
+    int _gamepad = Int_val(Field(args, 0));
+    int _button = Int_val(Field(args, 1));
+    bool result = IsGamepadButtonReleased(_gamepad, _button);
     return Val_bool(result);
 }
 
-value raylib_IsGamepadButtonUp(value gamepad, value button)
+value raylib_IsGamepadButtonUp(value args)
 {
-    bool result = IsGamepadButtonUp(Int_val(gamepad), Int_val(button));
+    int _gamepad = Int_val(Field(args, 0));
+    int _button = Int_val(Field(args, 1));
+    bool result = IsGamepadButtonUp(_gamepad, _button);
     return Val_bool(result);
 }
 
@@ -1281,51 +1464,63 @@ value raylib_GetGamepadButtonPressed(value unit)
     return Val_int(result);
 }
 
-value raylib_GetGamepadAxisCount(value gamepad)
+value raylib_GetGamepadAxisCount(value arg)
 {
-    int result = GetGamepadAxisCount(Int_val(gamepad));
+    int _gamepad = Int_val(arg);
+    int result = GetGamepadAxisCount(_gamepad);
     return Val_int(result);
 }
 
-value raylib_GetGamepadAxisMovement(value gamepad, value axis)
+value raylib_GetGamepadAxisMovement(value args)
 {
-    float result = GetGamepadAxisMovement(Int_val(gamepad), Int_val(axis));
+    int _gamepad = Int_val(Field(args, 0));
+    int _axis = Int_val(Field(args, 1));
+    float result = GetGamepadAxisMovement(_gamepad, _axis);
     return copy_double(result);
 }
 
-value raylib_SetGamepadMappings(value mappings)
+value raylib_SetGamepadMappings(value arg)
 {
-    int result = SetGamepadMappings(String_val(mappings));
+    const char * _mappings = String_val(arg);
+    int result = SetGamepadMappings(_mappings);
     return Val_int(result);
 }
 
-value raylib_SetGamepadVibration(value gamepad, value leftMotor, value rightMotor, value duration)
+value raylib_SetGamepadVibration(value args)
 {
-    SetGamepadVibration(Int_val(gamepad), Double_val(leftMotor), Double_val(rightMotor), Double_val(duration));
+    int _gamepad = Int_val(Field(args, 0));
+    float _leftMotor = Double_val(Field(args, 1));
+    float _rightMotor = Double_val(Field(args, 2));
+    float _duration = Double_val(Field(args, 3));
+    SetGamepadVibration(_gamepad, _leftMotor, _rightMotor, _duration);
     return Val_unit;
 }
 
-value raylib_IsMouseButtonPressed(value button)
+value raylib_IsMouseButtonPressed(value arg)
 {
-    bool result = IsMouseButtonPressed(Int_val(button));
+    int _button = Int_val(arg);
+    bool result = IsMouseButtonPressed(_button);
     return Val_bool(result);
 }
 
-value raylib_IsMouseButtonDown(value button)
+value raylib_IsMouseButtonDown(value arg)
 {
-    bool result = IsMouseButtonDown(Int_val(button));
+    int _button = Int_val(arg);
+    bool result = IsMouseButtonDown(_button);
     return Val_bool(result);
 }
 
-value raylib_IsMouseButtonReleased(value button)
+value raylib_IsMouseButtonReleased(value arg)
 {
-    bool result = IsMouseButtonReleased(Int_val(button));
+    int _button = Int_val(arg);
+    bool result = IsMouseButtonReleased(_button);
     return Val_bool(result);
 }
 
-value raylib_IsMouseButtonUp(value button)
+value raylib_IsMouseButtonUp(value arg)
 {
-    bool result = IsMouseButtonUp(Int_val(button));
+    int _button = Int_val(arg);
+    bool result = IsMouseButtonUp(_button);
     return Val_bool(result);
 }
 
@@ -1353,21 +1548,27 @@ value raylib_GetMouseDelta(value unit)
     return Val_vector2(result);
 }
 
-value raylib_SetMousePosition(value x, value y)
+value raylib_SetMousePosition(value args)
 {
-    SetMousePosition(Int_val(x), Int_val(y));
+    int _x = Int_val(Field(args, 0));
+    int _y = Int_val(Field(args, 1));
+    SetMousePosition(_x, _y);
     return Val_unit;
 }
 
-value raylib_SetMouseOffset(value offsetX, value offsetY)
+value raylib_SetMouseOffset(value args)
 {
-    SetMouseOffset(Int_val(offsetX), Int_val(offsetY));
+    int _offsetX = Int_val(Field(args, 0));
+    int _offsetY = Int_val(Field(args, 1));
+    SetMouseOffset(_offsetX, _offsetY);
     return Val_unit;
 }
 
-value raylib_SetMouseScale(value scaleX, value scaleY)
+value raylib_SetMouseScale(value args)
 {
-    SetMouseScale(Double_val(scaleX), Double_val(scaleY));
+    float _scaleX = Double_val(Field(args, 0));
+    float _scaleY = Double_val(Field(args, 1));
+    SetMouseScale(_scaleX, _scaleY);
     return Val_unit;
 }
 
@@ -1383,9 +1584,10 @@ value raylib_GetMouseWheelMoveV(value unit)
     return Val_vector2(result);
 }
 
-value raylib_SetMouseCursor(value cursor)
+value raylib_SetMouseCursor(value arg)
 {
-    SetMouseCursor(Int_val(cursor));
+    int _cursor = Int_val(arg);
+    SetMouseCursor(_cursor);
     return Val_unit;
 }
 
@@ -1401,15 +1603,17 @@ value raylib_GetTouchY(value unit)
     return Val_int(result);
 }
 
-value raylib_GetTouchPosition(value index)
+value raylib_GetTouchPosition(value arg)
 {
-    Vector2 result = GetTouchPosition(Int_val(index));
+    int _index = Int_val(arg);
+    Vector2 result = GetTouchPosition(_index);
     return Val_vector2(result);
 }
 
-value raylib_GetTouchPointId(value index)
+value raylib_GetTouchPointId(value arg)
 {
-    int result = GetTouchPointId(Int_val(index));
+    int _index = Int_val(arg);
+    int result = GetTouchPointId(_index);
     return Val_int(result);
 }
 
@@ -1420,17 +1624,19 @@ value raylib_GetTouchPointCount(value unit)
 }
 
 /*
-value raylib_SetGesturesEnabled(value flags)
+value raylib_SetGesturesEnabled(value arg)
 {
-    SetGesturesEnabled(UNKNOWN(flags));
+    unsigned int _flags = UNKNOWN(arg);
+    SetGesturesEnabled(_flags);
     return Val_unit;
 }
 */
 
 /*
-value raylib_IsGestureDetected(value gesture)
+value raylib_IsGestureDetected(value arg)
 {
-    bool result = IsGestureDetected(UNKNOWN(gesture));
+    unsigned int _gesture = UNKNOWN(arg);
+    bool result = IsGestureDetected(_gesture);
     return Val_bool(result);
 }
 */
@@ -1472,25 +1678,33 @@ value raylib_GetGesturePinchAngle(value unit)
 }
 
 /*
-value raylib_UpdateCamera(value camera, value mode)
+value raylib_UpdateCamera(value args)
 {
-    UpdateCamera(UNKNOWN(camera), Int_val(mode));
+    Camera * _camera = UNKNOWN(Field(args, 0));
+    int _mode = Int_val(Field(args, 1));
+    UpdateCamera(_camera, _mode);
     return Val_unit;
 }
 */
 
 /*
-value raylib_UpdateCameraPro(value camera, value movement, value rotation, value zoom)
+value raylib_UpdateCameraPro(value args)
 {
-    UpdateCameraPro(UNKNOWN(camera), UNKNOWN(movement), UNKNOWN(rotation), Double_val(zoom));
+    Camera * _camera = UNKNOWN(Field(args, 0));
+    Vector3 _movement = UNKNOWN(Field(args, 1));
+    Vector3 _rotation = UNKNOWN(Field(args, 2));
+    float _zoom = Double_val(Field(args, 3));
+    UpdateCameraPro(_camera, _movement, _rotation, _zoom);
     return Val_unit;
 }
 */
 
 /*
-value raylib_SetShapesTexture(value texture, value source)
+value raylib_SetShapesTexture(value args)
 {
-    SetShapesTexture(Texture_val(texture), UNKNOWN(source));
+    Texture2D _texture = Texture_val(Field(args, 0));
+    Rectangle _source = UNKNOWN(Field(args, 1));
+    SetShapesTexture(_texture, _source);
     return Val_unit;
 }
 */
@@ -1509,485 +1723,747 @@ value raylib_GetShapesTextureRectangle(value unit)
 }
 */
 
-value raylib_DrawPixel(value posX, value posY, value color)
+value raylib_DrawPixel(value args)
 {
-    DrawPixel(Int_val(posX), Int_val(posY), Colour_val(color));
+    int _posX = Int_val(Field(args, 0));
+    int _posY = Int_val(Field(args, 1));
+    Color _color = Colour_val(Field(args, 2));
+    DrawPixel(_posX, _posY, _color);
     return Val_unit;
 }
 
-value raylib_DrawPixelV(value position, value color)
+value raylib_DrawPixelV(value args)
 {
-    DrawPixelV(Vector2_val(position), Colour_val(color));
+    Vector2 _position = Vector2_val(Field(args, 0));
+    Color _color = Colour_val(Field(args, 1));
+    DrawPixelV(_position, _color);
     return Val_unit;
 }
 
-value raylib_DrawLine(value startPosX, value startPosY, value endPosX, value endPosY, value color)
+value raylib_DrawLine(value args)
 {
-    DrawLine(Int_val(startPosX), Int_val(startPosY), Int_val(endPosX), Int_val(endPosY), Colour_val(color));
+    int _startPosX = Int_val(Field(args, 0));
+    int _startPosY = Int_val(Field(args, 1));
+    int _endPosX = Int_val(Field(args, 2));
+    int _endPosY = Int_val(Field(args, 3));
+    Color _color = Colour_val(Field(args, 4));
+    DrawLine(_startPosX, _startPosY, _endPosX, _endPosY, _color);
     return Val_unit;
 }
 
-value raylib_DrawLineV(value startPos, value endPos, value color)
+value raylib_DrawLineV(value args)
 {
-    DrawLineV(Vector2_val(startPos), Vector2_val(endPos), Colour_val(color));
+    Vector2 _startPos = Vector2_val(Field(args, 0));
+    Vector2 _endPos = Vector2_val(Field(args, 1));
+    Color _color = Colour_val(Field(args, 2));
+    DrawLineV(_startPos, _endPos, _color);
     return Val_unit;
 }
 
-value raylib_DrawLineEx(value startPos, value endPos, value thick, value color)
+value raylib_DrawLineEx(value args)
 {
-    DrawLineEx(Vector2_val(startPos), Vector2_val(endPos), Double_val(thick), Colour_val(color));
+    Vector2 _startPos = Vector2_val(Field(args, 0));
+    Vector2 _endPos = Vector2_val(Field(args, 1));
+    float _thick = Double_val(Field(args, 2));
+    Color _color = Colour_val(Field(args, 3));
+    DrawLineEx(_startPos, _endPos, _thick, _color);
     return Val_unit;
 }
 
 /*
-value raylib_DrawLineStrip(value points, value pointCount, value color)
+value raylib_DrawLineStrip(value args)
 {
-    DrawLineStrip(UNKNOWN(points), Int_val(pointCount), Colour_val(color));
+    const Vector2 * _points = UNKNOWN(Field(args, 0));
+    int _pointCount = Int_val(Field(args, 1));
+    Color _color = Colour_val(Field(args, 2));
+    DrawLineStrip(_points, _pointCount, _color);
     return Val_unit;
 }
 */
 
-value raylib_DrawLineBezier(value startPos, value endPos, value thick, value color)
+value raylib_DrawLineBezier(value args)
 {
-    DrawLineBezier(Vector2_val(startPos), Vector2_val(endPos), Double_val(thick), Colour_val(color));
+    Vector2 _startPos = Vector2_val(Field(args, 0));
+    Vector2 _endPos = Vector2_val(Field(args, 1));
+    float _thick = Double_val(Field(args, 2));
+    Color _color = Colour_val(Field(args, 3));
+    DrawLineBezier(_startPos, _endPos, _thick, _color);
     return Val_unit;
 }
 
-value raylib_DrawCircle(value centerX, value centerY, value radius, value color)
+value raylib_DrawCircle(value args)
 {
-    DrawCircle(Int_val(centerX), Int_val(centerY), Double_val(radius), Colour_val(color));
+    int _centerX = Int_val(Field(args, 0));
+    int _centerY = Int_val(Field(args, 1));
+    float _radius = Double_val(Field(args, 2));
+    Color _color = Colour_val(Field(args, 3));
+    DrawCircle(_centerX, _centerY, _radius, _color);
     return Val_unit;
 }
 
-/*
-value raylib_DrawCircleSector(value center, value radius, value startAngle, value endAngle, value segments, value color)
+value raylib_DrawCircleSector(value args)
 {
-    DrawCircleSector(Vector2_val(center), Double_val(radius), Double_val(startAngle), Double_val(endAngle), Int_val(segments), Colour_val(color));
-    return Val_unit;
-}
-*/
-
-/*
-value raylib_DrawCircleSectorLines(value center, value radius, value startAngle, value endAngle, value segments, value color)
-{
-    DrawCircleSectorLines(Vector2_val(center), Double_val(radius), Double_val(startAngle), Double_val(endAngle), Int_val(segments), Colour_val(color));
-    return Val_unit;
-}
-*/
-
-value raylib_DrawCircleGradient(value centerX, value centerY, value radius, value inner, value outer)
-{
-    DrawCircleGradient(Int_val(centerX), Int_val(centerY), Double_val(radius), Colour_val(inner), Colour_val(outer));
+    Vector2 _center = Vector2_val(Field(args, 0));
+    float _radius = Double_val(Field(args, 1));
+    float _startAngle = Double_val(Field(args, 2));
+    float _endAngle = Double_val(Field(args, 3));
+    int _segments = Int_val(Field(args, 4));
+    Color _color = Colour_val(Field(args, 5));
+    DrawCircleSector(_center, _radius, _startAngle, _endAngle, _segments, _color);
     return Val_unit;
 }
 
-value raylib_DrawCircleV(value center, value radius, value color)
+value raylib_DrawCircleSectorLines(value args)
 {
-    DrawCircleV(Vector2_val(center), Double_val(radius), Colour_val(color));
+    Vector2 _center = Vector2_val(Field(args, 0));
+    float _radius = Double_val(Field(args, 1));
+    float _startAngle = Double_val(Field(args, 2));
+    float _endAngle = Double_val(Field(args, 3));
+    int _segments = Int_val(Field(args, 4));
+    Color _color = Colour_val(Field(args, 5));
+    DrawCircleSectorLines(_center, _radius, _startAngle, _endAngle, _segments, _color);
     return Val_unit;
 }
 
-value raylib_DrawCircleLines(value centerX, value centerY, value radius, value color)
+value raylib_DrawCircleGradient(value args)
 {
-    DrawCircleLines(Int_val(centerX), Int_val(centerY), Double_val(radius), Colour_val(color));
+    int _centerX = Int_val(Field(args, 0));
+    int _centerY = Int_val(Field(args, 1));
+    float _radius = Double_val(Field(args, 2));
+    Color _inner = Colour_val(Field(args, 3));
+    Color _outer = Colour_val(Field(args, 4));
+    DrawCircleGradient(_centerX, _centerY, _radius, _inner, _outer);
     return Val_unit;
 }
 
-value raylib_DrawCircleLinesV(value center, value radius, value color)
+value raylib_DrawCircleV(value args)
 {
-    DrawCircleLinesV(Vector2_val(center), Double_val(radius), Colour_val(color));
+    Vector2 _center = Vector2_val(Field(args, 0));
+    float _radius = Double_val(Field(args, 1));
+    Color _color = Colour_val(Field(args, 2));
+    DrawCircleV(_center, _radius, _color);
     return Val_unit;
 }
 
-value raylib_DrawEllipse(value centerX, value centerY, value radiusH, value radiusV, value color)
+value raylib_DrawCircleLines(value args)
 {
-    DrawEllipse(Int_val(centerX), Int_val(centerY), Double_val(radiusH), Double_val(radiusV), Colour_val(color));
+    int _centerX = Int_val(Field(args, 0));
+    int _centerY = Int_val(Field(args, 1));
+    float _radius = Double_val(Field(args, 2));
+    Color _color = Colour_val(Field(args, 3));
+    DrawCircleLines(_centerX, _centerY, _radius, _color);
     return Val_unit;
 }
 
-value raylib_DrawEllipseLines(value centerX, value centerY, value radiusH, value radiusV, value color)
+value raylib_DrawCircleLinesV(value args)
 {
-    DrawEllipseLines(Int_val(centerX), Int_val(centerY), Double_val(radiusH), Double_val(radiusV), Colour_val(color));
+    Vector2 _center = Vector2_val(Field(args, 0));
+    float _radius = Double_val(Field(args, 1));
+    Color _color = Colour_val(Field(args, 2));
+    DrawCircleLinesV(_center, _radius, _color);
     return Val_unit;
 }
 
-/*
-value raylib_DrawRing(value center, value innerRadius, value outerRadius, value startAngle, value endAngle, value segments, value color)
+value raylib_DrawEllipse(value args)
 {
-    DrawRing(Vector2_val(center), Double_val(innerRadius), Double_val(outerRadius), Double_val(startAngle), Double_val(endAngle), Int_val(segments), Colour_val(color));
-    return Val_unit;
-}
-*/
-
-/*
-value raylib_DrawRingLines(value center, value innerRadius, value outerRadius, value startAngle, value endAngle, value segments, value color)
-{
-    DrawRingLines(Vector2_val(center), Double_val(innerRadius), Double_val(outerRadius), Double_val(startAngle), Double_val(endAngle), Int_val(segments), Colour_val(color));
-    return Val_unit;
-}
-*/
-
-value raylib_DrawRectangle(value posX, value posY, value width, value height, value color)
-{
-    DrawRectangle(Int_val(posX), Int_val(posY), Int_val(width), Int_val(height), Colour_val(color));
+    int _centerX = Int_val(Field(args, 0));
+    int _centerY = Int_val(Field(args, 1));
+    float _radiusH = Double_val(Field(args, 2));
+    float _radiusV = Double_val(Field(args, 3));
+    Color _color = Colour_val(Field(args, 4));
+    DrawEllipse(_centerX, _centerY, _radiusH, _radiusV, _color);
     return Val_unit;
 }
 
-value raylib_DrawRectangleV(value position, value size, value color)
+value raylib_DrawEllipseLines(value args)
 {
-    DrawRectangleV(Vector2_val(position), Vector2_val(size), Colour_val(color));
+    int _centerX = Int_val(Field(args, 0));
+    int _centerY = Int_val(Field(args, 1));
+    float _radiusH = Double_val(Field(args, 2));
+    float _radiusV = Double_val(Field(args, 3));
+    Color _color = Colour_val(Field(args, 4));
+    DrawEllipseLines(_centerX, _centerY, _radiusH, _radiusV, _color);
     return Val_unit;
 }
 
-/*
-value raylib_DrawRectangleRec(value rec, value color)
+value raylib_DrawRing(value args)
 {
-    DrawRectangleRec(UNKNOWN(rec), Colour_val(color));
-    return Val_unit;
-}
-*/
-
-/*
-value raylib_DrawRectanglePro(value rec, value origin, value rotation, value color)
-{
-    DrawRectanglePro(UNKNOWN(rec), Vector2_val(origin), Double_val(rotation), Colour_val(color));
-    return Val_unit;
-}
-*/
-
-/*
-value raylib_DrawRectangleGradientV(value posX, value posY, value width, value height, value top, value bottom)
-{
-    DrawRectangleGradientV(Int_val(posX), Int_val(posY), Int_val(width), Int_val(height), Colour_val(top), Colour_val(bottom));
-    return Val_unit;
-}
-*/
-
-/*
-value raylib_DrawRectangleGradientH(value posX, value posY, value width, value height, value left, value right)
-{
-    DrawRectangleGradientH(Int_val(posX), Int_val(posY), Int_val(width), Int_val(height), Colour_val(left), Colour_val(right));
-    return Val_unit;
-}
-*/
-
-/*
-value raylib_DrawRectangleGradientEx(value rec, value topLeft, value bottomLeft, value topRight, value bottomRight)
-{
-    DrawRectangleGradientEx(UNKNOWN(rec), Colour_val(topLeft), Colour_val(bottomLeft), Colour_val(topRight), Colour_val(bottomRight));
-    return Val_unit;
-}
-*/
-
-value raylib_DrawRectangleLines(value posX, value posY, value width, value height, value color)
-{
-    DrawRectangleLines(Int_val(posX), Int_val(posY), Int_val(width), Int_val(height), Colour_val(color));
+    Vector2 _center = Vector2_val(Field(args, 0));
+    float _innerRadius = Double_val(Field(args, 1));
+    float _outerRadius = Double_val(Field(args, 2));
+    float _startAngle = Double_val(Field(args, 3));
+    float _endAngle = Double_val(Field(args, 4));
+    int _segments = Int_val(Field(args, 5));
+    Color _color = Colour_val(Field(args, 6));
+    DrawRing(_center, _innerRadius, _outerRadius, _startAngle, _endAngle, _segments, _color);
     return Val_unit;
 }
 
-/*
-value raylib_DrawRectangleLinesEx(value rec, value lineThick, value color)
+value raylib_DrawRingLines(value args)
 {
-    DrawRectangleLinesEx(UNKNOWN(rec), Double_val(lineThick), Colour_val(color));
-    return Val_unit;
-}
-*/
-
-/*
-value raylib_DrawRectangleRounded(value rec, value roundness, value segments, value color)
-{
-    DrawRectangleRounded(UNKNOWN(rec), Double_val(roundness), Int_val(segments), Colour_val(color));
-    return Val_unit;
-}
-*/
-
-/*
-value raylib_DrawRectangleRoundedLines(value rec, value roundness, value segments, value color)
-{
-    DrawRectangleRoundedLines(UNKNOWN(rec), Double_val(roundness), Int_val(segments), Colour_val(color));
-    return Val_unit;
-}
-*/
-
-/*
-value raylib_DrawRectangleRoundedLinesEx(value rec, value roundness, value segments, value lineThick, value color)
-{
-    DrawRectangleRoundedLinesEx(UNKNOWN(rec), Double_val(roundness), Int_val(segments), Double_val(lineThick), Colour_val(color));
-    return Val_unit;
-}
-*/
-
-value raylib_DrawTriangle(value v1, value v2, value v3, value color)
-{
-    DrawTriangle(Vector2_val(v1), Vector2_val(v2), Vector2_val(v3), Colour_val(color));
+    Vector2 _center = Vector2_val(Field(args, 0));
+    float _innerRadius = Double_val(Field(args, 1));
+    float _outerRadius = Double_val(Field(args, 2));
+    float _startAngle = Double_val(Field(args, 3));
+    float _endAngle = Double_val(Field(args, 4));
+    int _segments = Int_val(Field(args, 5));
+    Color _color = Colour_val(Field(args, 6));
+    DrawRingLines(_center, _innerRadius, _outerRadius, _startAngle, _endAngle, _segments, _color);
     return Val_unit;
 }
 
-value raylib_DrawTriangleLines(value v1, value v2, value v3, value color)
+value raylib_DrawRectangle(value args)
 {
-    DrawTriangleLines(Vector2_val(v1), Vector2_val(v2), Vector2_val(v3), Colour_val(color));
+    int _posX = Int_val(Field(args, 0));
+    int _posY = Int_val(Field(args, 1));
+    int _width = Int_val(Field(args, 2));
+    int _height = Int_val(Field(args, 3));
+    Color _color = Colour_val(Field(args, 4));
+    DrawRectangle(_posX, _posY, _width, _height, _color);
+    return Val_unit;
+}
+
+value raylib_DrawRectangleV(value args)
+{
+    Vector2 _position = Vector2_val(Field(args, 0));
+    Vector2 _size = Vector2_val(Field(args, 1));
+    Color _color = Colour_val(Field(args, 2));
+    DrawRectangleV(_position, _size, _color);
     return Val_unit;
 }
 
 /*
-value raylib_DrawTriangleFan(value points, value pointCount, value color)
+value raylib_DrawRectangleRec(value args)
 {
-    DrawTriangleFan(UNKNOWN(points), Int_val(pointCount), Colour_val(color));
+    Rectangle _rec = UNKNOWN(Field(args, 0));
+    Color _color = Colour_val(Field(args, 1));
+    DrawRectangleRec(_rec, _color);
     return Val_unit;
 }
 */
 
 /*
-value raylib_DrawTriangleStrip(value points, value pointCount, value color)
+value raylib_DrawRectanglePro(value args)
 {
-    DrawTriangleStrip(UNKNOWN(points), Int_val(pointCount), Colour_val(color));
+    Rectangle _rec = UNKNOWN(Field(args, 0));
+    Vector2 _origin = Vector2_val(Field(args, 1));
+    float _rotation = Double_val(Field(args, 2));
+    Color _color = Colour_val(Field(args, 3));
+    DrawRectanglePro(_rec, _origin, _rotation, _color);
     return Val_unit;
 }
 */
 
-value raylib_DrawPoly(value center, value sides, value radius, value rotation, value color)
+value raylib_DrawRectangleGradientV(value args)
 {
-    DrawPoly(Vector2_val(center), Int_val(sides), Double_val(radius), Double_val(rotation), Colour_val(color));
+    int _posX = Int_val(Field(args, 0));
+    int _posY = Int_val(Field(args, 1));
+    int _width = Int_val(Field(args, 2));
+    int _height = Int_val(Field(args, 3));
+    Color _top = Colour_val(Field(args, 4));
+    Color _bottom = Colour_val(Field(args, 5));
+    DrawRectangleGradientV(_posX, _posY, _width, _height, _top, _bottom);
     return Val_unit;
 }
 
-value raylib_DrawPolyLines(value center, value sides, value radius, value rotation, value color)
+value raylib_DrawRectangleGradientH(value args)
 {
-    DrawPolyLines(Vector2_val(center), Int_val(sides), Double_val(radius), Double_val(rotation), Colour_val(color));
+    int _posX = Int_val(Field(args, 0));
+    int _posY = Int_val(Field(args, 1));
+    int _width = Int_val(Field(args, 2));
+    int _height = Int_val(Field(args, 3));
+    Color _left = Colour_val(Field(args, 4));
+    Color _right = Colour_val(Field(args, 5));
+    DrawRectangleGradientH(_posX, _posY, _width, _height, _left, _right);
     return Val_unit;
 }
 
 /*
-value raylib_DrawPolyLinesEx(value center, value sides, value radius, value rotation, value lineThick, value color)
+value raylib_DrawRectangleGradientEx(value args)
 {
-    DrawPolyLinesEx(Vector2_val(center), Int_val(sides), Double_val(radius), Double_val(rotation), Double_val(lineThick), Colour_val(color));
+    Rectangle _rec = UNKNOWN(Field(args, 0));
+    Color _topLeft = Colour_val(Field(args, 1));
+    Color _bottomLeft = Colour_val(Field(args, 2));
+    Color _topRight = Colour_val(Field(args, 3));
+    Color _bottomRight = Colour_val(Field(args, 4));
+    DrawRectangleGradientEx(_rec, _topLeft, _bottomLeft, _topRight, _bottomRight);
     return Val_unit;
 }
 */
 
-/*
-value raylib_DrawSplineLinear(value points, value pointCount, value thick, value color)
+value raylib_DrawRectangleLines(value args)
 {
-    DrawSplineLinear(UNKNOWN(points), Int_val(pointCount), Double_val(thick), Colour_val(color));
-    return Val_unit;
-}
-*/
-
-/*
-value raylib_DrawSplineBasis(value points, value pointCount, value thick, value color)
-{
-    DrawSplineBasis(UNKNOWN(points), Int_val(pointCount), Double_val(thick), Colour_val(color));
-    return Val_unit;
-}
-*/
-
-/*
-value raylib_DrawSplineCatmullRom(value points, value pointCount, value thick, value color)
-{
-    DrawSplineCatmullRom(UNKNOWN(points), Int_val(pointCount), Double_val(thick), Colour_val(color));
-    return Val_unit;
-}
-*/
-
-/*
-value raylib_DrawSplineBezierQuadratic(value points, value pointCount, value thick, value color)
-{
-    DrawSplineBezierQuadratic(UNKNOWN(points), Int_val(pointCount), Double_val(thick), Colour_val(color));
-    return Val_unit;
-}
-*/
-
-/*
-value raylib_DrawSplineBezierCubic(value points, value pointCount, value thick, value color)
-{
-    DrawSplineBezierCubic(UNKNOWN(points), Int_val(pointCount), Double_val(thick), Colour_val(color));
-    return Val_unit;
-}
-*/
-
-value raylib_DrawSplineSegmentLinear(value p1, value p2, value thick, value color)
-{
-    DrawSplineSegmentLinear(Vector2_val(p1), Vector2_val(p2), Double_val(thick), Colour_val(color));
+    int _posX = Int_val(Field(args, 0));
+    int _posY = Int_val(Field(args, 1));
+    int _width = Int_val(Field(args, 2));
+    int _height = Int_val(Field(args, 3));
+    Color _color = Colour_val(Field(args, 4));
+    DrawRectangleLines(_posX, _posY, _width, _height, _color);
     return Val_unit;
 }
 
 /*
-value raylib_DrawSplineSegmentBasis(value p1, value p2, value p3, value p4, value thick, value color)
+value raylib_DrawRectangleLinesEx(value args)
 {
-    DrawSplineSegmentBasis(Vector2_val(p1), Vector2_val(p2), Vector2_val(p3), Vector2_val(p4), Double_val(thick), Colour_val(color));
+    Rectangle _rec = UNKNOWN(Field(args, 0));
+    float _lineThick = Double_val(Field(args, 1));
+    Color _color = Colour_val(Field(args, 2));
+    DrawRectangleLinesEx(_rec, _lineThick, _color);
     return Val_unit;
 }
 */
 
 /*
-value raylib_DrawSplineSegmentCatmullRom(value p1, value p2, value p3, value p4, value thick, value color)
+value raylib_DrawRectangleRounded(value args)
 {
-    DrawSplineSegmentCatmullRom(Vector2_val(p1), Vector2_val(p2), Vector2_val(p3), Vector2_val(p4), Double_val(thick), Colour_val(color));
+    Rectangle _rec = UNKNOWN(Field(args, 0));
+    float _roundness = Double_val(Field(args, 1));
+    int _segments = Int_val(Field(args, 2));
+    Color _color = Colour_val(Field(args, 3));
+    DrawRectangleRounded(_rec, _roundness, _segments, _color);
     return Val_unit;
 }
 */
 
-value raylib_DrawSplineSegmentBezierQuadratic(value p1, value c2, value p3, value thick, value color)
+/*
+value raylib_DrawRectangleRoundedLines(value args)
 {
-    DrawSplineSegmentBezierQuadratic(Vector2_val(p1), Vector2_val(c2), Vector2_val(p3), Double_val(thick), Colour_val(color));
+    Rectangle _rec = UNKNOWN(Field(args, 0));
+    float _roundness = Double_val(Field(args, 1));
+    int _segments = Int_val(Field(args, 2));
+    Color _color = Colour_val(Field(args, 3));
+    DrawRectangleRoundedLines(_rec, _roundness, _segments, _color);
+    return Val_unit;
+}
+*/
+
+/*
+value raylib_DrawRectangleRoundedLinesEx(value args)
+{
+    Rectangle _rec = UNKNOWN(Field(args, 0));
+    float _roundness = Double_val(Field(args, 1));
+    int _segments = Int_val(Field(args, 2));
+    float _lineThick = Double_val(Field(args, 3));
+    Color _color = Colour_val(Field(args, 4));
+    DrawRectangleRoundedLinesEx(_rec, _roundness, _segments, _lineThick, _color);
+    return Val_unit;
+}
+*/
+
+value raylib_DrawTriangle(value args)
+{
+    Vector2 _v1 = Vector2_val(Field(args, 0));
+    Vector2 _v2 = Vector2_val(Field(args, 1));
+    Vector2 _v3 = Vector2_val(Field(args, 2));
+    Color _color = Colour_val(Field(args, 3));
+    DrawTriangle(_v1, _v2, _v3, _color);
+    return Val_unit;
+}
+
+value raylib_DrawTriangleLines(value args)
+{
+    Vector2 _v1 = Vector2_val(Field(args, 0));
+    Vector2 _v2 = Vector2_val(Field(args, 1));
+    Vector2 _v3 = Vector2_val(Field(args, 2));
+    Color _color = Colour_val(Field(args, 3));
+    DrawTriangleLines(_v1, _v2, _v3, _color);
     return Val_unit;
 }
 
 /*
-value raylib_DrawSplineSegmentBezierCubic(value p1, value c2, value c3, value p4, value thick, value color)
+value raylib_DrawTriangleFan(value args)
 {
-    DrawSplineSegmentBezierCubic(Vector2_val(p1), Vector2_val(c2), Vector2_val(c3), Vector2_val(p4), Double_val(thick), Colour_val(color));
+    const Vector2 * _points = UNKNOWN(Field(args, 0));
+    int _pointCount = Int_val(Field(args, 1));
+    Color _color = Colour_val(Field(args, 2));
+    DrawTriangleFan(_points, _pointCount, _color);
     return Val_unit;
 }
 */
 
-value raylib_GetSplinePointLinear(value startPos, value endPos, value t)
+/*
+value raylib_DrawTriangleStrip(value args)
 {
-    Vector2 result = GetSplinePointLinear(Vector2_val(startPos), Vector2_val(endPos), Double_val(t));
+    const Vector2 * _points = UNKNOWN(Field(args, 0));
+    int _pointCount = Int_val(Field(args, 1));
+    Color _color = Colour_val(Field(args, 2));
+    DrawTriangleStrip(_points, _pointCount, _color);
+    return Val_unit;
+}
+*/
+
+value raylib_DrawPoly(value args)
+{
+    Vector2 _center = Vector2_val(Field(args, 0));
+    int _sides = Int_val(Field(args, 1));
+    float _radius = Double_val(Field(args, 2));
+    float _rotation = Double_val(Field(args, 3));
+    Color _color = Colour_val(Field(args, 4));
+    DrawPoly(_center, _sides, _radius, _rotation, _color);
+    return Val_unit;
+}
+
+value raylib_DrawPolyLines(value args)
+{
+    Vector2 _center = Vector2_val(Field(args, 0));
+    int _sides = Int_val(Field(args, 1));
+    float _radius = Double_val(Field(args, 2));
+    float _rotation = Double_val(Field(args, 3));
+    Color _color = Colour_val(Field(args, 4));
+    DrawPolyLines(_center, _sides, _radius, _rotation, _color);
+    return Val_unit;
+}
+
+value raylib_DrawPolyLinesEx(value args)
+{
+    Vector2 _center = Vector2_val(Field(args, 0));
+    int _sides = Int_val(Field(args, 1));
+    float _radius = Double_val(Field(args, 2));
+    float _rotation = Double_val(Field(args, 3));
+    float _lineThick = Double_val(Field(args, 4));
+    Color _color = Colour_val(Field(args, 5));
+    DrawPolyLinesEx(_center, _sides, _radius, _rotation, _lineThick, _color);
+    return Val_unit;
+}
+
+/*
+value raylib_DrawSplineLinear(value args)
+{
+    const Vector2 * _points = UNKNOWN(Field(args, 0));
+    int _pointCount = Int_val(Field(args, 1));
+    float _thick = Double_val(Field(args, 2));
+    Color _color = Colour_val(Field(args, 3));
+    DrawSplineLinear(_points, _pointCount, _thick, _color);
+    return Val_unit;
+}
+*/
+
+/*
+value raylib_DrawSplineBasis(value args)
+{
+    const Vector2 * _points = UNKNOWN(Field(args, 0));
+    int _pointCount = Int_val(Field(args, 1));
+    float _thick = Double_val(Field(args, 2));
+    Color _color = Colour_val(Field(args, 3));
+    DrawSplineBasis(_points, _pointCount, _thick, _color);
+    return Val_unit;
+}
+*/
+
+/*
+value raylib_DrawSplineCatmullRom(value args)
+{
+    const Vector2 * _points = UNKNOWN(Field(args, 0));
+    int _pointCount = Int_val(Field(args, 1));
+    float _thick = Double_val(Field(args, 2));
+    Color _color = Colour_val(Field(args, 3));
+    DrawSplineCatmullRom(_points, _pointCount, _thick, _color);
+    return Val_unit;
+}
+*/
+
+/*
+value raylib_DrawSplineBezierQuadratic(value args)
+{
+    const Vector2 * _points = UNKNOWN(Field(args, 0));
+    int _pointCount = Int_val(Field(args, 1));
+    float _thick = Double_val(Field(args, 2));
+    Color _color = Colour_val(Field(args, 3));
+    DrawSplineBezierQuadratic(_points, _pointCount, _thick, _color);
+    return Val_unit;
+}
+*/
+
+/*
+value raylib_DrawSplineBezierCubic(value args)
+{
+    const Vector2 * _points = UNKNOWN(Field(args, 0));
+    int _pointCount = Int_val(Field(args, 1));
+    float _thick = Double_val(Field(args, 2));
+    Color _color = Colour_val(Field(args, 3));
+    DrawSplineBezierCubic(_points, _pointCount, _thick, _color);
+    return Val_unit;
+}
+*/
+
+value raylib_DrawSplineSegmentLinear(value args)
+{
+    Vector2 _p1 = Vector2_val(Field(args, 0));
+    Vector2 _p2 = Vector2_val(Field(args, 1));
+    float _thick = Double_val(Field(args, 2));
+    Color _color = Colour_val(Field(args, 3));
+    DrawSplineSegmentLinear(_p1, _p2, _thick, _color);
+    return Val_unit;
+}
+
+value raylib_DrawSplineSegmentBasis(value args)
+{
+    Vector2 _p1 = Vector2_val(Field(args, 0));
+    Vector2 _p2 = Vector2_val(Field(args, 1));
+    Vector2 _p3 = Vector2_val(Field(args, 2));
+    Vector2 _p4 = Vector2_val(Field(args, 3));
+    float _thick = Double_val(Field(args, 4));
+    Color _color = Colour_val(Field(args, 5));
+    DrawSplineSegmentBasis(_p1, _p2, _p3, _p4, _thick, _color);
+    return Val_unit;
+}
+
+value raylib_DrawSplineSegmentCatmullRom(value args)
+{
+    Vector2 _p1 = Vector2_val(Field(args, 0));
+    Vector2 _p2 = Vector2_val(Field(args, 1));
+    Vector2 _p3 = Vector2_val(Field(args, 2));
+    Vector2 _p4 = Vector2_val(Field(args, 3));
+    float _thick = Double_val(Field(args, 4));
+    Color _color = Colour_val(Field(args, 5));
+    DrawSplineSegmentCatmullRom(_p1, _p2, _p3, _p4, _thick, _color);
+    return Val_unit;
+}
+
+value raylib_DrawSplineSegmentBezierQuadratic(value args)
+{
+    Vector2 _p1 = Vector2_val(Field(args, 0));
+    Vector2 _c2 = Vector2_val(Field(args, 1));
+    Vector2 _p3 = Vector2_val(Field(args, 2));
+    float _thick = Double_val(Field(args, 3));
+    Color _color = Colour_val(Field(args, 4));
+    DrawSplineSegmentBezierQuadratic(_p1, _c2, _p3, _thick, _color);
+    return Val_unit;
+}
+
+value raylib_DrawSplineSegmentBezierCubic(value args)
+{
+    Vector2 _p1 = Vector2_val(Field(args, 0));
+    Vector2 _c2 = Vector2_val(Field(args, 1));
+    Vector2 _c3 = Vector2_val(Field(args, 2));
+    Vector2 _p4 = Vector2_val(Field(args, 3));
+    float _thick = Double_val(Field(args, 4));
+    Color _color = Colour_val(Field(args, 5));
+    DrawSplineSegmentBezierCubic(_p1, _c2, _c3, _p4, _thick, _color);
+    return Val_unit;
+}
+
+value raylib_GetSplinePointLinear(value args)
+{
+    Vector2 _startPos = Vector2_val(Field(args, 0));
+    Vector2 _endPos = Vector2_val(Field(args, 1));
+    float _t = Double_val(Field(args, 2));
+    Vector2 result = GetSplinePointLinear(_startPos, _endPos, _t);
     return Val_vector2(result);
 }
 
-value raylib_GetSplinePointBasis(value p1, value p2, value p3, value p4, value t)
+value raylib_GetSplinePointBasis(value args)
 {
-    Vector2 result = GetSplinePointBasis(Vector2_val(p1), Vector2_val(p2), Vector2_val(p3), Vector2_val(p4), Double_val(t));
+    Vector2 _p1 = Vector2_val(Field(args, 0));
+    Vector2 _p2 = Vector2_val(Field(args, 1));
+    Vector2 _p3 = Vector2_val(Field(args, 2));
+    Vector2 _p4 = Vector2_val(Field(args, 3));
+    float _t = Double_val(Field(args, 4));
+    Vector2 result = GetSplinePointBasis(_p1, _p2, _p3, _p4, _t);
     return Val_vector2(result);
 }
 
-value raylib_GetSplinePointCatmullRom(value p1, value p2, value p3, value p4, value t)
+value raylib_GetSplinePointCatmullRom(value args)
 {
-    Vector2 result = GetSplinePointCatmullRom(Vector2_val(p1), Vector2_val(p2), Vector2_val(p3), Vector2_val(p4), Double_val(t));
+    Vector2 _p1 = Vector2_val(Field(args, 0));
+    Vector2 _p2 = Vector2_val(Field(args, 1));
+    Vector2 _p3 = Vector2_val(Field(args, 2));
+    Vector2 _p4 = Vector2_val(Field(args, 3));
+    float _t = Double_val(Field(args, 4));
+    Vector2 result = GetSplinePointCatmullRom(_p1, _p2, _p3, _p4, _t);
     return Val_vector2(result);
 }
 
-value raylib_GetSplinePointBezierQuad(value p1, value c2, value p3, value t)
+value raylib_GetSplinePointBezierQuad(value args)
 {
-    Vector2 result = GetSplinePointBezierQuad(Vector2_val(p1), Vector2_val(c2), Vector2_val(p3), Double_val(t));
+    Vector2 _p1 = Vector2_val(Field(args, 0));
+    Vector2 _c2 = Vector2_val(Field(args, 1));
+    Vector2 _p3 = Vector2_val(Field(args, 2));
+    float _t = Double_val(Field(args, 3));
+    Vector2 result = GetSplinePointBezierQuad(_p1, _c2, _p3, _t);
     return Val_vector2(result);
 }
 
-value raylib_GetSplinePointBezierCubic(value p1, value c2, value c3, value p4, value t)
+value raylib_GetSplinePointBezierCubic(value args)
 {
-    Vector2 result = GetSplinePointBezierCubic(Vector2_val(p1), Vector2_val(c2), Vector2_val(c3), Vector2_val(p4), Double_val(t));
+    Vector2 _p1 = Vector2_val(Field(args, 0));
+    Vector2 _c2 = Vector2_val(Field(args, 1));
+    Vector2 _c3 = Vector2_val(Field(args, 2));
+    Vector2 _p4 = Vector2_val(Field(args, 3));
+    float _t = Double_val(Field(args, 4));
+    Vector2 result = GetSplinePointBezierCubic(_p1, _c2, _c3, _p4, _t);
     return Val_vector2(result);
 }
 
 /*
-value raylib_CheckCollisionRecs(value rec1, value rec2)
+value raylib_CheckCollisionRecs(value args)
 {
-    bool result = CheckCollisionRecs(UNKNOWN(rec1), UNKNOWN(rec2));
+    Rectangle _rec1 = UNKNOWN(Field(args, 0));
+    Rectangle _rec2 = UNKNOWN(Field(args, 1));
+    bool result = CheckCollisionRecs(_rec1, _rec2);
     return Val_bool(result);
 }
 */
 
-value raylib_CheckCollisionCircles(value center1, value radius1, value center2, value radius2)
+value raylib_CheckCollisionCircles(value args)
 {
-    bool result = CheckCollisionCircles(Vector2_val(center1), Double_val(radius1), Vector2_val(center2), Double_val(radius2));
+    Vector2 _center1 = Vector2_val(Field(args, 0));
+    float _radius1 = Double_val(Field(args, 1));
+    Vector2 _center2 = Vector2_val(Field(args, 2));
+    float _radius2 = Double_val(Field(args, 3));
+    bool result = CheckCollisionCircles(_center1, _radius1, _center2, _radius2);
     return Val_bool(result);
 }
 
 /*
-value raylib_CheckCollisionCircleRec(value center, value radius, value rec)
+value raylib_CheckCollisionCircleRec(value args)
 {
-    bool result = CheckCollisionCircleRec(Vector2_val(center), Double_val(radius), UNKNOWN(rec));
+    Vector2 _center = Vector2_val(Field(args, 0));
+    float _radius = Double_val(Field(args, 1));
+    Rectangle _rec = UNKNOWN(Field(args, 2));
+    bool result = CheckCollisionCircleRec(_center, _radius, _rec);
     return Val_bool(result);
 }
 */
 
-value raylib_CheckCollisionCircleLine(value center, value radius, value p1, value p2)
+value raylib_CheckCollisionCircleLine(value args)
 {
-    bool result = CheckCollisionCircleLine(Vector2_val(center), Double_val(radius), Vector2_val(p1), Vector2_val(p2));
+    Vector2 _center = Vector2_val(Field(args, 0));
+    float _radius = Double_val(Field(args, 1));
+    Vector2 _p1 = Vector2_val(Field(args, 2));
+    Vector2 _p2 = Vector2_val(Field(args, 3));
+    bool result = CheckCollisionCircleLine(_center, _radius, _p1, _p2);
     return Val_bool(result);
 }
 
 /*
-value raylib_CheckCollisionPointRec(value point, value rec)
+value raylib_CheckCollisionPointRec(value args)
 {
-    bool result = CheckCollisionPointRec(Vector2_val(point), UNKNOWN(rec));
+    Vector2 _point = Vector2_val(Field(args, 0));
+    Rectangle _rec = UNKNOWN(Field(args, 1));
+    bool result = CheckCollisionPointRec(_point, _rec);
     return Val_bool(result);
 }
 */
 
-value raylib_CheckCollisionPointCircle(value point, value center, value radius)
+value raylib_CheckCollisionPointCircle(value args)
 {
-    bool result = CheckCollisionPointCircle(Vector2_val(point), Vector2_val(center), Double_val(radius));
+    Vector2 _point = Vector2_val(Field(args, 0));
+    Vector2 _center = Vector2_val(Field(args, 1));
+    float _radius = Double_val(Field(args, 2));
+    bool result = CheckCollisionPointCircle(_point, _center, _radius);
     return Val_bool(result);
 }
 
-value raylib_CheckCollisionPointTriangle(value point, value p1, value p2, value p3)
+value raylib_CheckCollisionPointTriangle(value args)
 {
-    bool result = CheckCollisionPointTriangle(Vector2_val(point), Vector2_val(p1), Vector2_val(p2), Vector2_val(p3));
+    Vector2 _point = Vector2_val(Field(args, 0));
+    Vector2 _p1 = Vector2_val(Field(args, 1));
+    Vector2 _p2 = Vector2_val(Field(args, 2));
+    Vector2 _p3 = Vector2_val(Field(args, 3));
+    bool result = CheckCollisionPointTriangle(_point, _p1, _p2, _p3);
     return Val_bool(result);
 }
 
-value raylib_CheckCollisionPointLine(value point, value p1, value p2, value threshold)
+value raylib_CheckCollisionPointLine(value args)
 {
-    bool result = CheckCollisionPointLine(Vector2_val(point), Vector2_val(p1), Vector2_val(p2), Int_val(threshold));
+    Vector2 _point = Vector2_val(Field(args, 0));
+    Vector2 _p1 = Vector2_val(Field(args, 1));
+    Vector2 _p2 = Vector2_val(Field(args, 2));
+    int _threshold = Int_val(Field(args, 3));
+    bool result = CheckCollisionPointLine(_point, _p1, _p2, _threshold);
     return Val_bool(result);
 }
 
 /*
-value raylib_CheckCollisionPointPoly(value point, value points, value pointCount)
+value raylib_CheckCollisionPointPoly(value args)
 {
-    bool result = CheckCollisionPointPoly(Vector2_val(point), UNKNOWN(points), Int_val(pointCount));
+    Vector2 _point = Vector2_val(Field(args, 0));
+    const Vector2 * _points = UNKNOWN(Field(args, 1));
+    int _pointCount = Int_val(Field(args, 2));
+    bool result = CheckCollisionPointPoly(_point, _points, _pointCount);
     return Val_bool(result);
 }
 */
 
 /*
-value raylib_CheckCollisionLines(value startPos1, value endPos1, value startPos2, value endPos2, value collisionPoint)
+value raylib_CheckCollisionLines(value args)
 {
-    bool result = CheckCollisionLines(Vector2_val(startPos1), Vector2_val(endPos1), Vector2_val(startPos2), Vector2_val(endPos2), UNKNOWN(collisionPoint));
+    Vector2 _startPos1 = Vector2_val(Field(args, 0));
+    Vector2 _endPos1 = Vector2_val(Field(args, 1));
+    Vector2 _startPos2 = Vector2_val(Field(args, 2));
+    Vector2 _endPos2 = Vector2_val(Field(args, 3));
+    Vector2 * _collisionPoint = UNKNOWN(Field(args, 4));
+    bool result = CheckCollisionLines(_startPos1, _endPos1, _startPos2, _endPos2, _collisionPoint);
     return Val_bool(result);
 }
 */
 
 /*
-value raylib_GetCollisionRec(value rec1, value rec2)
+value raylib_GetCollisionRec(value args)
 {
-    Rectangle result = GetCollisionRec(UNKNOWN(rec1), UNKNOWN(rec2));
+    Rectangle _rec1 = UNKNOWN(Field(args, 0));
+    Rectangle _rec2 = UNKNOWN(Field(args, 1));
+    Rectangle result = GetCollisionRec(_rec1, _rec2);
     return UNKNOWN(result);
 }
 */
 
-value raylib_LoadImage(value fileName)
+value raylib_LoadImage(value arg)
 {
-    Image result = LoadImage(String_val(fileName));
+    const char * _fileName = String_val(arg);
+    Image result = LoadImage(_fileName);
     return Val_image(result);
 }
 
-value raylib_LoadImageRaw(value fileName, value width, value height, value format, value headerSize)
+value raylib_LoadImageRaw(value args)
 {
-    Image result = LoadImageRaw(String_val(fileName), Int_val(width), Int_val(height), Int_val(format), Int_val(headerSize));
+    const char * _fileName = String_val(Field(args, 0));
+    int _width = Int_val(Field(args, 1));
+    int _height = Int_val(Field(args, 2));
+    int _format = Int_val(Field(args, 3));
+    int _headerSize = Int_val(Field(args, 4));
+    Image result = LoadImageRaw(_fileName, _width, _height, _format, _headerSize);
     return Val_image(result);
 }
 
 /*
-value raylib_LoadImageAnim(value fileName, value frames)
+value raylib_LoadImageAnim(value args)
 {
-    Image result = LoadImageAnim(String_val(fileName), UNKNOWN(frames));
+    const char * _fileName = String_val(Field(args, 0));
+    int * _frames = UNKNOWN(Field(args, 1));
+    Image result = LoadImageAnim(_fileName, _frames);
     return Val_image(result);
 }
 */
 
 /*
-value raylib_LoadImageAnimFromMemory(value fileType, value fileData, value dataSize, value frames)
+value raylib_LoadImageAnimFromMemory(value args)
 {
-    Image result = LoadImageAnimFromMemory(String_val(fileType), UNKNOWN(fileData), Int_val(dataSize), UNKNOWN(frames));
+    const char * _fileType = String_val(Field(args, 0));
+    const unsigned char * _fileData = UNKNOWN(Field(args, 1));
+    int _dataSize = Int_val(Field(args, 2));
+    int * _frames = UNKNOWN(Field(args, 3));
+    Image result = LoadImageAnimFromMemory(_fileType, _fileData, _dataSize, _frames);
     return Val_image(result);
 }
 */
 
 /*
-value raylib_LoadImageFromMemory(value fileType, value fileData, value dataSize)
+value raylib_LoadImageFromMemory(value args)
 {
-    Image result = LoadImageFromMemory(String_val(fileType), UNKNOWN(fileData), Int_val(dataSize));
+    const char * _fileType = String_val(Field(args, 0));
+    const unsigned char * _fileData = UNKNOWN(Field(args, 1));
+    int _dataSize = Int_val(Field(args, 2));
+    Image result = LoadImageFromMemory(_fileType, _fileData, _dataSize);
     return Val_image(result);
 }
 */
 
-value raylib_LoadImageFromTexture(value texture)
+value raylib_LoadImageFromTexture(value arg)
 {
-    Image result = LoadImageFromTexture(Texture_val(texture));
+    Texture2D _texture = Texture_val(arg);
+    Image result = LoadImageFromTexture(_texture);
     return Val_image(result);
 }
 
@@ -1997,795 +2473,1102 @@ value raylib_LoadImageFromScreen(value unit)
     return Val_image(result);
 }
 
-value raylib_IsImageValid(value image)
+value raylib_IsImageValid(value arg)
 {
-    bool result = IsImageValid(Image_val(image));
+    Image _image = Image_val(arg);
+    bool result = IsImageValid(_image);
     return Val_bool(result);
 }
 
-value raylib_UnloadImage(value image)
+value raylib_UnloadImage(value arg)
 {
-    UnloadImage(Image_val(image));
+    Image _image = Image_val(arg);
+    UnloadImage(_image);
     return Val_unit;
 }
 
-value raylib_ExportImage(value image, value fileName)
+value raylib_ExportImage(value args)
 {
-    bool result = ExportImage(Image_val(image), String_val(fileName));
+    Image _image = Image_val(Field(args, 0));
+    const char * _fileName = String_val(Field(args, 1));
+    bool result = ExportImage(_image, _fileName);
     return Val_bool(result);
 }
 
 /*
-value raylib_ExportImageToMemory(value image, value fileType, value fileSize)
+value raylib_ExportImageToMemory(value args)
 {
-    unsigned char * result = ExportImageToMemory(Image_val(image), String_val(fileType), UNKNOWN(fileSize));
+    Image _image = Image_val(Field(args, 0));
+    const char * _fileType = String_val(Field(args, 1));
+    int * _fileSize = UNKNOWN(Field(args, 2));
+    unsigned char * result = ExportImageToMemory(_image, _fileType, _fileSize);
     return UNKNOWN(result);
 }
 */
 
-value raylib_ExportImageAsCode(value image, value fileName)
+value raylib_ExportImageAsCode(value args)
 {
-    bool result = ExportImageAsCode(Image_val(image), String_val(fileName));
+    Image _image = Image_val(Field(args, 0));
+    const char * _fileName = String_val(Field(args, 1));
+    bool result = ExportImageAsCode(_image, _fileName);
     return Val_bool(result);
 }
 
-value raylib_GenImageColor(value width, value height, value color)
+value raylib_GenImageColor(value args)
 {
-    Image result = GenImageColor(Int_val(width), Int_val(height), Colour_val(color));
+    int _width = Int_val(Field(args, 0));
+    int _height = Int_val(Field(args, 1));
+    Color _color = Colour_val(Field(args, 2));
+    Image result = GenImageColor(_width, _height, _color);
     return Val_image(result);
 }
 
-value raylib_GenImageGradientLinear(value width, value height, value direction, value start, value end)
+value raylib_GenImageGradientLinear(value args)
 {
-    Image result = GenImageGradientLinear(Int_val(width), Int_val(height), Int_val(direction), Colour_val(start), Colour_val(end));
+    int _width = Int_val(Field(args, 0));
+    int _height = Int_val(Field(args, 1));
+    int _direction = Int_val(Field(args, 2));
+    Color _start = Colour_val(Field(args, 3));
+    Color _end = Colour_val(Field(args, 4));
+    Image result = GenImageGradientLinear(_width, _height, _direction, _start, _end);
     return Val_image(result);
 }
 
-value raylib_GenImageGradientRadial(value width, value height, value density, value inner, value outer)
+value raylib_GenImageGradientRadial(value args)
 {
-    Image result = GenImageGradientRadial(Int_val(width), Int_val(height), Double_val(density), Colour_val(inner), Colour_val(outer));
+    int _width = Int_val(Field(args, 0));
+    int _height = Int_val(Field(args, 1));
+    float _density = Double_val(Field(args, 2));
+    Color _inner = Colour_val(Field(args, 3));
+    Color _outer = Colour_val(Field(args, 4));
+    Image result = GenImageGradientRadial(_width, _height, _density, _inner, _outer);
     return Val_image(result);
 }
 
-value raylib_GenImageGradientSquare(value width, value height, value density, value inner, value outer)
+value raylib_GenImageGradientSquare(value args)
 {
-    Image result = GenImageGradientSquare(Int_val(width), Int_val(height), Double_val(density), Colour_val(inner), Colour_val(outer));
+    int _width = Int_val(Field(args, 0));
+    int _height = Int_val(Field(args, 1));
+    float _density = Double_val(Field(args, 2));
+    Color _inner = Colour_val(Field(args, 3));
+    Color _outer = Colour_val(Field(args, 4));
+    Image result = GenImageGradientSquare(_width, _height, _density, _inner, _outer);
+    return Val_image(result);
+}
+
+value raylib_GenImageChecked(value args)
+{
+    int _width = Int_val(Field(args, 0));
+    int _height = Int_val(Field(args, 1));
+    int _checksX = Int_val(Field(args, 2));
+    int _checksY = Int_val(Field(args, 3));
+    Color _col1 = Colour_val(Field(args, 4));
+    Color _col2 = Colour_val(Field(args, 5));
+    Image result = GenImageChecked(_width, _height, _checksX, _checksY, _col1, _col2);
+    return Val_image(result);
+}
+
+value raylib_GenImageWhiteNoise(value args)
+{
+    int _width = Int_val(Field(args, 0));
+    int _height = Int_val(Field(args, 1));
+    float _factor = Double_val(Field(args, 2));
+    Image result = GenImageWhiteNoise(_width, _height, _factor);
+    return Val_image(result);
+}
+
+value raylib_GenImagePerlinNoise(value args)
+{
+    int _width = Int_val(Field(args, 0));
+    int _height = Int_val(Field(args, 1));
+    int _offsetX = Int_val(Field(args, 2));
+    int _offsetY = Int_val(Field(args, 3));
+    float _scale = Double_val(Field(args, 4));
+    Image result = GenImagePerlinNoise(_width, _height, _offsetX, _offsetY, _scale);
+    return Val_image(result);
+}
+
+value raylib_GenImageCellular(value args)
+{
+    int _width = Int_val(Field(args, 0));
+    int _height = Int_val(Field(args, 1));
+    int _tileSize = Int_val(Field(args, 2));
+    Image result = GenImageCellular(_width, _height, _tileSize);
+    return Val_image(result);
+}
+
+value raylib_GenImageText(value args)
+{
+    int _width = Int_val(Field(args, 0));
+    int _height = Int_val(Field(args, 1));
+    const char * _text = String_val(Field(args, 2));
+    Image result = GenImageText(_width, _height, _text);
+    return Val_image(result);
+}
+
+value raylib_ImageCopy(value arg)
+{
+    Image _image = Image_val(arg);
+    Image result = ImageCopy(_image);
     return Val_image(result);
 }
 
 /*
-value raylib_GenImageChecked(value width, value height, value checksX, value checksY, value col1, value col2)
+value raylib_ImageFromImage(value args)
 {
-    Image result = GenImageChecked(Int_val(width), Int_val(height), Int_val(checksX), Int_val(checksY), Colour_val(col1), Colour_val(col2));
+    Image _image = Image_val(Field(args, 0));
+    Rectangle _rec = UNKNOWN(Field(args, 1));
+    Image result = ImageFromImage(_image, _rec);
     return Val_image(result);
 }
 */
 
-value raylib_GenImageWhiteNoise(value width, value height, value factor)
+value raylib_ImageFromChannel(value args)
 {
-    Image result = GenImageWhiteNoise(Int_val(width), Int_val(height), Double_val(factor));
+    Image _image = Image_val(Field(args, 0));
+    int _selectedChannel = Int_val(Field(args, 1));
+    Image result = ImageFromChannel(_image, _selectedChannel);
     return Val_image(result);
 }
 
-value raylib_GenImagePerlinNoise(value width, value height, value offsetX, value offsetY, value scale)
+value raylib_ImageText(value args)
 {
-    Image result = GenImagePerlinNoise(Int_val(width), Int_val(height), Int_val(offsetX), Int_val(offsetY), Double_val(scale));
-    return Val_image(result);
-}
-
-value raylib_GenImageCellular(value width, value height, value tileSize)
-{
-    Image result = GenImageCellular(Int_val(width), Int_val(height), Int_val(tileSize));
-    return Val_image(result);
-}
-
-value raylib_GenImageText(value width, value height, value text)
-{
-    Image result = GenImageText(Int_val(width), Int_val(height), String_val(text));
-    return Val_image(result);
-}
-
-value raylib_ImageCopy(value image)
-{
-    Image result = ImageCopy(Image_val(image));
+    const char * _text = String_val(Field(args, 0));
+    int _fontSize = Int_val(Field(args, 1));
+    Color _color = Colour_val(Field(args, 2));
+    Image result = ImageText(_text, _fontSize, _color);
     return Val_image(result);
 }
 
 /*
-value raylib_ImageFromImage(value image, value rec)
+value raylib_ImageTextEx(value args)
 {
-    Image result = ImageFromImage(Image_val(image), UNKNOWN(rec));
-    return Val_image(result);
-}
-*/
-
-value raylib_ImageFromChannel(value image, value selectedChannel)
-{
-    Image result = ImageFromChannel(Image_val(image), Int_val(selectedChannel));
-    return Val_image(result);
-}
-
-value raylib_ImageText(value text, value fontSize, value color)
-{
-    Image result = ImageText(String_val(text), Int_val(fontSize), Colour_val(color));
-    return Val_image(result);
-}
-
-/*
-value raylib_ImageTextEx(value font, value text, value fontSize, value spacing, value tint)
-{
-    Image result = ImageTextEx(UNKNOWN(font), String_val(text), Double_val(fontSize), Double_val(spacing), Colour_val(tint));
+    Font _font = UNKNOWN(Field(args, 0));
+    const char * _text = String_val(Field(args, 1));
+    float _fontSize = Double_val(Field(args, 2));
+    float _spacing = Double_val(Field(args, 3));
+    Color _tint = Colour_val(Field(args, 4));
+    Image result = ImageTextEx(_font, _text, _fontSize, _spacing, _tint);
     return Val_image(result);
 }
 */
 
 /*
-value raylib_ImageFormat(value image, value newFormat)
+value raylib_ImageFormat(value args)
 {
-    ImageFormat(UNKNOWN(image), Int_val(newFormat));
+    Image * _image = UNKNOWN(Field(args, 0));
+    int _newFormat = Int_val(Field(args, 1));
+    ImageFormat(_image, _newFormat);
     return Val_unit;
 }
 */
 
 /*
-value raylib_ImageToPOT(value image, value fill)
+value raylib_ImageToPOT(value args)
 {
-    ImageToPOT(UNKNOWN(image), Colour_val(fill));
+    Image * _image = UNKNOWN(Field(args, 0));
+    Color _fill = Colour_val(Field(args, 1));
+    ImageToPOT(_image, _fill);
     return Val_unit;
 }
 */
 
 /*
-value raylib_ImageCrop(value image, value crop)
+value raylib_ImageCrop(value args)
 {
-    ImageCrop(UNKNOWN(image), UNKNOWN(crop));
+    Image * _image = UNKNOWN(Field(args, 0));
+    Rectangle _crop = UNKNOWN(Field(args, 1));
+    ImageCrop(_image, _crop);
     return Val_unit;
 }
 */
 
 /*
-value raylib_ImageAlphaCrop(value image, value threshold)
+value raylib_ImageAlphaCrop(value args)
 {
-    ImageAlphaCrop(UNKNOWN(image), Double_val(threshold));
+    Image * _image = UNKNOWN(Field(args, 0));
+    float _threshold = Double_val(Field(args, 1));
+    ImageAlphaCrop(_image, _threshold);
     return Val_unit;
 }
 */
 
 /*
-value raylib_ImageAlphaClear(value image, value color, value threshold)
+value raylib_ImageAlphaClear(value args)
 {
-    ImageAlphaClear(UNKNOWN(image), Colour_val(color), Double_val(threshold));
+    Image * _image = UNKNOWN(Field(args, 0));
+    Color _color = Colour_val(Field(args, 1));
+    float _threshold = Double_val(Field(args, 2));
+    ImageAlphaClear(_image, _color, _threshold);
     return Val_unit;
 }
 */
 
 /*
-value raylib_ImageAlphaMask(value image, value alphaMask)
+value raylib_ImageAlphaMask(value args)
 {
-    ImageAlphaMask(UNKNOWN(image), Image_val(alphaMask));
+    Image * _image = UNKNOWN(Field(args, 0));
+    Image _alphaMask = Image_val(Field(args, 1));
+    ImageAlphaMask(_image, _alphaMask);
     return Val_unit;
 }
 */
 
 /*
-value raylib_ImageAlphaPremultiply(value image)
+value raylib_ImageAlphaPremultiply(value arg)
 {
-    ImageAlphaPremultiply(UNKNOWN(image));
+    Image * _image = UNKNOWN(arg);
+    ImageAlphaPremultiply(_image);
     return Val_unit;
 }
 */
 
 /*
-value raylib_ImageBlurGaussian(value image, value blurSize)
+value raylib_ImageBlurGaussian(value args)
 {
-    ImageBlurGaussian(UNKNOWN(image), Int_val(blurSize));
+    Image * _image = UNKNOWN(Field(args, 0));
+    int _blurSize = Int_val(Field(args, 1));
+    ImageBlurGaussian(_image, _blurSize);
     return Val_unit;
 }
 */
 
 /*
-value raylib_ImageKernelConvolution(value image, value kernel, value kernelSize)
+value raylib_ImageKernelConvolution(value args)
 {
-    ImageKernelConvolution(UNKNOWN(image), UNKNOWN(kernel), Int_val(kernelSize));
+    Image * _image = UNKNOWN(Field(args, 0));
+    const float * _kernel = UNKNOWN(Field(args, 1));
+    int _kernelSize = Int_val(Field(args, 2));
+    ImageKernelConvolution(_image, _kernel, _kernelSize);
     return Val_unit;
 }
 */
 
 /*
-value raylib_ImageResize(value image, value newWidth, value newHeight)
+value raylib_ImageResize(value args)
 {
-    ImageResize(UNKNOWN(image), Int_val(newWidth), Int_val(newHeight));
+    Image * _image = UNKNOWN(Field(args, 0));
+    int _newWidth = Int_val(Field(args, 1));
+    int _newHeight = Int_val(Field(args, 2));
+    ImageResize(_image, _newWidth, _newHeight);
     return Val_unit;
 }
 */
 
 /*
-value raylib_ImageResizeNN(value image, value newWidth, value newHeight)
+value raylib_ImageResizeNN(value args)
 {
-    ImageResizeNN(UNKNOWN(image), Int_val(newWidth), Int_val(newHeight));
+    Image * _image = UNKNOWN(Field(args, 0));
+    int _newWidth = Int_val(Field(args, 1));
+    int _newHeight = Int_val(Field(args, 2));
+    ImageResizeNN(_image, _newWidth, _newHeight);
     return Val_unit;
 }
 */
 
 /*
-value raylib_ImageResizeCanvas(value image, value newWidth, value newHeight, value offsetX, value offsetY, value fill)
+value raylib_ImageResizeCanvas(value args)
 {
-    ImageResizeCanvas(UNKNOWN(image), Int_val(newWidth), Int_val(newHeight), Int_val(offsetX), Int_val(offsetY), Colour_val(fill));
+    Image * _image = UNKNOWN(Field(args, 0));
+    int _newWidth = Int_val(Field(args, 1));
+    int _newHeight = Int_val(Field(args, 2));
+    int _offsetX = Int_val(Field(args, 3));
+    int _offsetY = Int_val(Field(args, 4));
+    Color _fill = Colour_val(Field(args, 5));
+    ImageResizeCanvas(_image, _newWidth, _newHeight, _offsetX, _offsetY, _fill);
     return Val_unit;
 }
 */
 
 /*
-value raylib_ImageMipmaps(value image)
+value raylib_ImageMipmaps(value arg)
 {
-    ImageMipmaps(UNKNOWN(image));
+    Image * _image = UNKNOWN(arg);
+    ImageMipmaps(_image);
     return Val_unit;
 }
 */
 
 /*
-value raylib_ImageDither(value image, value rBpp, value gBpp, value bBpp, value aBpp)
+value raylib_ImageDither(value args)
 {
-    ImageDither(UNKNOWN(image), Int_val(rBpp), Int_val(gBpp), Int_val(bBpp), Int_val(aBpp));
+    Image * _image = UNKNOWN(Field(args, 0));
+    int _rBpp = Int_val(Field(args, 1));
+    int _gBpp = Int_val(Field(args, 2));
+    int _bBpp = Int_val(Field(args, 3));
+    int _aBpp = Int_val(Field(args, 4));
+    ImageDither(_image, _rBpp, _gBpp, _bBpp, _aBpp);
     return Val_unit;
 }
 */
 
 /*
-value raylib_ImageFlipVertical(value image)
+value raylib_ImageFlipVertical(value arg)
 {
-    ImageFlipVertical(UNKNOWN(image));
+    Image * _image = UNKNOWN(arg);
+    ImageFlipVertical(_image);
     return Val_unit;
 }
 */
 
 /*
-value raylib_ImageFlipHorizontal(value image)
+value raylib_ImageFlipHorizontal(value arg)
 {
-    ImageFlipHorizontal(UNKNOWN(image));
+    Image * _image = UNKNOWN(arg);
+    ImageFlipHorizontal(_image);
     return Val_unit;
 }
 */
 
 /*
-value raylib_ImageRotate(value image, value degrees)
+value raylib_ImageRotate(value args)
 {
-    ImageRotate(UNKNOWN(image), Int_val(degrees));
+    Image * _image = UNKNOWN(Field(args, 0));
+    int _degrees = Int_val(Field(args, 1));
+    ImageRotate(_image, _degrees);
     return Val_unit;
 }
 */
 
 /*
-value raylib_ImageRotateCW(value image)
+value raylib_ImageRotateCW(value arg)
 {
-    ImageRotateCW(UNKNOWN(image));
+    Image * _image = UNKNOWN(arg);
+    ImageRotateCW(_image);
     return Val_unit;
 }
 */
 
 /*
-value raylib_ImageRotateCCW(value image)
+value raylib_ImageRotateCCW(value arg)
 {
-    ImageRotateCCW(UNKNOWN(image));
+    Image * _image = UNKNOWN(arg);
+    ImageRotateCCW(_image);
     return Val_unit;
 }
 */
 
 /*
-value raylib_ImageColorTint(value image, value color)
+value raylib_ImageColorTint(value args)
 {
-    ImageColorTint(UNKNOWN(image), Colour_val(color));
+    Image * _image = UNKNOWN(Field(args, 0));
+    Color _color = Colour_val(Field(args, 1));
+    ImageColorTint(_image, _color);
     return Val_unit;
 }
 */
 
 /*
-value raylib_ImageColorInvert(value image)
+value raylib_ImageColorInvert(value arg)
 {
-    ImageColorInvert(UNKNOWN(image));
+    Image * _image = UNKNOWN(arg);
+    ImageColorInvert(_image);
     return Val_unit;
 }
 */
 
 /*
-value raylib_ImageColorGrayscale(value image)
+value raylib_ImageColorGrayscale(value arg)
 {
-    ImageColorGrayscale(UNKNOWN(image));
+    Image * _image = UNKNOWN(arg);
+    ImageColorGrayscale(_image);
     return Val_unit;
 }
 */
 
 /*
-value raylib_ImageColorContrast(value image, value contrast)
+value raylib_ImageColorContrast(value args)
 {
-    ImageColorContrast(UNKNOWN(image), Double_val(contrast));
+    Image * _image = UNKNOWN(Field(args, 0));
+    float _contrast = Double_val(Field(args, 1));
+    ImageColorContrast(_image, _contrast);
     return Val_unit;
 }
 */
 
 /*
-value raylib_ImageColorBrightness(value image, value brightness)
+value raylib_ImageColorBrightness(value args)
 {
-    ImageColorBrightness(UNKNOWN(image), Int_val(brightness));
+    Image * _image = UNKNOWN(Field(args, 0));
+    int _brightness = Int_val(Field(args, 1));
+    ImageColorBrightness(_image, _brightness);
     return Val_unit;
 }
 */
 
 /*
-value raylib_ImageColorReplace(value image, value color, value replace)
+value raylib_ImageColorReplace(value args)
 {
-    ImageColorReplace(UNKNOWN(image), Colour_val(color), Colour_val(replace));
+    Image * _image = UNKNOWN(Field(args, 0));
+    Color _color = Colour_val(Field(args, 1));
+    Color _replace = Colour_val(Field(args, 2));
+    ImageColorReplace(_image, _color, _replace);
     return Val_unit;
 }
 */
 
 /*
-value raylib_LoadImageColors(value image)
+value raylib_LoadImageColors(value arg)
 {
-    Color * result = LoadImageColors(Image_val(image));
+    Image _image = Image_val(arg);
+    Color * result = LoadImageColors(_image);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_LoadImagePalette(value image, value maxPaletteSize, value colorCount)
+value raylib_LoadImagePalette(value args)
 {
-    Color * result = LoadImagePalette(Image_val(image), Int_val(maxPaletteSize), UNKNOWN(colorCount));
+    Image _image = Image_val(Field(args, 0));
+    int _maxPaletteSize = Int_val(Field(args, 1));
+    int * _colorCount = UNKNOWN(Field(args, 2));
+    Color * result = LoadImagePalette(_image, _maxPaletteSize, _colorCount);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_UnloadImageColors(value colors)
+value raylib_UnloadImageColors(value arg)
 {
-    UnloadImageColors(UNKNOWN(colors));
+    Color * _colors = UNKNOWN(arg);
+    UnloadImageColors(_colors);
     return Val_unit;
 }
 */
 
 /*
-value raylib_UnloadImagePalette(value colors)
+value raylib_UnloadImagePalette(value arg)
 {
-    UnloadImagePalette(UNKNOWN(colors));
+    Color * _colors = UNKNOWN(arg);
+    UnloadImagePalette(_colors);
     return Val_unit;
 }
 */
 
 /*
-value raylib_GetImageAlphaBorder(value image, value threshold)
+value raylib_GetImageAlphaBorder(value args)
 {
-    Rectangle result = GetImageAlphaBorder(Image_val(image), Double_val(threshold));
+    Image _image = Image_val(Field(args, 0));
+    float _threshold = Double_val(Field(args, 1));
+    Rectangle result = GetImageAlphaBorder(_image, _threshold);
     return UNKNOWN(result);
 }
 */
 
-value raylib_GetImageColor(value image, value x, value y)
+value raylib_GetImageColor(value args)
 {
-    Color result = GetImageColor(Image_val(image), Int_val(x), Int_val(y));
+    Image _image = Image_val(Field(args, 0));
+    int _x = Int_val(Field(args, 1));
+    int _y = Int_val(Field(args, 2));
+    Color result = GetImageColor(_image, _x, _y);
     return Val_colour(result);
 }
 
 /*
-value raylib_ImageClearBackground(value dst, value color)
+value raylib_ImageClearBackground(value args)
 {
-    ImageClearBackground(UNKNOWN(dst), Colour_val(color));
+    Image * _dst = UNKNOWN(Field(args, 0));
+    Color _color = Colour_val(Field(args, 1));
+    ImageClearBackground(_dst, _color);
     return Val_unit;
 }
 */
 
 /*
-value raylib_ImageDrawPixel(value dst, value posX, value posY, value color)
+value raylib_ImageDrawPixel(value args)
 {
-    ImageDrawPixel(UNKNOWN(dst), Int_val(posX), Int_val(posY), Colour_val(color));
+    Image * _dst = UNKNOWN(Field(args, 0));
+    int _posX = Int_val(Field(args, 1));
+    int _posY = Int_val(Field(args, 2));
+    Color _color = Colour_val(Field(args, 3));
+    ImageDrawPixel(_dst, _posX, _posY, _color);
     return Val_unit;
 }
 */
 
 /*
-value raylib_ImageDrawPixelV(value dst, value position, value color)
+value raylib_ImageDrawPixelV(value args)
 {
-    ImageDrawPixelV(UNKNOWN(dst), Vector2_val(position), Colour_val(color));
+    Image * _dst = UNKNOWN(Field(args, 0));
+    Vector2 _position = Vector2_val(Field(args, 1));
+    Color _color = Colour_val(Field(args, 2));
+    ImageDrawPixelV(_dst, _position, _color);
     return Val_unit;
 }
 */
 
 /*
-value raylib_ImageDrawLine(value dst, value startPosX, value startPosY, value endPosX, value endPosY, value color)
+value raylib_ImageDrawLine(value args)
 {
-    ImageDrawLine(UNKNOWN(dst), Int_val(startPosX), Int_val(startPosY), Int_val(endPosX), Int_val(endPosY), Colour_val(color));
+    Image * _dst = UNKNOWN(Field(args, 0));
+    int _startPosX = Int_val(Field(args, 1));
+    int _startPosY = Int_val(Field(args, 2));
+    int _endPosX = Int_val(Field(args, 3));
+    int _endPosY = Int_val(Field(args, 4));
+    Color _color = Colour_val(Field(args, 5));
+    ImageDrawLine(_dst, _startPosX, _startPosY, _endPosX, _endPosY, _color);
     return Val_unit;
 }
 */
 
 /*
-value raylib_ImageDrawLineV(value dst, value start, value end, value color)
+value raylib_ImageDrawLineV(value args)
 {
-    ImageDrawLineV(UNKNOWN(dst), Vector2_val(start), Vector2_val(end), Colour_val(color));
+    Image * _dst = UNKNOWN(Field(args, 0));
+    Vector2 _start = Vector2_val(Field(args, 1));
+    Vector2 _end = Vector2_val(Field(args, 2));
+    Color _color = Colour_val(Field(args, 3));
+    ImageDrawLineV(_dst, _start, _end, _color);
     return Val_unit;
 }
 */
 
 /*
-value raylib_ImageDrawLineEx(value dst, value start, value end, value thick, value color)
+value raylib_ImageDrawLineEx(value args)
 {
-    ImageDrawLineEx(UNKNOWN(dst), Vector2_val(start), Vector2_val(end), Int_val(thick), Colour_val(color));
+    Image * _dst = UNKNOWN(Field(args, 0));
+    Vector2 _start = Vector2_val(Field(args, 1));
+    Vector2 _end = Vector2_val(Field(args, 2));
+    int _thick = Int_val(Field(args, 3));
+    Color _color = Colour_val(Field(args, 4));
+    ImageDrawLineEx(_dst, _start, _end, _thick, _color);
     return Val_unit;
 }
 */
 
 /*
-value raylib_ImageDrawCircle(value dst, value centerX, value centerY, value radius, value color)
+value raylib_ImageDrawCircle(value args)
 {
-    ImageDrawCircle(UNKNOWN(dst), Int_val(centerX), Int_val(centerY), Int_val(radius), Colour_val(color));
+    Image * _dst = UNKNOWN(Field(args, 0));
+    int _centerX = Int_val(Field(args, 1));
+    int _centerY = Int_val(Field(args, 2));
+    int _radius = Int_val(Field(args, 3));
+    Color _color = Colour_val(Field(args, 4));
+    ImageDrawCircle(_dst, _centerX, _centerY, _radius, _color);
     return Val_unit;
 }
 */
 
 /*
-value raylib_ImageDrawCircleV(value dst, value center, value radius, value color)
+value raylib_ImageDrawCircleV(value args)
 {
-    ImageDrawCircleV(UNKNOWN(dst), Vector2_val(center), Int_val(radius), Colour_val(color));
+    Image * _dst = UNKNOWN(Field(args, 0));
+    Vector2 _center = Vector2_val(Field(args, 1));
+    int _radius = Int_val(Field(args, 2));
+    Color _color = Colour_val(Field(args, 3));
+    ImageDrawCircleV(_dst, _center, _radius, _color);
     return Val_unit;
 }
 */
 
 /*
-value raylib_ImageDrawCircleLines(value dst, value centerX, value centerY, value radius, value color)
+value raylib_ImageDrawCircleLines(value args)
 {
-    ImageDrawCircleLines(UNKNOWN(dst), Int_val(centerX), Int_val(centerY), Int_val(radius), Colour_val(color));
+    Image * _dst = UNKNOWN(Field(args, 0));
+    int _centerX = Int_val(Field(args, 1));
+    int _centerY = Int_val(Field(args, 2));
+    int _radius = Int_val(Field(args, 3));
+    Color _color = Colour_val(Field(args, 4));
+    ImageDrawCircleLines(_dst, _centerX, _centerY, _radius, _color);
     return Val_unit;
 }
 */
 
 /*
-value raylib_ImageDrawCircleLinesV(value dst, value center, value radius, value color)
+value raylib_ImageDrawCircleLinesV(value args)
 {
-    ImageDrawCircleLinesV(UNKNOWN(dst), Vector2_val(center), Int_val(radius), Colour_val(color));
+    Image * _dst = UNKNOWN(Field(args, 0));
+    Vector2 _center = Vector2_val(Field(args, 1));
+    int _radius = Int_val(Field(args, 2));
+    Color _color = Colour_val(Field(args, 3));
+    ImageDrawCircleLinesV(_dst, _center, _radius, _color);
     return Val_unit;
 }
 */
 
 /*
-value raylib_ImageDrawRectangle(value dst, value posX, value posY, value width, value height, value color)
+value raylib_ImageDrawRectangle(value args)
 {
-    ImageDrawRectangle(UNKNOWN(dst), Int_val(posX), Int_val(posY), Int_val(width), Int_val(height), Colour_val(color));
+    Image * _dst = UNKNOWN(Field(args, 0));
+    int _posX = Int_val(Field(args, 1));
+    int _posY = Int_val(Field(args, 2));
+    int _width = Int_val(Field(args, 3));
+    int _height = Int_val(Field(args, 4));
+    Color _color = Colour_val(Field(args, 5));
+    ImageDrawRectangle(_dst, _posX, _posY, _width, _height, _color);
     return Val_unit;
 }
 */
 
 /*
-value raylib_ImageDrawRectangleV(value dst, value position, value size, value color)
+value raylib_ImageDrawRectangleV(value args)
 {
-    ImageDrawRectangleV(UNKNOWN(dst), Vector2_val(position), Vector2_val(size), Colour_val(color));
+    Image * _dst = UNKNOWN(Field(args, 0));
+    Vector2 _position = Vector2_val(Field(args, 1));
+    Vector2 _size = Vector2_val(Field(args, 2));
+    Color _color = Colour_val(Field(args, 3));
+    ImageDrawRectangleV(_dst, _position, _size, _color);
     return Val_unit;
 }
 */
 
 /*
-value raylib_ImageDrawRectangleRec(value dst, value rec, value color)
+value raylib_ImageDrawRectangleRec(value args)
 {
-    ImageDrawRectangleRec(UNKNOWN(dst), UNKNOWN(rec), Colour_val(color));
+    Image * _dst = UNKNOWN(Field(args, 0));
+    Rectangle _rec = UNKNOWN(Field(args, 1));
+    Color _color = Colour_val(Field(args, 2));
+    ImageDrawRectangleRec(_dst, _rec, _color);
     return Val_unit;
 }
 */
 
 /*
-value raylib_ImageDrawRectangleLines(value dst, value rec, value thick, value color)
+value raylib_ImageDrawRectangleLines(value args)
 {
-    ImageDrawRectangleLines(UNKNOWN(dst), UNKNOWN(rec), Int_val(thick), Colour_val(color));
+    Image * _dst = UNKNOWN(Field(args, 0));
+    Rectangle _rec = UNKNOWN(Field(args, 1));
+    int _thick = Int_val(Field(args, 2));
+    Color _color = Colour_val(Field(args, 3));
+    ImageDrawRectangleLines(_dst, _rec, _thick, _color);
     return Val_unit;
 }
 */
 
 /*
-value raylib_ImageDrawTriangle(value dst, value v1, value v2, value v3, value color)
+value raylib_ImageDrawTriangle(value args)
 {
-    ImageDrawTriangle(UNKNOWN(dst), Vector2_val(v1), Vector2_val(v2), Vector2_val(v3), Colour_val(color));
+    Image * _dst = UNKNOWN(Field(args, 0));
+    Vector2 _v1 = Vector2_val(Field(args, 1));
+    Vector2 _v2 = Vector2_val(Field(args, 2));
+    Vector2 _v3 = Vector2_val(Field(args, 3));
+    Color _color = Colour_val(Field(args, 4));
+    ImageDrawTriangle(_dst, _v1, _v2, _v3, _color);
     return Val_unit;
 }
 */
 
 /*
-value raylib_ImageDrawTriangleEx(value dst, value v1, value v2, value v3, value c1, value c2, value c3)
+value raylib_ImageDrawTriangleEx(value args)
 {
-    ImageDrawTriangleEx(UNKNOWN(dst), Vector2_val(v1), Vector2_val(v2), Vector2_val(v3), Colour_val(c1), Colour_val(c2), Colour_val(c3));
+    Image * _dst = UNKNOWN(Field(args, 0));
+    Vector2 _v1 = Vector2_val(Field(args, 1));
+    Vector2 _v2 = Vector2_val(Field(args, 2));
+    Vector2 _v3 = Vector2_val(Field(args, 3));
+    Color _c1 = Colour_val(Field(args, 4));
+    Color _c2 = Colour_val(Field(args, 5));
+    Color _c3 = Colour_val(Field(args, 6));
+    ImageDrawTriangleEx(_dst, _v1, _v2, _v3, _c1, _c2, _c3);
     return Val_unit;
 }
 */
 
 /*
-value raylib_ImageDrawTriangleLines(value dst, value v1, value v2, value v3, value color)
+value raylib_ImageDrawTriangleLines(value args)
 {
-    ImageDrawTriangleLines(UNKNOWN(dst), Vector2_val(v1), Vector2_val(v2), Vector2_val(v3), Colour_val(color));
+    Image * _dst = UNKNOWN(Field(args, 0));
+    Vector2 _v1 = Vector2_val(Field(args, 1));
+    Vector2 _v2 = Vector2_val(Field(args, 2));
+    Vector2 _v3 = Vector2_val(Field(args, 3));
+    Color _color = Colour_val(Field(args, 4));
+    ImageDrawTriangleLines(_dst, _v1, _v2, _v3, _color);
     return Val_unit;
 }
 */
 
 /*
-value raylib_ImageDrawTriangleFan(value dst, value points, value pointCount, value color)
+value raylib_ImageDrawTriangleFan(value args)
 {
-    ImageDrawTriangleFan(UNKNOWN(dst), UNKNOWN(points), Int_val(pointCount), Colour_val(color));
+    Image * _dst = UNKNOWN(Field(args, 0));
+    Vector2 * _points = UNKNOWN(Field(args, 1));
+    int _pointCount = Int_val(Field(args, 2));
+    Color _color = Colour_val(Field(args, 3));
+    ImageDrawTriangleFan(_dst, _points, _pointCount, _color);
     return Val_unit;
 }
 */
 
 /*
-value raylib_ImageDrawTriangleStrip(value dst, value points, value pointCount, value color)
+value raylib_ImageDrawTriangleStrip(value args)
 {
-    ImageDrawTriangleStrip(UNKNOWN(dst), UNKNOWN(points), Int_val(pointCount), Colour_val(color));
+    Image * _dst = UNKNOWN(Field(args, 0));
+    Vector2 * _points = UNKNOWN(Field(args, 1));
+    int _pointCount = Int_val(Field(args, 2));
+    Color _color = Colour_val(Field(args, 3));
+    ImageDrawTriangleStrip(_dst, _points, _pointCount, _color);
     return Val_unit;
 }
 */
 
 /*
-value raylib_ImageDraw(value dst, value src, value srcRec, value dstRec, value tint)
+value raylib_ImageDraw(value args)
 {
-    ImageDraw(UNKNOWN(dst), Image_val(src), UNKNOWN(srcRec), UNKNOWN(dstRec), Colour_val(tint));
+    Image * _dst = UNKNOWN(Field(args, 0));
+    Image _src = Image_val(Field(args, 1));
+    Rectangle _srcRec = UNKNOWN(Field(args, 2));
+    Rectangle _dstRec = UNKNOWN(Field(args, 3));
+    Color _tint = Colour_val(Field(args, 4));
+    ImageDraw(_dst, _src, _srcRec, _dstRec, _tint);
     return Val_unit;
 }
 */
 
 /*
-value raylib_ImageDrawText(value dst, value text, value posX, value posY, value fontSize, value color)
+value raylib_ImageDrawText(value args)
 {
-    ImageDrawText(UNKNOWN(dst), String_val(text), Int_val(posX), Int_val(posY), Int_val(fontSize), Colour_val(color));
+    Image * _dst = UNKNOWN(Field(args, 0));
+    const char * _text = String_val(Field(args, 1));
+    int _posX = Int_val(Field(args, 2));
+    int _posY = Int_val(Field(args, 3));
+    int _fontSize = Int_val(Field(args, 4));
+    Color _color = Colour_val(Field(args, 5));
+    ImageDrawText(_dst, _text, _posX, _posY, _fontSize, _color);
     return Val_unit;
 }
 */
 
 /*
-value raylib_ImageDrawTextEx(value dst, value font, value text, value position, value fontSize, value spacing, value tint)
+value raylib_ImageDrawTextEx(value args)
 {
-    ImageDrawTextEx(UNKNOWN(dst), UNKNOWN(font), String_val(text), Vector2_val(position), Double_val(fontSize), Double_val(spacing), Colour_val(tint));
+    Image * _dst = UNKNOWN(Field(args, 0));
+    Font _font = UNKNOWN(Field(args, 1));
+    const char * _text = String_val(Field(args, 2));
+    Vector2 _position = Vector2_val(Field(args, 3));
+    float _fontSize = Double_val(Field(args, 4));
+    float _spacing = Double_val(Field(args, 5));
+    Color _tint = Colour_val(Field(args, 6));
+    ImageDrawTextEx(_dst, _font, _text, _position, _fontSize, _spacing, _tint);
     return Val_unit;
 }
 */
 
-value raylib_LoadTexture(value fileName)
+value raylib_LoadTexture(value arg)
 {
-    Texture2D result = LoadTexture(String_val(fileName));
+    const char * _fileName = String_val(arg);
+    Texture2D result = LoadTexture(_fileName);
     return Val_texture(result);
 }
 
-value raylib_LoadTextureFromImage(value image)
+value raylib_LoadTextureFromImage(value arg)
 {
-    Texture2D result = LoadTextureFromImage(Image_val(image));
+    Image _image = Image_val(arg);
+    Texture2D result = LoadTextureFromImage(_image);
     return Val_texture(result);
 }
 
 /*
-value raylib_LoadTextureCubemap(value image, value layout)
+value raylib_LoadTextureCubemap(value args)
 {
-    TextureCubemap result = LoadTextureCubemap(Image_val(image), Int_val(layout));
+    Image _image = Image_val(Field(args, 0));
+    int _layout = Int_val(Field(args, 1));
+    TextureCubemap result = LoadTextureCubemap(_image, _layout);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_LoadRenderTexture(value width, value height)
+value raylib_LoadRenderTexture(value args)
 {
-    RenderTexture2D result = LoadRenderTexture(Int_val(width), Int_val(height));
+    int _width = Int_val(Field(args, 0));
+    int _height = Int_val(Field(args, 1));
+    RenderTexture2D result = LoadRenderTexture(_width, _height);
     return UNKNOWN(result);
 }
 */
 
-value raylib_IsTextureValid(value texture)
+value raylib_IsTextureValid(value arg)
 {
-    bool result = IsTextureValid(Texture_val(texture));
+    Texture2D _texture = Texture_val(arg);
+    bool result = IsTextureValid(_texture);
     return Val_bool(result);
 }
 
-value raylib_UnloadTexture(value texture)
+value raylib_UnloadTexture(value arg)
 {
-    UnloadTexture(Texture_val(texture));
+    Texture2D _texture = Texture_val(arg);
+    UnloadTexture(_texture);
     return Val_unit;
 }
 
 /*
-value raylib_IsRenderTextureValid(value target)
+value raylib_IsRenderTextureValid(value arg)
 {
-    bool result = IsRenderTextureValid(UNKNOWN(target));
+    RenderTexture2D _target = UNKNOWN(arg);
+    bool result = IsRenderTextureValid(_target);
     return Val_bool(result);
 }
 */
 
 /*
-value raylib_UnloadRenderTexture(value target)
+value raylib_UnloadRenderTexture(value arg)
 {
-    UnloadRenderTexture(UNKNOWN(target));
+    RenderTexture2D _target = UNKNOWN(arg);
+    UnloadRenderTexture(_target);
     return Val_unit;
 }
 */
 
 /*
-value raylib_UpdateTexture(value texture, value pixels)
+value raylib_UpdateTexture(value args)
 {
-    UpdateTexture(Texture_val(texture), UNKNOWN(pixels));
+    Texture2D _texture = Texture_val(Field(args, 0));
+    const void * _pixels = UNKNOWN(Field(args, 1));
+    UpdateTexture(_texture, _pixels);
     return Val_unit;
 }
 */
 
 /*
-value raylib_UpdateTextureRec(value texture, value rec, value pixels)
+value raylib_UpdateTextureRec(value args)
 {
-    UpdateTextureRec(Texture_val(texture), UNKNOWN(rec), UNKNOWN(pixels));
+    Texture2D _texture = Texture_val(Field(args, 0));
+    Rectangle _rec = UNKNOWN(Field(args, 1));
+    const void * _pixels = UNKNOWN(Field(args, 2));
+    UpdateTextureRec(_texture, _rec, _pixels);
     return Val_unit;
 }
 */
 
 /*
-value raylib_GenTextureMipmaps(value texture)
+value raylib_GenTextureMipmaps(value arg)
 {
-    GenTextureMipmaps(UNKNOWN(texture));
+    Texture2D * _texture = UNKNOWN(arg);
+    GenTextureMipmaps(_texture);
     return Val_unit;
 }
 */
 
-value raylib_SetTextureFilter(value texture, value filter)
+value raylib_SetTextureFilter(value args)
 {
-    SetTextureFilter(Texture_val(texture), Int_val(filter));
+    Texture2D _texture = Texture_val(Field(args, 0));
+    int _filter = Int_val(Field(args, 1));
+    SetTextureFilter(_texture, _filter);
     return Val_unit;
 }
 
-value raylib_SetTextureWrap(value texture, value wrap)
+value raylib_SetTextureWrap(value args)
 {
-    SetTextureWrap(Texture_val(texture), Int_val(wrap));
+    Texture2D _texture = Texture_val(Field(args, 0));
+    int _wrap = Int_val(Field(args, 1));
+    SetTextureWrap(_texture, _wrap);
     return Val_unit;
 }
 
-value raylib_DrawTexture(value texture, value posX, value posY, value tint)
+value raylib_DrawTexture(value args)
 {
-    DrawTexture(Texture_val(texture), Int_val(posX), Int_val(posY), Colour_val(tint));
+    Texture2D _texture = Texture_val(Field(args, 0));
+    int _posX = Int_val(Field(args, 1));
+    int _posY = Int_val(Field(args, 2));
+    Color _tint = Colour_val(Field(args, 3));
+    DrawTexture(_texture, _posX, _posY, _tint);
     return Val_unit;
 }
 
-value raylib_DrawTextureV(value texture, value position, value tint)
+value raylib_DrawTextureV(value args)
 {
-    DrawTextureV(Texture_val(texture), Vector2_val(position), Colour_val(tint));
+    Texture2D _texture = Texture_val(Field(args, 0));
+    Vector2 _position = Vector2_val(Field(args, 1));
+    Color _tint = Colour_val(Field(args, 2));
+    DrawTextureV(_texture, _position, _tint);
     return Val_unit;
 }
 
-value raylib_DrawTextureEx(value texture, value position, value rotation, value scale, value tint)
+value raylib_DrawTextureEx(value args)
 {
-    DrawTextureEx(Texture_val(texture), Vector2_val(position), Double_val(rotation), Double_val(scale), Colour_val(tint));
+    Texture2D _texture = Texture_val(Field(args, 0));
+    Vector2 _position = Vector2_val(Field(args, 1));
+    float _rotation = Double_val(Field(args, 2));
+    float _scale = Double_val(Field(args, 3));
+    Color _tint = Colour_val(Field(args, 4));
+    DrawTextureEx(_texture, _position, _rotation, _scale, _tint);
     return Val_unit;
 }
 
 /*
-value raylib_DrawTextureRec(value texture, value source, value position, value tint)
+value raylib_DrawTextureRec(value args)
 {
-    DrawTextureRec(Texture_val(texture), UNKNOWN(source), Vector2_val(position), Colour_val(tint));
+    Texture2D _texture = Texture_val(Field(args, 0));
+    Rectangle _source = UNKNOWN(Field(args, 1));
+    Vector2 _position = Vector2_val(Field(args, 2));
+    Color _tint = Colour_val(Field(args, 3));
+    DrawTextureRec(_texture, _source, _position, _tint);
     return Val_unit;
 }
 */
 
 /*
-value raylib_DrawTexturePro(value texture, value source, value dest, value origin, value rotation, value tint)
+value raylib_DrawTexturePro(value args)
 {
-    DrawTexturePro(Texture_val(texture), UNKNOWN(source), UNKNOWN(dest), Vector2_val(origin), Double_val(rotation), Colour_val(tint));
+    Texture2D _texture = Texture_val(Field(args, 0));
+    Rectangle _source = UNKNOWN(Field(args, 1));
+    Rectangle _dest = UNKNOWN(Field(args, 2));
+    Vector2 _origin = Vector2_val(Field(args, 3));
+    float _rotation = Double_val(Field(args, 4));
+    Color _tint = Colour_val(Field(args, 5));
+    DrawTexturePro(_texture, _source, _dest, _origin, _rotation, _tint);
     return Val_unit;
 }
 */
 
 /*
-value raylib_DrawTextureNPatch(value texture, value nPatchInfo, value dest, value origin, value rotation, value tint)
+value raylib_DrawTextureNPatch(value args)
 {
-    DrawTextureNPatch(Texture_val(texture), UNKNOWN(nPatchInfo), UNKNOWN(dest), Vector2_val(origin), Double_val(rotation), Colour_val(tint));
+    Texture2D _texture = Texture_val(Field(args, 0));
+    NPatchInfo _nPatchInfo = UNKNOWN(Field(args, 1));
+    Rectangle _dest = UNKNOWN(Field(args, 2));
+    Vector2 _origin = Vector2_val(Field(args, 3));
+    float _rotation = Double_val(Field(args, 4));
+    Color _tint = Colour_val(Field(args, 5));
+    DrawTextureNPatch(_texture, _nPatchInfo, _dest, _origin, _rotation, _tint);
     return Val_unit;
 }
 */
 
-value raylib_ColorIsEqual(value col1, value col2)
+value raylib_ColorIsEqual(value args)
 {
-    bool result = ColorIsEqual(Colour_val(col1), Colour_val(col2));
+    Color _col1 = Colour_val(Field(args, 0));
+    Color _col2 = Colour_val(Field(args, 1));
+    bool result = ColorIsEqual(_col1, _col2);
     return Val_bool(result);
 }
 
-value raylib_Fade(value color, value alpha)
+value raylib_Fade(value args)
 {
-    Color result = Fade(Colour_val(color), Double_val(alpha));
+    Color _color = Colour_val(Field(args, 0));
+    float _alpha = Double_val(Field(args, 1));
+    Color result = Fade(_color, _alpha);
     return Val_colour(result);
 }
 
-value raylib_ColorToInt(value color)
+value raylib_ColorToInt(value arg)
 {
-    int result = ColorToInt(Colour_val(color));
+    Color _color = Colour_val(arg);
+    int result = ColorToInt(_color);
     return Val_int(result);
 }
 
 /*
-value raylib_ColorNormalize(value color)
+value raylib_ColorNormalize(value arg)
 {
-    Vector4 result = ColorNormalize(Colour_val(color));
+    Color _color = Colour_val(arg);
+    Vector4 result = ColorNormalize(_color);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_ColorFromNormalized(value normalized)
+value raylib_ColorFromNormalized(value arg)
 {
-    Color result = ColorFromNormalized(UNKNOWN(normalized));
+    Vector4 _normalized = UNKNOWN(arg);
+    Color result = ColorFromNormalized(_normalized);
     return Val_colour(result);
 }
 */
 
 /*
-value raylib_ColorToHSV(value color)
+value raylib_ColorToHSV(value arg)
 {
-    Vector3 result = ColorToHSV(Colour_val(color));
+    Color _color = Colour_val(arg);
+    Vector3 result = ColorToHSV(_color);
     return UNKNOWN(result);
 }
 */
 
-value raylib_ColorFromHSV(value hue, value saturation, value value)
+value raylib_ColorFromHSV(value args)
 {
-    Color result = ColorFromHSV(Double_val(hue), Double_val(saturation), Double_val(value));
+    float _hue = Double_val(Field(args, 0));
+    float _saturation = Double_val(Field(args, 1));
+    float _value = Double_val(Field(args, 2));
+    Color result = ColorFromHSV(_hue, _saturation, _value);
     return Val_colour(result);
 }
 
-value raylib_ColorTint(value color, value tint)
+value raylib_ColorTint(value args)
 {
-    Color result = ColorTint(Colour_val(color), Colour_val(tint));
+    Color _color = Colour_val(Field(args, 0));
+    Color _tint = Colour_val(Field(args, 1));
+    Color result = ColorTint(_color, _tint);
     return Val_colour(result);
 }
 
-value raylib_ColorBrightness(value color, value factor)
+value raylib_ColorBrightness(value args)
 {
-    Color result = ColorBrightness(Colour_val(color), Double_val(factor));
+    Color _color = Colour_val(Field(args, 0));
+    float _factor = Double_val(Field(args, 1));
+    Color result = ColorBrightness(_color, _factor);
     return Val_colour(result);
 }
 
-value raylib_ColorContrast(value color, value contrast)
+value raylib_ColorContrast(value args)
 {
-    Color result = ColorContrast(Colour_val(color), Double_val(contrast));
+    Color _color = Colour_val(Field(args, 0));
+    float _contrast = Double_val(Field(args, 1));
+    Color result = ColorContrast(_color, _contrast);
     return Val_colour(result);
 }
 
-value raylib_ColorAlpha(value color, value alpha)
+value raylib_ColorAlpha(value args)
 {
-    Color result = ColorAlpha(Colour_val(color), Double_val(alpha));
+    Color _color = Colour_val(Field(args, 0));
+    float _alpha = Double_val(Field(args, 1));
+    Color result = ColorAlpha(_color, _alpha);
     return Val_colour(result);
 }
 
-value raylib_ColorAlphaBlend(value dst, value src, value tint)
+value raylib_ColorAlphaBlend(value args)
 {
-    Color result = ColorAlphaBlend(Colour_val(dst), Colour_val(src), Colour_val(tint));
+    Color _dst = Colour_val(Field(args, 0));
+    Color _src = Colour_val(Field(args, 1));
+    Color _tint = Colour_val(Field(args, 2));
+    Color result = ColorAlphaBlend(_dst, _src, _tint);
     return Val_colour(result);
 }
 
-value raylib_ColorLerp(value color1, value color2, value factor)
+value raylib_ColorLerp(value args)
 {
-    Color result = ColorLerp(Colour_val(color1), Colour_val(color2), Double_val(factor));
+    Color _color1 = Colour_val(Field(args, 0));
+    Color _color2 = Colour_val(Field(args, 1));
+    float _factor = Double_val(Field(args, 2));
+    Color result = ColorLerp(_color1, _color2, _factor);
     return Val_colour(result);
 }
 
 /*
-value raylib_GetColor(value hexValue)
+value raylib_GetColor(value arg)
 {
-    Color result = GetColor(UNKNOWN(hexValue));
+    unsigned int _hexValue = UNKNOWN(arg);
+    Color result = GetColor(_hexValue);
     return Val_colour(result);
 }
 */
 
 /*
-value raylib_GetPixelColor(value srcPtr, value format)
+value raylib_GetPixelColor(value args)
 {
-    Color result = GetPixelColor(UNKNOWN(srcPtr), Int_val(format));
+    void * _srcPtr = UNKNOWN(Field(args, 0));
+    int _format = Int_val(Field(args, 1));
+    Color result = GetPixelColor(_srcPtr, _format);
     return Val_colour(result);
 }
 */
 
 /*
-value raylib_SetPixelColor(value dstPtr, value color, value format)
+value raylib_SetPixelColor(value args)
 {
-    SetPixelColor(UNKNOWN(dstPtr), Colour_val(color), Int_val(format));
+    void * _dstPtr = UNKNOWN(Field(args, 0));
+    Color _color = Colour_val(Field(args, 1));
+    int _format = Int_val(Field(args, 2));
+    SetPixelColor(_dstPtr, _color, _format);
     return Val_unit;
 }
 */
 
-value raylib_GetPixelDataSize(value width, value height, value format)
+value raylib_GetPixelDataSize(value args)
 {
-    int result = GetPixelDataSize(Int_val(width), Int_val(height), Int_val(format));
+    int _width = Int_val(Field(args, 0));
+    int _height = Int_val(Field(args, 1));
+    int _format = Int_val(Field(args, 2));
+    int result = GetPixelDataSize(_width, _height, _format);
     return Val_int(result);
 }
 
@@ -2798,817 +3581,1146 @@ value raylib_GetFontDefault(value unit)
 */
 
 /*
-value raylib_LoadFont(value fileName)
+value raylib_LoadFont(value arg)
 {
-    Font result = LoadFont(String_val(fileName));
+    const char * _fileName = String_val(arg);
+    Font result = LoadFont(_fileName);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_LoadFontEx(value fileName, value fontSize, value codepoints, value codepointCount)
+value raylib_LoadFontEx(value args)
 {
-    Font result = LoadFontEx(String_val(fileName), Int_val(fontSize), UNKNOWN(codepoints), Int_val(codepointCount));
+    const char * _fileName = String_val(Field(args, 0));
+    int _fontSize = Int_val(Field(args, 1));
+    int * _codepoints = UNKNOWN(Field(args, 2));
+    int _codepointCount = Int_val(Field(args, 3));
+    Font result = LoadFontEx(_fileName, _fontSize, _codepoints, _codepointCount);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_LoadFontFromImage(value image, value key, value firstChar)
+value raylib_LoadFontFromImage(value args)
 {
-    Font result = LoadFontFromImage(Image_val(image), Colour_val(key), Int_val(firstChar));
+    Image _image = Image_val(Field(args, 0));
+    Color _key = Colour_val(Field(args, 1));
+    int _firstChar = Int_val(Field(args, 2));
+    Font result = LoadFontFromImage(_image, _key, _firstChar);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_LoadFontFromMemory(value fileType, value fileData, value dataSize, value fontSize, value codepoints, value codepointCount)
+value raylib_LoadFontFromMemory(value args)
 {
-    Font result = LoadFontFromMemory(String_val(fileType), UNKNOWN(fileData), Int_val(dataSize), Int_val(fontSize), UNKNOWN(codepoints), Int_val(codepointCount));
+    const char * _fileType = String_val(Field(args, 0));
+    const unsigned char * _fileData = UNKNOWN(Field(args, 1));
+    int _dataSize = Int_val(Field(args, 2));
+    int _fontSize = Int_val(Field(args, 3));
+    int * _codepoints = UNKNOWN(Field(args, 4));
+    int _codepointCount = Int_val(Field(args, 5));
+    Font result = LoadFontFromMemory(_fileType, _fileData, _dataSize, _fontSize, _codepoints, _codepointCount);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_IsFontValid(value font)
+value raylib_IsFontValid(value arg)
 {
-    bool result = IsFontValid(UNKNOWN(font));
+    Font _font = UNKNOWN(arg);
+    bool result = IsFontValid(_font);
     return Val_bool(result);
 }
 */
 
 /*
-value raylib_LoadFontData(value fileData, value dataSize, value fontSize, value codepoints, value codepointCount, value type)
+value raylib_LoadFontData(value args)
 {
-    GlyphInfo * result = LoadFontData(UNKNOWN(fileData), Int_val(dataSize), Int_val(fontSize), UNKNOWN(codepoints), Int_val(codepointCount), Int_val(type));
+    const unsigned char * _fileData = UNKNOWN(Field(args, 0));
+    int _dataSize = Int_val(Field(args, 1));
+    int _fontSize = Int_val(Field(args, 2));
+    int * _codepoints = UNKNOWN(Field(args, 3));
+    int _codepointCount = Int_val(Field(args, 4));
+    int _type = Int_val(Field(args, 5));
+    GlyphInfo * result = LoadFontData(_fileData, _dataSize, _fontSize, _codepoints, _codepointCount, _type);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_GenImageFontAtlas(value glyphs, value glyphRecs, value glyphCount, value fontSize, value padding, value packMethod)
+value raylib_GenImageFontAtlas(value args)
 {
-    Image result = GenImageFontAtlas(UNKNOWN(glyphs), UNKNOWN(glyphRecs), Int_val(glyphCount), Int_val(fontSize), Int_val(padding), Int_val(packMethod));
+    const GlyphInfo * _glyphs = UNKNOWN(Field(args, 0));
+    Rectangle ** _glyphRecs = UNKNOWN(Field(args, 1));
+    int _glyphCount = Int_val(Field(args, 2));
+    int _fontSize = Int_val(Field(args, 3));
+    int _padding = Int_val(Field(args, 4));
+    int _packMethod = Int_val(Field(args, 5));
+    Image result = GenImageFontAtlas(_glyphs, _glyphRecs, _glyphCount, _fontSize, _padding, _packMethod);
     return Val_image(result);
 }
 */
 
 /*
-value raylib_UnloadFontData(value glyphs, value glyphCount)
+value raylib_UnloadFontData(value args)
 {
-    UnloadFontData(UNKNOWN(glyphs), Int_val(glyphCount));
+    GlyphInfo * _glyphs = UNKNOWN(Field(args, 0));
+    int _glyphCount = Int_val(Field(args, 1));
+    UnloadFontData(_glyphs, _glyphCount);
     return Val_unit;
 }
 */
 
 /*
-value raylib_UnloadFont(value font)
+value raylib_UnloadFont(value arg)
 {
-    UnloadFont(UNKNOWN(font));
+    Font _font = UNKNOWN(arg);
+    UnloadFont(_font);
     return Val_unit;
 }
 */
 
 /*
-value raylib_ExportFontAsCode(value font, value fileName)
+value raylib_ExportFontAsCode(value args)
 {
-    bool result = ExportFontAsCode(UNKNOWN(font), String_val(fileName));
+    Font _font = UNKNOWN(Field(args, 0));
+    const char * _fileName = String_val(Field(args, 1));
+    bool result = ExportFontAsCode(_font, _fileName);
     return Val_bool(result);
 }
 */
 
-value raylib_DrawFPS(value posX, value posY)
+value raylib_DrawFPS(value args)
 {
-    DrawFPS(Int_val(posX), Int_val(posY));
+    int _posX = Int_val(Field(args, 0));
+    int _posY = Int_val(Field(args, 1));
+    DrawFPS(_posX, _posY);
     return Val_unit;
 }
 
-value raylib_DrawText(value text, value posX, value posY, value fontSize, value color)
+value raylib_DrawText(value args)
 {
-    DrawText(String_val(text), Int_val(posX), Int_val(posY), Int_val(fontSize), Colour_val(color));
+    const char * _text = String_val(Field(args, 0));
+    int _posX = Int_val(Field(args, 1));
+    int _posY = Int_val(Field(args, 2));
+    int _fontSize = Int_val(Field(args, 3));
+    Color _color = Colour_val(Field(args, 4));
+    DrawText(_text, _posX, _posY, _fontSize, _color);
     return Val_unit;
 }
 
 /*
-value raylib_DrawTextEx(value font, value text, value position, value fontSize, value spacing, value tint)
+value raylib_DrawTextEx(value args)
 {
-    DrawTextEx(UNKNOWN(font), String_val(text), Vector2_val(position), Double_val(fontSize), Double_val(spacing), Colour_val(tint));
+    Font _font = UNKNOWN(Field(args, 0));
+    const char * _text = String_val(Field(args, 1));
+    Vector2 _position = Vector2_val(Field(args, 2));
+    float _fontSize = Double_val(Field(args, 3));
+    float _spacing = Double_val(Field(args, 4));
+    Color _tint = Colour_val(Field(args, 5));
+    DrawTextEx(_font, _text, _position, _fontSize, _spacing, _tint);
     return Val_unit;
 }
 */
 
 /*
-value raylib_DrawTextPro(value font, value text, value position, value origin, value rotation, value fontSize, value spacing, value tint)
+value raylib_DrawTextPro(value args)
 {
-    DrawTextPro(UNKNOWN(font), String_val(text), Vector2_val(position), Vector2_val(origin), Double_val(rotation), Double_val(fontSize), Double_val(spacing), Colour_val(tint));
+    Font _font = UNKNOWN(Field(args, 0));
+    const char * _text = String_val(Field(args, 1));
+    Vector2 _position = Vector2_val(Field(args, 2));
+    Vector2 _origin = Vector2_val(Field(args, 3));
+    float _rotation = Double_val(Field(args, 4));
+    float _fontSize = Double_val(Field(args, 5));
+    float _spacing = Double_val(Field(args, 6));
+    Color _tint = Colour_val(Field(args, 7));
+    DrawTextPro(_font, _text, _position, _origin, _rotation, _fontSize, _spacing, _tint);
     return Val_unit;
 }
 */
 
 /*
-value raylib_DrawTextCodepoint(value font, value codepoint, value position, value fontSize, value tint)
+value raylib_DrawTextCodepoint(value args)
 {
-    DrawTextCodepoint(UNKNOWN(font), Int_val(codepoint), Vector2_val(position), Double_val(fontSize), Colour_val(tint));
+    Font _font = UNKNOWN(Field(args, 0));
+    int _codepoint = Int_val(Field(args, 1));
+    Vector2 _position = Vector2_val(Field(args, 2));
+    float _fontSize = Double_val(Field(args, 3));
+    Color _tint = Colour_val(Field(args, 4));
+    DrawTextCodepoint(_font, _codepoint, _position, _fontSize, _tint);
     return Val_unit;
 }
 */
 
 /*
-value raylib_DrawTextCodepoints(value font, value codepoints, value codepointCount, value position, value fontSize, value spacing, value tint)
+value raylib_DrawTextCodepoints(value args)
 {
-    DrawTextCodepoints(UNKNOWN(font), UNKNOWN(codepoints), Int_val(codepointCount), Vector2_val(position), Double_val(fontSize), Double_val(spacing), Colour_val(tint));
+    Font _font = UNKNOWN(Field(args, 0));
+    const int * _codepoints = UNKNOWN(Field(args, 1));
+    int _codepointCount = Int_val(Field(args, 2));
+    Vector2 _position = Vector2_val(Field(args, 3));
+    float _fontSize = Double_val(Field(args, 4));
+    float _spacing = Double_val(Field(args, 5));
+    Color _tint = Colour_val(Field(args, 6));
+    DrawTextCodepoints(_font, _codepoints, _codepointCount, _position, _fontSize, _spacing, _tint);
     return Val_unit;
 }
 */
 
-value raylib_SetTextLineSpacing(value spacing)
+value raylib_SetTextLineSpacing(value arg)
 {
-    SetTextLineSpacing(Int_val(spacing));
+    int _spacing = Int_val(arg);
+    SetTextLineSpacing(_spacing);
     return Val_unit;
 }
 
-value raylib_MeasureText(value text, value fontSize)
+value raylib_MeasureText(value args)
 {
-    int result = MeasureText(String_val(text), Int_val(fontSize));
+    const char * _text = String_val(Field(args, 0));
+    int _fontSize = Int_val(Field(args, 1));
+    int result = MeasureText(_text, _fontSize);
     return Val_int(result);
 }
 
 /*
-value raylib_MeasureTextEx(value font, value text, value fontSize, value spacing)
+value raylib_MeasureTextEx(value args)
 {
-    Vector2 result = MeasureTextEx(UNKNOWN(font), String_val(text), Double_val(fontSize), Double_val(spacing));
+    Font _font = UNKNOWN(Field(args, 0));
+    const char * _text = String_val(Field(args, 1));
+    float _fontSize = Double_val(Field(args, 2));
+    float _spacing = Double_val(Field(args, 3));
+    Vector2 result = MeasureTextEx(_font, _text, _fontSize, _spacing);
     return Val_vector2(result);
 }
 */
 
 /*
-value raylib_GetGlyphIndex(value font, value codepoint)
+value raylib_GetGlyphIndex(value args)
 {
-    int result = GetGlyphIndex(UNKNOWN(font), Int_val(codepoint));
+    Font _font = UNKNOWN(Field(args, 0));
+    int _codepoint = Int_val(Field(args, 1));
+    int result = GetGlyphIndex(_font, _codepoint);
     return Val_int(result);
 }
 */
 
 /*
-value raylib_GetGlyphInfo(value font, value codepoint)
+value raylib_GetGlyphInfo(value args)
 {
-    GlyphInfo result = GetGlyphInfo(UNKNOWN(font), Int_val(codepoint));
+    Font _font = UNKNOWN(Field(args, 0));
+    int _codepoint = Int_val(Field(args, 1));
+    GlyphInfo result = GetGlyphInfo(_font, _codepoint);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_GetGlyphAtlasRec(value font, value codepoint)
+value raylib_GetGlyphAtlasRec(value args)
 {
-    Rectangle result = GetGlyphAtlasRec(UNKNOWN(font), Int_val(codepoint));
+    Font _font = UNKNOWN(Field(args, 0));
+    int _codepoint = Int_val(Field(args, 1));
+    Rectangle result = GetGlyphAtlasRec(_font, _codepoint);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_LoadUTF8(value codepoints, value length)
+value raylib_LoadUTF8(value args)
 {
-    char * result = LoadUTF8(UNKNOWN(codepoints), Int_val(length));
+    const int * _codepoints = UNKNOWN(Field(args, 0));
+    int _length = Int_val(Field(args, 1));
+    char * result = LoadUTF8(_codepoints, _length);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_UnloadUTF8(value text)
+value raylib_UnloadUTF8(value arg)
 {
-    UnloadUTF8(UNKNOWN(text));
+    char * _text = UNKNOWN(arg);
+    UnloadUTF8(_text);
     return Val_unit;
 }
 */
 
 /*
-value raylib_LoadCodepoints(value text, value count)
+value raylib_LoadCodepoints(value args)
 {
-    int * result = LoadCodepoints(String_val(text), UNKNOWN(count));
+    const char * _text = String_val(Field(args, 0));
+    int * _count = UNKNOWN(Field(args, 1));
+    int * result = LoadCodepoints(_text, _count);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_UnloadCodepoints(value codepoints)
+value raylib_UnloadCodepoints(value arg)
 {
-    UnloadCodepoints(UNKNOWN(codepoints));
+    int * _codepoints = UNKNOWN(arg);
+    UnloadCodepoints(_codepoints);
     return Val_unit;
 }
 */
 
-value raylib_GetCodepointCount(value text)
+value raylib_GetCodepointCount(value arg)
 {
-    int result = GetCodepointCount(String_val(text));
+    const char * _text = String_val(arg);
+    int result = GetCodepointCount(_text);
     return Val_int(result);
 }
 
 /*
-value raylib_GetCodepoint(value text, value codepointSize)
+value raylib_GetCodepoint(value args)
 {
-    int result = GetCodepoint(String_val(text), UNKNOWN(codepointSize));
-    return Val_int(result);
-}
-*/
-
-/*
-value raylib_GetCodepointNext(value text, value codepointSize)
-{
-    int result = GetCodepointNext(String_val(text), UNKNOWN(codepointSize));
+    const char * _text = String_val(Field(args, 0));
+    int * _codepointSize = UNKNOWN(Field(args, 1));
+    int result = GetCodepoint(_text, _codepointSize);
     return Val_int(result);
 }
 */
 
 /*
-value raylib_GetCodepointPrevious(value text, value codepointSize)
+value raylib_GetCodepointNext(value args)
 {
-    int result = GetCodepointPrevious(String_val(text), UNKNOWN(codepointSize));
+    const char * _text = String_val(Field(args, 0));
+    int * _codepointSize = UNKNOWN(Field(args, 1));
+    int result = GetCodepointNext(_text, _codepointSize);
     return Val_int(result);
 }
 */
 
 /*
-value raylib_CodepointToUTF8(value codepoint, value utf8Size)
+value raylib_GetCodepointPrevious(value args)
 {
-    const char * result = CodepointToUTF8(Int_val(codepoint), UNKNOWN(utf8Size));
+    const char * _text = String_val(Field(args, 0));
+    int * _codepointSize = UNKNOWN(Field(args, 1));
+    int result = GetCodepointPrevious(_text, _codepointSize);
+    return Val_int(result);
+}
+*/
+
+/*
+value raylib_CodepointToUTF8(value args)
+{
+    int _codepoint = Int_val(Field(args, 0));
+    int * _utf8Size = UNKNOWN(Field(args, 1));
+    const char * result = CodepointToUTF8(_codepoint, _utf8Size);
     return Val_string(result);
 }
 */
 
 /*
-value raylib_TextCopy(value dst, value src)
+value raylib_TextCopy(value args)
 {
-    int result = TextCopy(UNKNOWN(dst), String_val(src));
+    char * _dst = UNKNOWN(Field(args, 0));
+    const char * _src = String_val(Field(args, 1));
+    int result = TextCopy(_dst, _src);
     return Val_int(result);
 }
 */
 
-value raylib_TextIsEqual(value text1, value text2)
+value raylib_TextIsEqual(value args)
 {
-    bool result = TextIsEqual(String_val(text1), String_val(text2));
+    const char * _text1 = String_val(Field(args, 0));
+    const char * _text2 = String_val(Field(args, 1));
+    bool result = TextIsEqual(_text1, _text2);
     return Val_bool(result);
 }
 
 /*
-value raylib_TextLength(value text)
+value raylib_TextLength(value arg)
 {
-    unsigned int result = TextLength(String_val(text));
+    const char * _text = String_val(arg);
+    unsigned int result = TextLength(_text);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_TextFormat(value text, value args)
+value raylib_TextFormat(value args)
 {
-    const char * result = TextFormat(String_val(text), UNKNOWN(args));
+    const char * _text = String_val(Field(args, 0));
+    ... _args = UNKNOWN(Field(args, 1));
+    const char * result = TextFormat(_text, _args);
     return Val_string(result);
 }
 */
 
-value raylib_TextSubtext(value text, value position, value length)
+value raylib_TextSubtext(value args)
 {
-    const char * result = TextSubtext(String_val(text), Int_val(position), Int_val(length));
+    const char * _text = String_val(Field(args, 0));
+    int _position = Int_val(Field(args, 1));
+    int _length = Int_val(Field(args, 2));
+    const char * result = TextSubtext(_text, _position, _length);
     return Val_string(result);
 }
 
 /*
-value raylib_TextReplace(value text, value replace, value by)
+value raylib_TextReplace(value args)
 {
-    char * result = TextReplace(String_val(text), String_val(replace), String_val(by));
+    const char * _text = String_val(Field(args, 0));
+    const char * _replace = String_val(Field(args, 1));
+    const char * _by = String_val(Field(args, 2));
+    char * result = TextReplace(_text, _replace, _by);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_TextInsert(value text, value insert, value position)
+value raylib_TextInsert(value args)
 {
-    char * result = TextInsert(String_val(text), String_val(insert), Int_val(position));
+    const char * _text = String_val(Field(args, 0));
+    const char * _insert = String_val(Field(args, 1));
+    int _position = Int_val(Field(args, 2));
+    char * result = TextInsert(_text, _insert, _position);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_TextJoin(value textList, value count, value delimiter)
+value raylib_TextJoin(value args)
 {
-    const char * result = TextJoin(UNKNOWN(textList), Int_val(count), String_val(delimiter));
+    const char ** _textList = UNKNOWN(Field(args, 0));
+    int _count = Int_val(Field(args, 1));
+    const char * _delimiter = String_val(Field(args, 2));
+    const char * result = TextJoin(_textList, _count, _delimiter);
     return Val_string(result);
 }
 */
 
 /*
-value raylib_TextSplit(value text, value delimiter, value count)
+value raylib_TextSplit(value args)
 {
-    const char ** result = TextSplit(String_val(text), UNKNOWN(delimiter), UNKNOWN(count));
+    const char * _text = String_val(Field(args, 0));
+    char _delimiter = UNKNOWN(Field(args, 1));
+    int * _count = UNKNOWN(Field(args, 2));
+    const char ** result = TextSplit(_text, _delimiter, _count);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_TextAppend(value text, value append, value position)
+value raylib_TextAppend(value args)
 {
-    TextAppend(UNKNOWN(text), String_val(append), UNKNOWN(position));
+    char * _text = UNKNOWN(Field(args, 0));
+    const char * _append = String_val(Field(args, 1));
+    int * _position = UNKNOWN(Field(args, 2));
+    TextAppend(_text, _append, _position);
     return Val_unit;
 }
 */
 
-value raylib_TextFindIndex(value text, value find)
+value raylib_TextFindIndex(value args)
 {
-    int result = TextFindIndex(String_val(text), String_val(find));
+    const char * _text = String_val(Field(args, 0));
+    const char * _find = String_val(Field(args, 1));
+    int result = TextFindIndex(_text, _find);
     return Val_int(result);
 }
 
-value raylib_TextToUpper(value text)
+value raylib_TextToUpper(value arg)
 {
-    const char * result = TextToUpper(String_val(text));
+    const char * _text = String_val(arg);
+    const char * result = TextToUpper(_text);
     return Val_string(result);
 }
 
-value raylib_TextToLower(value text)
+value raylib_TextToLower(value arg)
 {
-    const char * result = TextToLower(String_val(text));
+    const char * _text = String_val(arg);
+    const char * result = TextToLower(_text);
     return Val_string(result);
 }
 
-value raylib_TextToPascal(value text)
+value raylib_TextToPascal(value arg)
 {
-    const char * result = TextToPascal(String_val(text));
+    const char * _text = String_val(arg);
+    const char * result = TextToPascal(_text);
     return Val_string(result);
 }
 
-value raylib_TextToSnake(value text)
+value raylib_TextToSnake(value arg)
 {
-    const char * result = TextToSnake(String_val(text));
+    const char * _text = String_val(arg);
+    const char * result = TextToSnake(_text);
     return Val_string(result);
 }
 
-value raylib_TextToCamel(value text)
+value raylib_TextToCamel(value arg)
 {
-    const char * result = TextToCamel(String_val(text));
+    const char * _text = String_val(arg);
+    const char * result = TextToCamel(_text);
     return Val_string(result);
 }
 
-value raylib_TextToInteger(value text)
+value raylib_TextToInteger(value arg)
 {
-    int result = TextToInteger(String_val(text));
+    const char * _text = String_val(arg);
+    int result = TextToInteger(_text);
     return Val_int(result);
 }
 
-value raylib_TextToFloat(value text)
+value raylib_TextToFloat(value arg)
 {
-    float result = TextToFloat(String_val(text));
+    const char * _text = String_val(arg);
+    float result = TextToFloat(_text);
     return copy_double(result);
 }
 
 /*
-value raylib_DrawLine3D(value startPos, value endPos, value color)
+value raylib_DrawLine3D(value args)
 {
-    DrawLine3D(UNKNOWN(startPos), UNKNOWN(endPos), Colour_val(color));
+    Vector3 _startPos = UNKNOWN(Field(args, 0));
+    Vector3 _endPos = UNKNOWN(Field(args, 1));
+    Color _color = Colour_val(Field(args, 2));
+    DrawLine3D(_startPos, _endPos, _color);
     return Val_unit;
 }
 */
 
 /*
-value raylib_DrawPoint3D(value position, value color)
+value raylib_DrawPoint3D(value args)
 {
-    DrawPoint3D(UNKNOWN(position), Colour_val(color));
+    Vector3 _position = UNKNOWN(Field(args, 0));
+    Color _color = Colour_val(Field(args, 1));
+    DrawPoint3D(_position, _color);
     return Val_unit;
 }
 */
 
 /*
-value raylib_DrawCircle3D(value center, value radius, value rotationAxis, value rotationAngle, value color)
+value raylib_DrawCircle3D(value args)
 {
-    DrawCircle3D(UNKNOWN(center), Double_val(radius), UNKNOWN(rotationAxis), Double_val(rotationAngle), Colour_val(color));
+    Vector3 _center = UNKNOWN(Field(args, 0));
+    float _radius = Double_val(Field(args, 1));
+    Vector3 _rotationAxis = UNKNOWN(Field(args, 2));
+    float _rotationAngle = Double_val(Field(args, 3));
+    Color _color = Colour_val(Field(args, 4));
+    DrawCircle3D(_center, _radius, _rotationAxis, _rotationAngle, _color);
     return Val_unit;
 }
 */
 
 /*
-value raylib_DrawTriangle3D(value v1, value v2, value v3, value color)
+value raylib_DrawTriangle3D(value args)
 {
-    DrawTriangle3D(UNKNOWN(v1), UNKNOWN(v2), UNKNOWN(v3), Colour_val(color));
+    Vector3 _v1 = UNKNOWN(Field(args, 0));
+    Vector3 _v2 = UNKNOWN(Field(args, 1));
+    Vector3 _v3 = UNKNOWN(Field(args, 2));
+    Color _color = Colour_val(Field(args, 3));
+    DrawTriangle3D(_v1, _v2, _v3, _color);
     return Val_unit;
 }
 */
 
 /*
-value raylib_DrawTriangleStrip3D(value points, value pointCount, value color)
+value raylib_DrawTriangleStrip3D(value args)
 {
-    DrawTriangleStrip3D(UNKNOWN(points), Int_val(pointCount), Colour_val(color));
+    const Vector3 * _points = UNKNOWN(Field(args, 0));
+    int _pointCount = Int_val(Field(args, 1));
+    Color _color = Colour_val(Field(args, 2));
+    DrawTriangleStrip3D(_points, _pointCount, _color);
     return Val_unit;
 }
 */
 
 /*
-value raylib_DrawCube(value position, value width, value height, value length, value color)
+value raylib_DrawCube(value args)
 {
-    DrawCube(UNKNOWN(position), Double_val(width), Double_val(height), Double_val(length), Colour_val(color));
+    Vector3 _position = UNKNOWN(Field(args, 0));
+    float _width = Double_val(Field(args, 1));
+    float _height = Double_val(Field(args, 2));
+    float _length = Double_val(Field(args, 3));
+    Color _color = Colour_val(Field(args, 4));
+    DrawCube(_position, _width, _height, _length, _color);
     return Val_unit;
 }
 */
 
 /*
-value raylib_DrawCubeV(value position, value size, value color)
+value raylib_DrawCubeV(value args)
 {
-    DrawCubeV(UNKNOWN(position), UNKNOWN(size), Colour_val(color));
+    Vector3 _position = UNKNOWN(Field(args, 0));
+    Vector3 _size = UNKNOWN(Field(args, 1));
+    Color _color = Colour_val(Field(args, 2));
+    DrawCubeV(_position, _size, _color);
     return Val_unit;
 }
 */
 
 /*
-value raylib_DrawCubeWires(value position, value width, value height, value length, value color)
+value raylib_DrawCubeWires(value args)
 {
-    DrawCubeWires(UNKNOWN(position), Double_val(width), Double_val(height), Double_val(length), Colour_val(color));
+    Vector3 _position = UNKNOWN(Field(args, 0));
+    float _width = Double_val(Field(args, 1));
+    float _height = Double_val(Field(args, 2));
+    float _length = Double_val(Field(args, 3));
+    Color _color = Colour_val(Field(args, 4));
+    DrawCubeWires(_position, _width, _height, _length, _color);
     return Val_unit;
 }
 */
 
 /*
-value raylib_DrawCubeWiresV(value position, value size, value color)
+value raylib_DrawCubeWiresV(value args)
 {
-    DrawCubeWiresV(UNKNOWN(position), UNKNOWN(size), Colour_val(color));
+    Vector3 _position = UNKNOWN(Field(args, 0));
+    Vector3 _size = UNKNOWN(Field(args, 1));
+    Color _color = Colour_val(Field(args, 2));
+    DrawCubeWiresV(_position, _size, _color);
     return Val_unit;
 }
 */
 
 /*
-value raylib_DrawSphere(value centerPos, value radius, value color)
+value raylib_DrawSphere(value args)
 {
-    DrawSphere(UNKNOWN(centerPos), Double_val(radius), Colour_val(color));
+    Vector3 _centerPos = UNKNOWN(Field(args, 0));
+    float _radius = Double_val(Field(args, 1));
+    Color _color = Colour_val(Field(args, 2));
+    DrawSphere(_centerPos, _radius, _color);
     return Val_unit;
 }
 */
 
 /*
-value raylib_DrawSphereEx(value centerPos, value radius, value rings, value slices, value color)
+value raylib_DrawSphereEx(value args)
 {
-    DrawSphereEx(UNKNOWN(centerPos), Double_val(radius), Int_val(rings), Int_val(slices), Colour_val(color));
+    Vector3 _centerPos = UNKNOWN(Field(args, 0));
+    float _radius = Double_val(Field(args, 1));
+    int _rings = Int_val(Field(args, 2));
+    int _slices = Int_val(Field(args, 3));
+    Color _color = Colour_val(Field(args, 4));
+    DrawSphereEx(_centerPos, _radius, _rings, _slices, _color);
     return Val_unit;
 }
 */
 
 /*
-value raylib_DrawSphereWires(value centerPos, value radius, value rings, value slices, value color)
+value raylib_DrawSphereWires(value args)
 {
-    DrawSphereWires(UNKNOWN(centerPos), Double_val(radius), Int_val(rings), Int_val(slices), Colour_val(color));
+    Vector3 _centerPos = UNKNOWN(Field(args, 0));
+    float _radius = Double_val(Field(args, 1));
+    int _rings = Int_val(Field(args, 2));
+    int _slices = Int_val(Field(args, 3));
+    Color _color = Colour_val(Field(args, 4));
+    DrawSphereWires(_centerPos, _radius, _rings, _slices, _color);
     return Val_unit;
 }
 */
 
 /*
-value raylib_DrawCylinder(value position, value radiusTop, value radiusBottom, value height, value slices, value color)
+value raylib_DrawCylinder(value args)
 {
-    DrawCylinder(UNKNOWN(position), Double_val(radiusTop), Double_val(radiusBottom), Double_val(height), Int_val(slices), Colour_val(color));
+    Vector3 _position = UNKNOWN(Field(args, 0));
+    float _radiusTop = Double_val(Field(args, 1));
+    float _radiusBottom = Double_val(Field(args, 2));
+    float _height = Double_val(Field(args, 3));
+    int _slices = Int_val(Field(args, 4));
+    Color _color = Colour_val(Field(args, 5));
+    DrawCylinder(_position, _radiusTop, _radiusBottom, _height, _slices, _color);
     return Val_unit;
 }
 */
 
 /*
-value raylib_DrawCylinderEx(value startPos, value endPos, value startRadius, value endRadius, value sides, value color)
+value raylib_DrawCylinderEx(value args)
 {
-    DrawCylinderEx(UNKNOWN(startPos), UNKNOWN(endPos), Double_val(startRadius), Double_val(endRadius), Int_val(sides), Colour_val(color));
+    Vector3 _startPos = UNKNOWN(Field(args, 0));
+    Vector3 _endPos = UNKNOWN(Field(args, 1));
+    float _startRadius = Double_val(Field(args, 2));
+    float _endRadius = Double_val(Field(args, 3));
+    int _sides = Int_val(Field(args, 4));
+    Color _color = Colour_val(Field(args, 5));
+    DrawCylinderEx(_startPos, _endPos, _startRadius, _endRadius, _sides, _color);
     return Val_unit;
 }
 */
 
 /*
-value raylib_DrawCylinderWires(value position, value radiusTop, value radiusBottom, value height, value slices, value color)
+value raylib_DrawCylinderWires(value args)
 {
-    DrawCylinderWires(UNKNOWN(position), Double_val(radiusTop), Double_val(radiusBottom), Double_val(height), Int_val(slices), Colour_val(color));
+    Vector3 _position = UNKNOWN(Field(args, 0));
+    float _radiusTop = Double_val(Field(args, 1));
+    float _radiusBottom = Double_val(Field(args, 2));
+    float _height = Double_val(Field(args, 3));
+    int _slices = Int_val(Field(args, 4));
+    Color _color = Colour_val(Field(args, 5));
+    DrawCylinderWires(_position, _radiusTop, _radiusBottom, _height, _slices, _color);
     return Val_unit;
 }
 */
 
 /*
-value raylib_DrawCylinderWiresEx(value startPos, value endPos, value startRadius, value endRadius, value sides, value color)
+value raylib_DrawCylinderWiresEx(value args)
 {
-    DrawCylinderWiresEx(UNKNOWN(startPos), UNKNOWN(endPos), Double_val(startRadius), Double_val(endRadius), Int_val(sides), Colour_val(color));
+    Vector3 _startPos = UNKNOWN(Field(args, 0));
+    Vector3 _endPos = UNKNOWN(Field(args, 1));
+    float _startRadius = Double_val(Field(args, 2));
+    float _endRadius = Double_val(Field(args, 3));
+    int _sides = Int_val(Field(args, 4));
+    Color _color = Colour_val(Field(args, 5));
+    DrawCylinderWiresEx(_startPos, _endPos, _startRadius, _endRadius, _sides, _color);
     return Val_unit;
 }
 */
 
 /*
-value raylib_DrawCapsule(value startPos, value endPos, value radius, value slices, value rings, value color)
+value raylib_DrawCapsule(value args)
 {
-    DrawCapsule(UNKNOWN(startPos), UNKNOWN(endPos), Double_val(radius), Int_val(slices), Int_val(rings), Colour_val(color));
+    Vector3 _startPos = UNKNOWN(Field(args, 0));
+    Vector3 _endPos = UNKNOWN(Field(args, 1));
+    float _radius = Double_val(Field(args, 2));
+    int _slices = Int_val(Field(args, 3));
+    int _rings = Int_val(Field(args, 4));
+    Color _color = Colour_val(Field(args, 5));
+    DrawCapsule(_startPos, _endPos, _radius, _slices, _rings, _color);
     return Val_unit;
 }
 */
 
 /*
-value raylib_DrawCapsuleWires(value startPos, value endPos, value radius, value slices, value rings, value color)
+value raylib_DrawCapsuleWires(value args)
 {
-    DrawCapsuleWires(UNKNOWN(startPos), UNKNOWN(endPos), Double_val(radius), Int_val(slices), Int_val(rings), Colour_val(color));
+    Vector3 _startPos = UNKNOWN(Field(args, 0));
+    Vector3 _endPos = UNKNOWN(Field(args, 1));
+    float _radius = Double_val(Field(args, 2));
+    int _slices = Int_val(Field(args, 3));
+    int _rings = Int_val(Field(args, 4));
+    Color _color = Colour_val(Field(args, 5));
+    DrawCapsuleWires(_startPos, _endPos, _radius, _slices, _rings, _color);
     return Val_unit;
 }
 */
 
 /*
-value raylib_DrawPlane(value centerPos, value size, value color)
+value raylib_DrawPlane(value args)
 {
-    DrawPlane(UNKNOWN(centerPos), Vector2_val(size), Colour_val(color));
+    Vector3 _centerPos = UNKNOWN(Field(args, 0));
+    Vector2 _size = Vector2_val(Field(args, 1));
+    Color _color = Colour_val(Field(args, 2));
+    DrawPlane(_centerPos, _size, _color);
     return Val_unit;
 }
 */
 
 /*
-value raylib_DrawRay(value ray, value color)
+value raylib_DrawRay(value args)
 {
-    DrawRay(UNKNOWN(ray), Colour_val(color));
+    Ray _ray = UNKNOWN(Field(args, 0));
+    Color _color = Colour_val(Field(args, 1));
+    DrawRay(_ray, _color);
     return Val_unit;
 }
 */
 
-value raylib_DrawGrid(value slices, value spacing)
+value raylib_DrawGrid(value args)
 {
-    DrawGrid(Int_val(slices), Double_val(spacing));
+    int _slices = Int_val(Field(args, 0));
+    float _spacing = Double_val(Field(args, 1));
+    DrawGrid(_slices, _spacing);
     return Val_unit;
 }
 
 /*
-value raylib_LoadModel(value fileName)
+value raylib_LoadModel(value arg)
 {
-    Model result = LoadModel(String_val(fileName));
+    const char * _fileName = String_val(arg);
+    Model result = LoadModel(_fileName);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_LoadModelFromMesh(value mesh)
+value raylib_LoadModelFromMesh(value arg)
 {
-    Model result = LoadModelFromMesh(UNKNOWN(mesh));
+    Mesh _mesh = UNKNOWN(arg);
+    Model result = LoadModelFromMesh(_mesh);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_IsModelValid(value model)
+value raylib_IsModelValid(value arg)
 {
-    bool result = IsModelValid(UNKNOWN(model));
+    Model _model = UNKNOWN(arg);
+    bool result = IsModelValid(_model);
     return Val_bool(result);
 }
 */
 
 /*
-value raylib_UnloadModel(value model)
+value raylib_UnloadModel(value arg)
 {
-    UnloadModel(UNKNOWN(model));
+    Model _model = UNKNOWN(arg);
+    UnloadModel(_model);
     return Val_unit;
 }
 */
 
 /*
-value raylib_GetModelBoundingBox(value model)
+value raylib_GetModelBoundingBox(value arg)
 {
-    BoundingBox result = GetModelBoundingBox(UNKNOWN(model));
+    Model _model = UNKNOWN(arg);
+    BoundingBox result = GetModelBoundingBox(_model);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_DrawModel(value model, value position, value scale, value tint)
+value raylib_DrawModel(value args)
 {
-    DrawModel(UNKNOWN(model), UNKNOWN(position), Double_val(scale), Colour_val(tint));
+    Model _model = UNKNOWN(Field(args, 0));
+    Vector3 _position = UNKNOWN(Field(args, 1));
+    float _scale = Double_val(Field(args, 2));
+    Color _tint = Colour_val(Field(args, 3));
+    DrawModel(_model, _position, _scale, _tint);
     return Val_unit;
 }
 */
 
 /*
-value raylib_DrawModelEx(value model, value position, value rotationAxis, value rotationAngle, value scale, value tint)
+value raylib_DrawModelEx(value args)
 {
-    DrawModelEx(UNKNOWN(model), UNKNOWN(position), UNKNOWN(rotationAxis), Double_val(rotationAngle), UNKNOWN(scale), Colour_val(tint));
+    Model _model = UNKNOWN(Field(args, 0));
+    Vector3 _position = UNKNOWN(Field(args, 1));
+    Vector3 _rotationAxis = UNKNOWN(Field(args, 2));
+    float _rotationAngle = Double_val(Field(args, 3));
+    Vector3 _scale = UNKNOWN(Field(args, 4));
+    Color _tint = Colour_val(Field(args, 5));
+    DrawModelEx(_model, _position, _rotationAxis, _rotationAngle, _scale, _tint);
     return Val_unit;
 }
 */
 
 /*
-value raylib_DrawModelWires(value model, value position, value scale, value tint)
+value raylib_DrawModelWires(value args)
 {
-    DrawModelWires(UNKNOWN(model), UNKNOWN(position), Double_val(scale), Colour_val(tint));
+    Model _model = UNKNOWN(Field(args, 0));
+    Vector3 _position = UNKNOWN(Field(args, 1));
+    float _scale = Double_val(Field(args, 2));
+    Color _tint = Colour_val(Field(args, 3));
+    DrawModelWires(_model, _position, _scale, _tint);
     return Val_unit;
 }
 */
 
 /*
-value raylib_DrawModelWiresEx(value model, value position, value rotationAxis, value rotationAngle, value scale, value tint)
+value raylib_DrawModelWiresEx(value args)
 {
-    DrawModelWiresEx(UNKNOWN(model), UNKNOWN(position), UNKNOWN(rotationAxis), Double_val(rotationAngle), UNKNOWN(scale), Colour_val(tint));
+    Model _model = UNKNOWN(Field(args, 0));
+    Vector3 _position = UNKNOWN(Field(args, 1));
+    Vector3 _rotationAxis = UNKNOWN(Field(args, 2));
+    float _rotationAngle = Double_val(Field(args, 3));
+    Vector3 _scale = UNKNOWN(Field(args, 4));
+    Color _tint = Colour_val(Field(args, 5));
+    DrawModelWiresEx(_model, _position, _rotationAxis, _rotationAngle, _scale, _tint);
     return Val_unit;
 }
 */
 
 /*
-value raylib_DrawModelPoints(value model, value position, value scale, value tint)
+value raylib_DrawModelPoints(value args)
 {
-    DrawModelPoints(UNKNOWN(model), UNKNOWN(position), Double_val(scale), Colour_val(tint));
+    Model _model = UNKNOWN(Field(args, 0));
+    Vector3 _position = UNKNOWN(Field(args, 1));
+    float _scale = Double_val(Field(args, 2));
+    Color _tint = Colour_val(Field(args, 3));
+    DrawModelPoints(_model, _position, _scale, _tint);
     return Val_unit;
 }
 */
 
 /*
-value raylib_DrawModelPointsEx(value model, value position, value rotationAxis, value rotationAngle, value scale, value tint)
+value raylib_DrawModelPointsEx(value args)
 {
-    DrawModelPointsEx(UNKNOWN(model), UNKNOWN(position), UNKNOWN(rotationAxis), Double_val(rotationAngle), UNKNOWN(scale), Colour_val(tint));
+    Model _model = UNKNOWN(Field(args, 0));
+    Vector3 _position = UNKNOWN(Field(args, 1));
+    Vector3 _rotationAxis = UNKNOWN(Field(args, 2));
+    float _rotationAngle = Double_val(Field(args, 3));
+    Vector3 _scale = UNKNOWN(Field(args, 4));
+    Color _tint = Colour_val(Field(args, 5));
+    DrawModelPointsEx(_model, _position, _rotationAxis, _rotationAngle, _scale, _tint);
     return Val_unit;
 }
 */
 
 /*
-value raylib_DrawBoundingBox(value box, value color)
+value raylib_DrawBoundingBox(value args)
 {
-    DrawBoundingBox(UNKNOWN(box), Colour_val(color));
+    BoundingBox _box = UNKNOWN(Field(args, 0));
+    Color _color = Colour_val(Field(args, 1));
+    DrawBoundingBox(_box, _color);
     return Val_unit;
 }
 */
 
 /*
-value raylib_DrawBillboard(value camera, value texture, value position, value scale, value tint)
+value raylib_DrawBillboard(value args)
 {
-    DrawBillboard(UNKNOWN(camera), Texture_val(texture), UNKNOWN(position), Double_val(scale), Colour_val(tint));
+    Camera _camera = UNKNOWN(Field(args, 0));
+    Texture2D _texture = Texture_val(Field(args, 1));
+    Vector3 _position = UNKNOWN(Field(args, 2));
+    float _scale = Double_val(Field(args, 3));
+    Color _tint = Colour_val(Field(args, 4));
+    DrawBillboard(_camera, _texture, _position, _scale, _tint);
     return Val_unit;
 }
 */
 
 /*
-value raylib_DrawBillboardRec(value camera, value texture, value source, value position, value size, value tint)
+value raylib_DrawBillboardRec(value args)
 {
-    DrawBillboardRec(UNKNOWN(camera), Texture_val(texture), UNKNOWN(source), UNKNOWN(position), Vector2_val(size), Colour_val(tint));
+    Camera _camera = UNKNOWN(Field(args, 0));
+    Texture2D _texture = Texture_val(Field(args, 1));
+    Rectangle _source = UNKNOWN(Field(args, 2));
+    Vector3 _position = UNKNOWN(Field(args, 3));
+    Vector2 _size = Vector2_val(Field(args, 4));
+    Color _tint = Colour_val(Field(args, 5));
+    DrawBillboardRec(_camera, _texture, _source, _position, _size, _tint);
     return Val_unit;
 }
 */
 
 /*
-value raylib_DrawBillboardPro(value camera, value texture, value source, value position, value up, value size, value origin, value rotation, value tint)
+value raylib_DrawBillboardPro(value args)
 {
-    DrawBillboardPro(UNKNOWN(camera), Texture_val(texture), UNKNOWN(source), UNKNOWN(position), UNKNOWN(up), Vector2_val(size), Vector2_val(origin), Double_val(rotation), Colour_val(tint));
+    Camera _camera = UNKNOWN(Field(args, 0));
+    Texture2D _texture = Texture_val(Field(args, 1));
+    Rectangle _source = UNKNOWN(Field(args, 2));
+    Vector3 _position = UNKNOWN(Field(args, 3));
+    Vector3 _up = UNKNOWN(Field(args, 4));
+    Vector2 _size = Vector2_val(Field(args, 5));
+    Vector2 _origin = Vector2_val(Field(args, 6));
+    float _rotation = Double_val(Field(args, 7));
+    Color _tint = Colour_val(Field(args, 8));
+    DrawBillboardPro(_camera, _texture, _source, _position, _up, _size, _origin, _rotation, _tint);
     return Val_unit;
 }
 */
 
 /*
-value raylib_UploadMesh(value mesh, value dynamic)
+value raylib_UploadMesh(value args)
 {
-    UploadMesh(UNKNOWN(mesh), Bool_val(dynamic));
+    Mesh * _mesh = UNKNOWN(Field(args, 0));
+    bool _dynamic = Bool_val(Field(args, 1));
+    UploadMesh(_mesh, _dynamic);
     return Val_unit;
 }
 */
 
 /*
-value raylib_UpdateMeshBuffer(value mesh, value index, value data, value dataSize, value offset)
+value raylib_UpdateMeshBuffer(value args)
 {
-    UpdateMeshBuffer(UNKNOWN(mesh), Int_val(index), UNKNOWN(data), Int_val(dataSize), Int_val(offset));
+    Mesh _mesh = UNKNOWN(Field(args, 0));
+    int _index = Int_val(Field(args, 1));
+    const void * _data = UNKNOWN(Field(args, 2));
+    int _dataSize = Int_val(Field(args, 3));
+    int _offset = Int_val(Field(args, 4));
+    UpdateMeshBuffer(_mesh, _index, _data, _dataSize, _offset);
     return Val_unit;
 }
 */
 
 /*
-value raylib_UnloadMesh(value mesh)
+value raylib_UnloadMesh(value arg)
 {
-    UnloadMesh(UNKNOWN(mesh));
+    Mesh _mesh = UNKNOWN(arg);
+    UnloadMesh(_mesh);
     return Val_unit;
 }
 */
 
 /*
-value raylib_DrawMesh(value mesh, value material, value transform)
+value raylib_DrawMesh(value args)
 {
-    DrawMesh(UNKNOWN(mesh), UNKNOWN(material), UNKNOWN(transform));
+    Mesh _mesh = UNKNOWN(Field(args, 0));
+    Material _material = UNKNOWN(Field(args, 1));
+    Matrix _transform = UNKNOWN(Field(args, 2));
+    DrawMesh(_mesh, _material, _transform);
     return Val_unit;
 }
 */
 
 /*
-value raylib_DrawMeshInstanced(value mesh, value material, value transforms, value instances)
+value raylib_DrawMeshInstanced(value args)
 {
-    DrawMeshInstanced(UNKNOWN(mesh), UNKNOWN(material), UNKNOWN(transforms), Int_val(instances));
+    Mesh _mesh = UNKNOWN(Field(args, 0));
+    Material _material = UNKNOWN(Field(args, 1));
+    const Matrix * _transforms = UNKNOWN(Field(args, 2));
+    int _instances = Int_val(Field(args, 3));
+    DrawMeshInstanced(_mesh, _material, _transforms, _instances);
     return Val_unit;
 }
 */
 
 /*
-value raylib_GetMeshBoundingBox(value mesh)
+value raylib_GetMeshBoundingBox(value arg)
 {
-    BoundingBox result = GetMeshBoundingBox(UNKNOWN(mesh));
+    Mesh _mesh = UNKNOWN(arg);
+    BoundingBox result = GetMeshBoundingBox(_mesh);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_GenMeshTangents(value mesh)
+value raylib_GenMeshTangents(value arg)
 {
-    GenMeshTangents(UNKNOWN(mesh));
+    Mesh * _mesh = UNKNOWN(arg);
+    GenMeshTangents(_mesh);
     return Val_unit;
 }
 */
 
 /*
-value raylib_ExportMesh(value mesh, value fileName)
+value raylib_ExportMesh(value args)
 {
-    bool result = ExportMesh(UNKNOWN(mesh), String_val(fileName));
+    Mesh _mesh = UNKNOWN(Field(args, 0));
+    const char * _fileName = String_val(Field(args, 1));
+    bool result = ExportMesh(_mesh, _fileName);
     return Val_bool(result);
 }
 */
 
 /*
-value raylib_ExportMeshAsCode(value mesh, value fileName)
+value raylib_ExportMeshAsCode(value args)
 {
-    bool result = ExportMeshAsCode(UNKNOWN(mesh), String_val(fileName));
+    Mesh _mesh = UNKNOWN(Field(args, 0));
+    const char * _fileName = String_val(Field(args, 1));
+    bool result = ExportMeshAsCode(_mesh, _fileName);
     return Val_bool(result);
 }
 */
 
 /*
-value raylib_GenMeshPoly(value sides, value radius)
+value raylib_GenMeshPoly(value args)
 {
-    Mesh result = GenMeshPoly(Int_val(sides), Double_val(radius));
+    int _sides = Int_val(Field(args, 0));
+    float _radius = Double_val(Field(args, 1));
+    Mesh result = GenMeshPoly(_sides, _radius);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_GenMeshPlane(value width, value length, value resX, value resZ)
+value raylib_GenMeshPlane(value args)
 {
-    Mesh result = GenMeshPlane(Double_val(width), Double_val(length), Int_val(resX), Int_val(resZ));
+    float _width = Double_val(Field(args, 0));
+    float _length = Double_val(Field(args, 1));
+    int _resX = Int_val(Field(args, 2));
+    int _resZ = Int_val(Field(args, 3));
+    Mesh result = GenMeshPlane(_width, _length, _resX, _resZ);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_GenMeshCube(value width, value height, value length)
+value raylib_GenMeshCube(value args)
 {
-    Mesh result = GenMeshCube(Double_val(width), Double_val(height), Double_val(length));
+    float _width = Double_val(Field(args, 0));
+    float _height = Double_val(Field(args, 1));
+    float _length = Double_val(Field(args, 2));
+    Mesh result = GenMeshCube(_width, _height, _length);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_GenMeshSphere(value radius, value rings, value slices)
+value raylib_GenMeshSphere(value args)
 {
-    Mesh result = GenMeshSphere(Double_val(radius), Int_val(rings), Int_val(slices));
+    float _radius = Double_val(Field(args, 0));
+    int _rings = Int_val(Field(args, 1));
+    int _slices = Int_val(Field(args, 2));
+    Mesh result = GenMeshSphere(_radius, _rings, _slices);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_GenMeshHemiSphere(value radius, value rings, value slices)
+value raylib_GenMeshHemiSphere(value args)
 {
-    Mesh result = GenMeshHemiSphere(Double_val(radius), Int_val(rings), Int_val(slices));
+    float _radius = Double_val(Field(args, 0));
+    int _rings = Int_val(Field(args, 1));
+    int _slices = Int_val(Field(args, 2));
+    Mesh result = GenMeshHemiSphere(_radius, _rings, _slices);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_GenMeshCylinder(value radius, value height, value slices)
+value raylib_GenMeshCylinder(value args)
 {
-    Mesh result = GenMeshCylinder(Double_val(radius), Double_val(height), Int_val(slices));
+    float _radius = Double_val(Field(args, 0));
+    float _height = Double_val(Field(args, 1));
+    int _slices = Int_val(Field(args, 2));
+    Mesh result = GenMeshCylinder(_radius, _height, _slices);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_GenMeshCone(value radius, value height, value slices)
+value raylib_GenMeshCone(value args)
 {
-    Mesh result = GenMeshCone(Double_val(radius), Double_val(height), Int_val(slices));
+    float _radius = Double_val(Field(args, 0));
+    float _height = Double_val(Field(args, 1));
+    int _slices = Int_val(Field(args, 2));
+    Mesh result = GenMeshCone(_radius, _height, _slices);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_GenMeshTorus(value radius, value size, value radSeg, value sides)
+value raylib_GenMeshTorus(value args)
 {
-    Mesh result = GenMeshTorus(Double_val(radius), Double_val(size), Int_val(radSeg), Int_val(sides));
+    float _radius = Double_val(Field(args, 0));
+    float _size = Double_val(Field(args, 1));
+    int _radSeg = Int_val(Field(args, 2));
+    int _sides = Int_val(Field(args, 3));
+    Mesh result = GenMeshTorus(_radius, _size, _radSeg, _sides);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_GenMeshKnot(value radius, value size, value radSeg, value sides)
+value raylib_GenMeshKnot(value args)
 {
-    Mesh result = GenMeshKnot(Double_val(radius), Double_val(size), Int_val(radSeg), Int_val(sides));
+    float _radius = Double_val(Field(args, 0));
+    float _size = Double_val(Field(args, 1));
+    int _radSeg = Int_val(Field(args, 2));
+    int _sides = Int_val(Field(args, 3));
+    Mesh result = GenMeshKnot(_radius, _size, _radSeg, _sides);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_GenMeshHeightmap(value heightmap, value size)
+value raylib_GenMeshHeightmap(value args)
 {
-    Mesh result = GenMeshHeightmap(Image_val(heightmap), UNKNOWN(size));
+    Image _heightmap = Image_val(Field(args, 0));
+    Vector3 _size = UNKNOWN(Field(args, 1));
+    Mesh result = GenMeshHeightmap(_heightmap, _size);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_GenMeshCubicmap(value cubicmap, value cubeSize)
+value raylib_GenMeshCubicmap(value args)
 {
-    Mesh result = GenMeshCubicmap(Image_val(cubicmap), UNKNOWN(cubeSize));
+    Image _cubicmap = Image_val(Field(args, 0));
+    Vector3 _cubeSize = UNKNOWN(Field(args, 1));
+    Mesh result = GenMeshCubicmap(_cubicmap, _cubeSize);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_LoadMaterials(value fileName, value materialCount)
+value raylib_LoadMaterials(value args)
 {
-    Material * result = LoadMaterials(String_val(fileName), UNKNOWN(materialCount));
+    const char * _fileName = String_val(Field(args, 0));
+    int * _materialCount = UNKNOWN(Field(args, 1));
+    Material * result = LoadMaterials(_fileName, _materialCount);
     return UNKNOWN(result);
 }
 */
@@ -3622,145 +4734,192 @@ value raylib_LoadMaterialDefault(value unit)
 */
 
 /*
-value raylib_IsMaterialValid(value material)
+value raylib_IsMaterialValid(value arg)
 {
-    bool result = IsMaterialValid(UNKNOWN(material));
+    Material _material = UNKNOWN(arg);
+    bool result = IsMaterialValid(_material);
     return Val_bool(result);
 }
 */
 
 /*
-value raylib_UnloadMaterial(value material)
+value raylib_UnloadMaterial(value arg)
 {
-    UnloadMaterial(UNKNOWN(material));
+    Material _material = UNKNOWN(arg);
+    UnloadMaterial(_material);
     return Val_unit;
 }
 */
 
 /*
-value raylib_SetMaterialTexture(value material, value mapType, value texture)
+value raylib_SetMaterialTexture(value args)
 {
-    SetMaterialTexture(UNKNOWN(material), Int_val(mapType), Texture_val(texture));
+    Material * _material = UNKNOWN(Field(args, 0));
+    int _mapType = Int_val(Field(args, 1));
+    Texture2D _texture = Texture_val(Field(args, 2));
+    SetMaterialTexture(_material, _mapType, _texture);
     return Val_unit;
 }
 */
 
 /*
-value raylib_SetModelMeshMaterial(value model, value meshId, value materialId)
+value raylib_SetModelMeshMaterial(value args)
 {
-    SetModelMeshMaterial(UNKNOWN(model), Int_val(meshId), Int_val(materialId));
+    Model * _model = UNKNOWN(Field(args, 0));
+    int _meshId = Int_val(Field(args, 1));
+    int _materialId = Int_val(Field(args, 2));
+    SetModelMeshMaterial(_model, _meshId, _materialId);
     return Val_unit;
 }
 */
 
 /*
-value raylib_LoadModelAnimations(value fileName, value animCount)
+value raylib_LoadModelAnimations(value args)
 {
-    ModelAnimation * result = LoadModelAnimations(String_val(fileName), UNKNOWN(animCount));
+    const char * _fileName = String_val(Field(args, 0));
+    int * _animCount = UNKNOWN(Field(args, 1));
+    ModelAnimation * result = LoadModelAnimations(_fileName, _animCount);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_UpdateModelAnimation(value model, value anim, value frame)
+value raylib_UpdateModelAnimation(value args)
 {
-    UpdateModelAnimation(UNKNOWN(model), UNKNOWN(anim), Int_val(frame));
+    Model _model = UNKNOWN(Field(args, 0));
+    ModelAnimation _anim = UNKNOWN(Field(args, 1));
+    int _frame = Int_val(Field(args, 2));
+    UpdateModelAnimation(_model, _anim, _frame);
     return Val_unit;
 }
 */
 
 /*
-value raylib_UpdateModelAnimationBones(value model, value anim, value frame)
+value raylib_UpdateModelAnimationBones(value args)
 {
-    UpdateModelAnimationBones(UNKNOWN(model), UNKNOWN(anim), Int_val(frame));
+    Model _model = UNKNOWN(Field(args, 0));
+    ModelAnimation _anim = UNKNOWN(Field(args, 1));
+    int _frame = Int_val(Field(args, 2));
+    UpdateModelAnimationBones(_model, _anim, _frame);
     return Val_unit;
 }
 */
 
 /*
-value raylib_UnloadModelAnimation(value anim)
+value raylib_UnloadModelAnimation(value arg)
 {
-    UnloadModelAnimation(UNKNOWN(anim));
+    ModelAnimation _anim = UNKNOWN(arg);
+    UnloadModelAnimation(_anim);
     return Val_unit;
 }
 */
 
 /*
-value raylib_UnloadModelAnimations(value animations, value animCount)
+value raylib_UnloadModelAnimations(value args)
 {
-    UnloadModelAnimations(UNKNOWN(animations), Int_val(animCount));
+    ModelAnimation * _animations = UNKNOWN(Field(args, 0));
+    int _animCount = Int_val(Field(args, 1));
+    UnloadModelAnimations(_animations, _animCount);
     return Val_unit;
 }
 */
 
 /*
-value raylib_IsModelAnimationValid(value model, value anim)
+value raylib_IsModelAnimationValid(value args)
 {
-    bool result = IsModelAnimationValid(UNKNOWN(model), UNKNOWN(anim));
+    Model _model = UNKNOWN(Field(args, 0));
+    ModelAnimation _anim = UNKNOWN(Field(args, 1));
+    bool result = IsModelAnimationValid(_model, _anim);
     return Val_bool(result);
 }
 */
 
 /*
-value raylib_CheckCollisionSpheres(value center1, value radius1, value center2, value radius2)
+value raylib_CheckCollisionSpheres(value args)
 {
-    bool result = CheckCollisionSpheres(UNKNOWN(center1), Double_val(radius1), UNKNOWN(center2), Double_val(radius2));
+    Vector3 _center1 = UNKNOWN(Field(args, 0));
+    float _radius1 = Double_val(Field(args, 1));
+    Vector3 _center2 = UNKNOWN(Field(args, 2));
+    float _radius2 = Double_val(Field(args, 3));
+    bool result = CheckCollisionSpheres(_center1, _radius1, _center2, _radius2);
     return Val_bool(result);
 }
 */
 
 /*
-value raylib_CheckCollisionBoxes(value box1, value box2)
+value raylib_CheckCollisionBoxes(value args)
 {
-    bool result = CheckCollisionBoxes(UNKNOWN(box1), UNKNOWN(box2));
+    BoundingBox _box1 = UNKNOWN(Field(args, 0));
+    BoundingBox _box2 = UNKNOWN(Field(args, 1));
+    bool result = CheckCollisionBoxes(_box1, _box2);
     return Val_bool(result);
 }
 */
 
 /*
-value raylib_CheckCollisionBoxSphere(value box, value center, value radius)
+value raylib_CheckCollisionBoxSphere(value args)
 {
-    bool result = CheckCollisionBoxSphere(UNKNOWN(box), UNKNOWN(center), Double_val(radius));
+    BoundingBox _box = UNKNOWN(Field(args, 0));
+    Vector3 _center = UNKNOWN(Field(args, 1));
+    float _radius = Double_val(Field(args, 2));
+    bool result = CheckCollisionBoxSphere(_box, _center, _radius);
     return Val_bool(result);
 }
 */
 
 /*
-value raylib_GetRayCollisionSphere(value ray, value center, value radius)
+value raylib_GetRayCollisionSphere(value args)
 {
-    RayCollision result = GetRayCollisionSphere(UNKNOWN(ray), UNKNOWN(center), Double_val(radius));
+    Ray _ray = UNKNOWN(Field(args, 0));
+    Vector3 _center = UNKNOWN(Field(args, 1));
+    float _radius = Double_val(Field(args, 2));
+    RayCollision result = GetRayCollisionSphere(_ray, _center, _radius);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_GetRayCollisionBox(value ray, value box)
+value raylib_GetRayCollisionBox(value args)
 {
-    RayCollision result = GetRayCollisionBox(UNKNOWN(ray), UNKNOWN(box));
+    Ray _ray = UNKNOWN(Field(args, 0));
+    BoundingBox _box = UNKNOWN(Field(args, 1));
+    RayCollision result = GetRayCollisionBox(_ray, _box);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_GetRayCollisionMesh(value ray, value mesh, value transform)
+value raylib_GetRayCollisionMesh(value args)
 {
-    RayCollision result = GetRayCollisionMesh(UNKNOWN(ray), UNKNOWN(mesh), UNKNOWN(transform));
+    Ray _ray = UNKNOWN(Field(args, 0));
+    Mesh _mesh = UNKNOWN(Field(args, 1));
+    Matrix _transform = UNKNOWN(Field(args, 2));
+    RayCollision result = GetRayCollisionMesh(_ray, _mesh, _transform);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_GetRayCollisionTriangle(value ray, value p1, value p2, value p3)
+value raylib_GetRayCollisionTriangle(value args)
 {
-    RayCollision result = GetRayCollisionTriangle(UNKNOWN(ray), UNKNOWN(p1), UNKNOWN(p2), UNKNOWN(p3));
+    Ray _ray = UNKNOWN(Field(args, 0));
+    Vector3 _p1 = UNKNOWN(Field(args, 1));
+    Vector3 _p2 = UNKNOWN(Field(args, 2));
+    Vector3 _p3 = UNKNOWN(Field(args, 3));
+    RayCollision result = GetRayCollisionTriangle(_ray, _p1, _p2, _p3);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_GetRayCollisionQuad(value ray, value p1, value p2, value p3, value p4)
+value raylib_GetRayCollisionQuad(value args)
 {
-    RayCollision result = GetRayCollisionQuad(UNKNOWN(ray), UNKNOWN(p1), UNKNOWN(p2), UNKNOWN(p3), UNKNOWN(p4));
+    Ray _ray = UNKNOWN(Field(args, 0));
+    Vector3 _p1 = UNKNOWN(Field(args, 1));
+    Vector3 _p2 = UNKNOWN(Field(args, 2));
+    Vector3 _p3 = UNKNOWN(Field(args, 3));
+    Vector3 _p4 = UNKNOWN(Field(args, 4));
+    RayCollision result = GetRayCollisionQuad(_ray, _p1, _p2, _p3, _p4);
     return UNKNOWN(result);
 }
 */
@@ -3783,9 +4942,10 @@ value raylib_IsAudioDeviceReady(value unit)
     return Val_bool(result);
 }
 
-value raylib_SetMasterVolume(value volume)
+value raylib_SetMasterVolume(value arg)
 {
-    SetMasterVolume(Double_val(volume));
+    float _volume = Double_val(arg);
+    SetMasterVolume(_volume);
     return Val_unit;
 }
 
@@ -3796,487 +4956,578 @@ value raylib_GetMasterVolume(value unit)
 }
 
 /*
-value raylib_LoadWave(value fileName)
+value raylib_LoadWave(value arg)
 {
-    Wave result = LoadWave(String_val(fileName));
+    const char * _fileName = String_val(arg);
+    Wave result = LoadWave(_fileName);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_LoadWaveFromMemory(value fileType, value fileData, value dataSize)
+value raylib_LoadWaveFromMemory(value args)
 {
-    Wave result = LoadWaveFromMemory(String_val(fileType), UNKNOWN(fileData), Int_val(dataSize));
+    const char * _fileType = String_val(Field(args, 0));
+    const unsigned char * _fileData = UNKNOWN(Field(args, 1));
+    int _dataSize = Int_val(Field(args, 2));
+    Wave result = LoadWaveFromMemory(_fileType, _fileData, _dataSize);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_IsWaveValid(value wave)
+value raylib_IsWaveValid(value arg)
 {
-    bool result = IsWaveValid(UNKNOWN(wave));
+    Wave _wave = UNKNOWN(arg);
+    bool result = IsWaveValid(_wave);
     return Val_bool(result);
 }
 */
 
 /*
-value raylib_LoadSound(value fileName)
+value raylib_LoadSound(value arg)
 {
-    Sound result = LoadSound(String_val(fileName));
+    const char * _fileName = String_val(arg);
+    Sound result = LoadSound(_fileName);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_LoadSoundFromWave(value wave)
+value raylib_LoadSoundFromWave(value arg)
 {
-    Sound result = LoadSoundFromWave(UNKNOWN(wave));
+    Wave _wave = UNKNOWN(arg);
+    Sound result = LoadSoundFromWave(_wave);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_LoadSoundAlias(value source)
+value raylib_LoadSoundAlias(value arg)
 {
-    Sound result = LoadSoundAlias(UNKNOWN(source));
+    Sound _source = UNKNOWN(arg);
+    Sound result = LoadSoundAlias(_source);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_IsSoundValid(value sound)
+value raylib_IsSoundValid(value arg)
 {
-    bool result = IsSoundValid(UNKNOWN(sound));
+    Sound _sound = UNKNOWN(arg);
+    bool result = IsSoundValid(_sound);
     return Val_bool(result);
 }
 */
 
 /*
-value raylib_UpdateSound(value sound, value data, value sampleCount)
+value raylib_UpdateSound(value args)
 {
-    UpdateSound(UNKNOWN(sound), UNKNOWN(data), Int_val(sampleCount));
+    Sound _sound = UNKNOWN(Field(args, 0));
+    const void * _data = UNKNOWN(Field(args, 1));
+    int _sampleCount = Int_val(Field(args, 2));
+    UpdateSound(_sound, _data, _sampleCount);
     return Val_unit;
 }
 */
 
 /*
-value raylib_UnloadWave(value wave)
+value raylib_UnloadWave(value arg)
 {
-    UnloadWave(UNKNOWN(wave));
+    Wave _wave = UNKNOWN(arg);
+    UnloadWave(_wave);
     return Val_unit;
 }
 */
 
 /*
-value raylib_UnloadSound(value sound)
+value raylib_UnloadSound(value arg)
 {
-    UnloadSound(UNKNOWN(sound));
+    Sound _sound = UNKNOWN(arg);
+    UnloadSound(_sound);
     return Val_unit;
 }
 */
 
 /*
-value raylib_UnloadSoundAlias(value alias)
+value raylib_UnloadSoundAlias(value arg)
 {
-    UnloadSoundAlias(UNKNOWN(alias));
+    Sound _alias = UNKNOWN(arg);
+    UnloadSoundAlias(_alias);
     return Val_unit;
 }
 */
 
 /*
-value raylib_ExportWave(value wave, value fileName)
+value raylib_ExportWave(value args)
 {
-    bool result = ExportWave(UNKNOWN(wave), String_val(fileName));
+    Wave _wave = UNKNOWN(Field(args, 0));
+    const char * _fileName = String_val(Field(args, 1));
+    bool result = ExportWave(_wave, _fileName);
     return Val_bool(result);
 }
 */
 
 /*
-value raylib_ExportWaveAsCode(value wave, value fileName)
+value raylib_ExportWaveAsCode(value args)
 {
-    bool result = ExportWaveAsCode(UNKNOWN(wave), String_val(fileName));
+    Wave _wave = UNKNOWN(Field(args, 0));
+    const char * _fileName = String_val(Field(args, 1));
+    bool result = ExportWaveAsCode(_wave, _fileName);
     return Val_bool(result);
 }
 */
 
 /*
-value raylib_PlaySound(value sound)
+value raylib_PlaySound(value arg)
 {
-    PlaySound(UNKNOWN(sound));
+    Sound _sound = UNKNOWN(arg);
+    PlaySound(_sound);
     return Val_unit;
 }
 */
 
 /*
-value raylib_StopSound(value sound)
+value raylib_StopSound(value arg)
 {
-    StopSound(UNKNOWN(sound));
+    Sound _sound = UNKNOWN(arg);
+    StopSound(_sound);
     return Val_unit;
 }
 */
 
 /*
-value raylib_PauseSound(value sound)
+value raylib_PauseSound(value arg)
 {
-    PauseSound(UNKNOWN(sound));
+    Sound _sound = UNKNOWN(arg);
+    PauseSound(_sound);
     return Val_unit;
 }
 */
 
 /*
-value raylib_ResumeSound(value sound)
+value raylib_ResumeSound(value arg)
 {
-    ResumeSound(UNKNOWN(sound));
+    Sound _sound = UNKNOWN(arg);
+    ResumeSound(_sound);
     return Val_unit;
 }
 */
 
 /*
-value raylib_IsSoundPlaying(value sound)
+value raylib_IsSoundPlaying(value arg)
 {
-    bool result = IsSoundPlaying(UNKNOWN(sound));
+    Sound _sound = UNKNOWN(arg);
+    bool result = IsSoundPlaying(_sound);
     return Val_bool(result);
 }
 */
 
 /*
-value raylib_SetSoundVolume(value sound, value volume)
+value raylib_SetSoundVolume(value args)
 {
-    SetSoundVolume(UNKNOWN(sound), Double_val(volume));
+    Sound _sound = UNKNOWN(Field(args, 0));
+    float _volume = Double_val(Field(args, 1));
+    SetSoundVolume(_sound, _volume);
     return Val_unit;
 }
 */
 
 /*
-value raylib_SetSoundPitch(value sound, value pitch)
+value raylib_SetSoundPitch(value args)
 {
-    SetSoundPitch(UNKNOWN(sound), Double_val(pitch));
+    Sound _sound = UNKNOWN(Field(args, 0));
+    float _pitch = Double_val(Field(args, 1));
+    SetSoundPitch(_sound, _pitch);
     return Val_unit;
 }
 */
 
 /*
-value raylib_SetSoundPan(value sound, value pan)
+value raylib_SetSoundPan(value args)
 {
-    SetSoundPan(UNKNOWN(sound), Double_val(pan));
+    Sound _sound = UNKNOWN(Field(args, 0));
+    float _pan = Double_val(Field(args, 1));
+    SetSoundPan(_sound, _pan);
     return Val_unit;
 }
 */
 
 /*
-value raylib_WaveCopy(value wave)
+value raylib_WaveCopy(value arg)
 {
-    Wave result = WaveCopy(UNKNOWN(wave));
+    Wave _wave = UNKNOWN(arg);
+    Wave result = WaveCopy(_wave);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_WaveCrop(value wave, value initFrame, value finalFrame)
+value raylib_WaveCrop(value args)
 {
-    WaveCrop(UNKNOWN(wave), Int_val(initFrame), Int_val(finalFrame));
+    Wave * _wave = UNKNOWN(Field(args, 0));
+    int _initFrame = Int_val(Field(args, 1));
+    int _finalFrame = Int_val(Field(args, 2));
+    WaveCrop(_wave, _initFrame, _finalFrame);
     return Val_unit;
 }
 */
 
 /*
-value raylib_WaveFormat(value wave, value sampleRate, value sampleSize, value channels)
+value raylib_WaveFormat(value args)
 {
-    WaveFormat(UNKNOWN(wave), Int_val(sampleRate), Int_val(sampleSize), Int_val(channels));
+    Wave * _wave = UNKNOWN(Field(args, 0));
+    int _sampleRate = Int_val(Field(args, 1));
+    int _sampleSize = Int_val(Field(args, 2));
+    int _channels = Int_val(Field(args, 3));
+    WaveFormat(_wave, _sampleRate, _sampleSize, _channels);
     return Val_unit;
 }
 */
 
 /*
-value raylib_LoadWaveSamples(value wave)
+value raylib_LoadWaveSamples(value arg)
 {
-    float * result = LoadWaveSamples(UNKNOWN(wave));
+    Wave _wave = UNKNOWN(arg);
+    float * result = LoadWaveSamples(_wave);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_UnloadWaveSamples(value samples)
+value raylib_UnloadWaveSamples(value arg)
 {
-    UnloadWaveSamples(UNKNOWN(samples));
+    float * _samples = UNKNOWN(arg);
+    UnloadWaveSamples(_samples);
     return Val_unit;
 }
 */
 
 /*
-value raylib_LoadMusicStream(value fileName)
+value raylib_LoadMusicStream(value arg)
 {
-    Music result = LoadMusicStream(String_val(fileName));
+    const char * _fileName = String_val(arg);
+    Music result = LoadMusicStream(_fileName);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_LoadMusicStreamFromMemory(value fileType, value data, value dataSize)
+value raylib_LoadMusicStreamFromMemory(value args)
 {
-    Music result = LoadMusicStreamFromMemory(String_val(fileType), UNKNOWN(data), Int_val(dataSize));
+    const char * _fileType = String_val(Field(args, 0));
+    const unsigned char * _data = UNKNOWN(Field(args, 1));
+    int _dataSize = Int_val(Field(args, 2));
+    Music result = LoadMusicStreamFromMemory(_fileType, _data, _dataSize);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_IsMusicValid(value music)
+value raylib_IsMusicValid(value arg)
 {
-    bool result = IsMusicValid(UNKNOWN(music));
+    Music _music = UNKNOWN(arg);
+    bool result = IsMusicValid(_music);
     return Val_bool(result);
 }
 */
 
 /*
-value raylib_UnloadMusicStream(value music)
+value raylib_UnloadMusicStream(value arg)
 {
-    UnloadMusicStream(UNKNOWN(music));
+    Music _music = UNKNOWN(arg);
+    UnloadMusicStream(_music);
     return Val_unit;
 }
 */
 
 /*
-value raylib_PlayMusicStream(value music)
+value raylib_PlayMusicStream(value arg)
 {
-    PlayMusicStream(UNKNOWN(music));
+    Music _music = UNKNOWN(arg);
+    PlayMusicStream(_music);
     return Val_unit;
 }
 */
 
 /*
-value raylib_IsMusicStreamPlaying(value music)
+value raylib_IsMusicStreamPlaying(value arg)
 {
-    bool result = IsMusicStreamPlaying(UNKNOWN(music));
+    Music _music = UNKNOWN(arg);
+    bool result = IsMusicStreamPlaying(_music);
     return Val_bool(result);
 }
 */
 
 /*
-value raylib_UpdateMusicStream(value music)
+value raylib_UpdateMusicStream(value arg)
 {
-    UpdateMusicStream(UNKNOWN(music));
+    Music _music = UNKNOWN(arg);
+    UpdateMusicStream(_music);
     return Val_unit;
 }
 */
 
 /*
-value raylib_StopMusicStream(value music)
+value raylib_StopMusicStream(value arg)
 {
-    StopMusicStream(UNKNOWN(music));
+    Music _music = UNKNOWN(arg);
+    StopMusicStream(_music);
     return Val_unit;
 }
 */
 
 /*
-value raylib_PauseMusicStream(value music)
+value raylib_PauseMusicStream(value arg)
 {
-    PauseMusicStream(UNKNOWN(music));
+    Music _music = UNKNOWN(arg);
+    PauseMusicStream(_music);
     return Val_unit;
 }
 */
 
 /*
-value raylib_ResumeMusicStream(value music)
+value raylib_ResumeMusicStream(value arg)
 {
-    ResumeMusicStream(UNKNOWN(music));
+    Music _music = UNKNOWN(arg);
+    ResumeMusicStream(_music);
     return Val_unit;
 }
 */
 
 /*
-value raylib_SeekMusicStream(value music, value position)
+value raylib_SeekMusicStream(value args)
 {
-    SeekMusicStream(UNKNOWN(music), Double_val(position));
+    Music _music = UNKNOWN(Field(args, 0));
+    float _position = Double_val(Field(args, 1));
+    SeekMusicStream(_music, _position);
     return Val_unit;
 }
 */
 
 /*
-value raylib_SetMusicVolume(value music, value volume)
+value raylib_SetMusicVolume(value args)
 {
-    SetMusicVolume(UNKNOWN(music), Double_val(volume));
+    Music _music = UNKNOWN(Field(args, 0));
+    float _volume = Double_val(Field(args, 1));
+    SetMusicVolume(_music, _volume);
     return Val_unit;
 }
 */
 
 /*
-value raylib_SetMusicPitch(value music, value pitch)
+value raylib_SetMusicPitch(value args)
 {
-    SetMusicPitch(UNKNOWN(music), Double_val(pitch));
+    Music _music = UNKNOWN(Field(args, 0));
+    float _pitch = Double_val(Field(args, 1));
+    SetMusicPitch(_music, _pitch);
     return Val_unit;
 }
 */
 
 /*
-value raylib_SetMusicPan(value music, value pan)
+value raylib_SetMusicPan(value args)
 {
-    SetMusicPan(UNKNOWN(music), Double_val(pan));
+    Music _music = UNKNOWN(Field(args, 0));
+    float _pan = Double_val(Field(args, 1));
+    SetMusicPan(_music, _pan);
     return Val_unit;
 }
 */
 
 /*
-value raylib_GetMusicTimeLength(value music)
+value raylib_GetMusicTimeLength(value arg)
 {
-    float result = GetMusicTimeLength(UNKNOWN(music));
+    Music _music = UNKNOWN(arg);
+    float result = GetMusicTimeLength(_music);
     return copy_double(result);
 }
 */
 
 /*
-value raylib_GetMusicTimePlayed(value music)
+value raylib_GetMusicTimePlayed(value arg)
 {
-    float result = GetMusicTimePlayed(UNKNOWN(music));
+    Music _music = UNKNOWN(arg);
+    float result = GetMusicTimePlayed(_music);
     return copy_double(result);
 }
 */
 
 /*
-value raylib_LoadAudioStream(value sampleRate, value sampleSize, value channels)
+value raylib_LoadAudioStream(value args)
 {
-    AudioStream result = LoadAudioStream(UNKNOWN(sampleRate), UNKNOWN(sampleSize), UNKNOWN(channels));
+    unsigned int _sampleRate = UNKNOWN(Field(args, 0));
+    unsigned int _sampleSize = UNKNOWN(Field(args, 1));
+    unsigned int _channels = UNKNOWN(Field(args, 2));
+    AudioStream result = LoadAudioStream(_sampleRate, _sampleSize, _channels);
     return UNKNOWN(result);
 }
 */
 
 /*
-value raylib_IsAudioStreamValid(value stream)
+value raylib_IsAudioStreamValid(value arg)
 {
-    bool result = IsAudioStreamValid(UNKNOWN(stream));
+    AudioStream _stream = UNKNOWN(arg);
+    bool result = IsAudioStreamValid(_stream);
     return Val_bool(result);
 }
 */
 
 /*
-value raylib_UnloadAudioStream(value stream)
+value raylib_UnloadAudioStream(value arg)
 {
-    UnloadAudioStream(UNKNOWN(stream));
+    AudioStream _stream = UNKNOWN(arg);
+    UnloadAudioStream(_stream);
     return Val_unit;
 }
 */
 
 /*
-value raylib_UpdateAudioStream(value stream, value data, value frameCount)
+value raylib_UpdateAudioStream(value args)
 {
-    UpdateAudioStream(UNKNOWN(stream), UNKNOWN(data), Int_val(frameCount));
+    AudioStream _stream = UNKNOWN(Field(args, 0));
+    const void * _data = UNKNOWN(Field(args, 1));
+    int _frameCount = Int_val(Field(args, 2));
+    UpdateAudioStream(_stream, _data, _frameCount);
     return Val_unit;
 }
 */
 
 /*
-value raylib_IsAudioStreamProcessed(value stream)
+value raylib_IsAudioStreamProcessed(value arg)
 {
-    bool result = IsAudioStreamProcessed(UNKNOWN(stream));
+    AudioStream _stream = UNKNOWN(arg);
+    bool result = IsAudioStreamProcessed(_stream);
     return Val_bool(result);
 }
 */
 
 /*
-value raylib_PlayAudioStream(value stream)
+value raylib_PlayAudioStream(value arg)
 {
-    PlayAudioStream(UNKNOWN(stream));
+    AudioStream _stream = UNKNOWN(arg);
+    PlayAudioStream(_stream);
     return Val_unit;
 }
 */
 
 /*
-value raylib_PauseAudioStream(value stream)
+value raylib_PauseAudioStream(value arg)
 {
-    PauseAudioStream(UNKNOWN(stream));
+    AudioStream _stream = UNKNOWN(arg);
+    PauseAudioStream(_stream);
     return Val_unit;
 }
 */
 
 /*
-value raylib_ResumeAudioStream(value stream)
+value raylib_ResumeAudioStream(value arg)
 {
-    ResumeAudioStream(UNKNOWN(stream));
+    AudioStream _stream = UNKNOWN(arg);
+    ResumeAudioStream(_stream);
     return Val_unit;
 }
 */
 
 /*
-value raylib_IsAudioStreamPlaying(value stream)
+value raylib_IsAudioStreamPlaying(value arg)
 {
-    bool result = IsAudioStreamPlaying(UNKNOWN(stream));
+    AudioStream _stream = UNKNOWN(arg);
+    bool result = IsAudioStreamPlaying(_stream);
     return Val_bool(result);
 }
 */
 
 /*
-value raylib_StopAudioStream(value stream)
+value raylib_StopAudioStream(value arg)
 {
-    StopAudioStream(UNKNOWN(stream));
+    AudioStream _stream = UNKNOWN(arg);
+    StopAudioStream(_stream);
     return Val_unit;
 }
 */
 
 /*
-value raylib_SetAudioStreamVolume(value stream, value volume)
+value raylib_SetAudioStreamVolume(value args)
 {
-    SetAudioStreamVolume(UNKNOWN(stream), Double_val(volume));
+    AudioStream _stream = UNKNOWN(Field(args, 0));
+    float _volume = Double_val(Field(args, 1));
+    SetAudioStreamVolume(_stream, _volume);
     return Val_unit;
 }
 */
 
 /*
-value raylib_SetAudioStreamPitch(value stream, value pitch)
+value raylib_SetAudioStreamPitch(value args)
 {
-    SetAudioStreamPitch(UNKNOWN(stream), Double_val(pitch));
+    AudioStream _stream = UNKNOWN(Field(args, 0));
+    float _pitch = Double_val(Field(args, 1));
+    SetAudioStreamPitch(_stream, _pitch);
     return Val_unit;
 }
 */
 
 /*
-value raylib_SetAudioStreamPan(value stream, value pan)
+value raylib_SetAudioStreamPan(value args)
 {
-    SetAudioStreamPan(UNKNOWN(stream), Double_val(pan));
+    AudioStream _stream = UNKNOWN(Field(args, 0));
+    float _pan = Double_val(Field(args, 1));
+    SetAudioStreamPan(_stream, _pan);
     return Val_unit;
 }
 */
 
-value raylib_SetAudioStreamBufferSizeDefault(value size)
+value raylib_SetAudioStreamBufferSizeDefault(value arg)
 {
-    SetAudioStreamBufferSizeDefault(Int_val(size));
+    int _size = Int_val(arg);
+    SetAudioStreamBufferSizeDefault(_size);
     return Val_unit;
 }
 
 /*
-value raylib_SetAudioStreamCallback(value stream, value callback)
+value raylib_SetAudioStreamCallback(value args)
 {
-    SetAudioStreamCallback(UNKNOWN(stream), UNKNOWN(callback));
-    return Val_unit;
-}
-*/
-
-/*
-value raylib_AttachAudioStreamProcessor(value stream, value processor)
-{
-    AttachAudioStreamProcessor(UNKNOWN(stream), UNKNOWN(processor));
+    AudioStream _stream = UNKNOWN(Field(args, 0));
+    AudioCallback _callback = UNKNOWN(Field(args, 1));
+    SetAudioStreamCallback(_stream, _callback);
     return Val_unit;
 }
 */
 
 /*
-value raylib_DetachAudioStreamProcessor(value stream, value processor)
+value raylib_AttachAudioStreamProcessor(value args)
 {
-    DetachAudioStreamProcessor(UNKNOWN(stream), UNKNOWN(processor));
+    AudioStream _stream = UNKNOWN(Field(args, 0));
+    AudioCallback _processor = UNKNOWN(Field(args, 1));
+    AttachAudioStreamProcessor(_stream, _processor);
     return Val_unit;
 }
 */
 
 /*
-value raylib_AttachAudioMixedProcessor(value processor)
+value raylib_DetachAudioStreamProcessor(value args)
 {
-    AttachAudioMixedProcessor(UNKNOWN(processor));
+    AudioStream _stream = UNKNOWN(Field(args, 0));
+    AudioCallback _processor = UNKNOWN(Field(args, 1));
+    DetachAudioStreamProcessor(_stream, _processor);
     return Val_unit;
 }
 */
 
 /*
-value raylib_DetachAudioMixedProcessor(value processor)
+value raylib_AttachAudioMixedProcessor(value arg)
 {
-    DetachAudioMixedProcessor(UNKNOWN(processor));
+    AudioCallback _processor = UNKNOWN(arg);
+    AttachAudioMixedProcessor(_processor);
+    return Val_unit;
+}
+*/
+
+/*
+value raylib_DetachAudioMixedProcessor(value arg)
+{
+    AudioCallback _processor = UNKNOWN(arg);
+    DetachAudioMixedProcessor(_processor);
     return Val_unit;
 }
 */

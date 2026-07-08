@@ -2218,7 +2218,6 @@ static void ExportParsedData(const char *fileName, int format)
                 temp_rewind(mark);
                 bool skip_for_now = false;
                 Type *retType = get_c_type(funcs[i].retType);
-                skip_for_now = skip_for_now || funcs[i].paramCount > 5;
                 skip_for_now = skip_for_now || retType ==  NULL || retType->value_to_c == NULL || retType->c_to_value == NULL;
                 for (int p = 0; !skip_for_now && p < funcs[i].paramCount; p++) {
                     Type *type = get_c_type(funcs[i].paramType[p]);
@@ -2242,16 +2241,12 @@ static void ExportParsedData(const char *fileName, int format)
                         fprintf(outFile, "unit");
                     } else {
                         for (int p = 0; p < funcs[i].paramCount; p++) {
-                            if (p > 0) fprintf(outFile, " -> ");
+                            if (p > 0) fprintf(outFile, " * ");
                             fprintf(outFile, "%s", translate_type_c_to_sml(funcs[i].paramType[p]));
                         }
                     }
                     fprintf(outFile, " -> %s", translate_type_c_to_sml(funcs[i].retType));
-                    if (funcs[i].paramCount == 0) {
-                        fprintf(outFile, " = app1 (dlsym dlh \"raylib_%s\")", funcs[i].name);
-                    } else {
-                        fprintf(outFile, " = app%d (dlsym dlh \"raylib_%s\")", funcs[i].paramCount, funcs[i].name);
-                    }
+                    fprintf(outFile, " = app1 (dlsym dlh \"raylib_%s\")", funcs[i].name);
 
                     if (skip_for_now) fprintf(outFile, " *)");
                     fprintf(outFile, "\n");
@@ -2263,14 +2258,22 @@ static void ExportParsedData(const char *fileName, int format)
                     fprintf(outCFile, "value raylib_%s(", funcs[i].name);
                     if (funcs[i].paramCount == 0) {
                         fprintf(outCFile, "value unit");
+                    } else if (funcs[i].paramCount == 1) {
+                        fprintf(outCFile, "value arg");
                     } else {
-                        for (int p = 0; p < funcs[i].paramCount; p++) {
-                            if (p > 0) fprintf(outCFile, ", ");
-                            fprintf(outCFile, "value %s", funcs[i].paramName[p]);
-                        }
+                        fprintf(outCFile, "value args");
                     }
                     fprintf(outCFile, ")\n");
                     fprintf(outCFile, "{\n");
+                    for (int p = 0; p < funcs[i].paramCount; p++) {
+                        Type *type = get_c_type(funcs[i].paramType[p]);
+                        const char *value_to_c = type == NULL || type->value_to_c == NULL ? "UNKNOWN" : type->value_to_c;
+                        if (funcs[i].paramCount == 1) {
+                            fprintf(outCFile, "    %s _%s = %s(arg);\n", funcs[i].paramType[p], funcs[i].paramName[p], value_to_c);
+                        } else {
+                            fprintf(outCFile, "    %s _%s = %s(Field(args, %d));\n", funcs[i].paramType[p], funcs[i].paramName[p], value_to_c, p);
+                        }
+                    }
                     if (strcmp(funcs[i].retType, "void") != 0) {
                         fprintf(outCFile, "    %s result = ", funcs[i].retType);
                     } else {
@@ -2279,9 +2282,7 @@ static void ExportParsedData(const char *fileName, int format)
                     fprintf(outCFile, "%s(", funcs[i].name);
                     for (int p = 0; p < funcs[i].paramCount; p++) {
                         if (p > 0) fprintf(outCFile, ", ");
-                        Type *type = get_c_type(funcs[i].paramType[p]);
-                        const char *value_to_c = type == NULL || type->value_to_c == NULL ? "UNKNOWN" : type->value_to_c;
-                        fprintf(outCFile, "%s(%s)", value_to_c, funcs[i].paramName[p]);
+                        fprintf(outCFile, "_%s", funcs[i].paramName[p]);
                     }
                     fprintf(outCFile, ");\n");
                     if (strcmp(funcs[i].retType, "void") != 0) {
