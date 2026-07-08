@@ -46,6 +46,26 @@ static inline Vector2 Vector2_val(value v)
     };
     return vec;
 }
+static inline value Val_rectangle(Rectangle rect)
+{
+    value rec = alloc_tuple(4);
+    modify(&Field(rec, 0), copy_double(rect.height));
+    modify(&Field(rec, 1), copy_double(rect.width));
+    modify(&Field(rec, 2), copy_double(rect.x));
+    modify(&Field(rec, 3), copy_double(rect.y));
+    return rec;
+}
+
+static inline Rectangle Rectangle_val(value v)
+{
+    Rectangle rect = {
+       .height = Double_val(Field(v, 0)),
+       .width  = Double_val(Field(v, 1)),
+       .x      = Double_val(Field(v, 2)),
+       .y      = Double_val(Field(v, 3)),
+    };
+    return rect;
+}
 static inline value Val_image(Image i)
 {
     value rec = alloc_tuple(5);
@@ -1685,15 +1705,13 @@ value raylib_UpdateCameraPro(value args)
 }
 */
 
-/*
 value raylib_SetShapesTexture(value args)
 {
     Texture2D _texture = Texture_val(Field(args, 0));
-    Rectangle _source = UNKNOWN(Field(args, 1));
+    Rectangle _source = Rectangle_val(Field(args, 1));
     SetShapesTexture(_texture, _source);
     return Val_unit;
 }
-*/
 
 value raylib_GetShapesTexture(value unit)
 {
@@ -1701,13 +1719,11 @@ value raylib_GetShapesTexture(value unit)
     return Val_texture(result);
 }
 
-/*
 value raylib_GetShapesTextureRectangle(value unit)
 {
     Rectangle result = GetShapesTextureRectangle();
-    return UNKNOWN(result);
+    return Val_rectangle(result);
 }
-*/
 
 value raylib_DrawPixel(value args)
 {
@@ -1918,27 +1934,23 @@ value raylib_DrawRectangleV(value args)
     return Val_unit;
 }
 
-/*
 value raylib_DrawRectangleRec(value args)
 {
-    Rectangle _rec = UNKNOWN(Field(args, 0));
+    Rectangle _rec = Rectangle_val(Field(args, 0));
     Color _color = Colour_val(Field(args, 1));
     DrawRectangleRec(_rec, _color);
     return Val_unit;
 }
-*/
 
-/*
 value raylib_DrawRectanglePro(value args)
 {
-    Rectangle _rec = UNKNOWN(Field(args, 0));
+    Rectangle _rec = Rectangle_val(Field(args, 0));
     Vector2 _origin = Vector2_val(Field(args, 1));
     float _rotation = Double_val(Field(args, 2));
     Color _color = Colour_val(Field(args, 3));
     DrawRectanglePro(_rec, _origin, _rotation, _color);
     return Val_unit;
 }
-*/
 
 value raylib_DrawRectangleGradientV(value args)
 {
@@ -1964,10 +1976,9 @@ value raylib_DrawRectangleGradientH(value args)
     return Val_unit;
 }
 
-/*
 value raylib_DrawRectangleGradientEx(value args)
 {
-    Rectangle _rec = UNKNOWN(Field(args, 0));
+    Rectangle _rec = Rectangle_val(Field(args, 0));
     Color _topLeft = Colour_val(Field(args, 1));
     Color _bottomLeft = Colour_val(Field(args, 2));
     Color _topRight = Colour_val(Field(args, 3));
@@ -1975,7 +1986,6 @@ value raylib_DrawRectangleGradientEx(value args)
     DrawRectangleGradientEx(_rec, _topLeft, _bottomLeft, _topRight, _bottomRight);
     return Val_unit;
 }
-*/
 
 value raylib_DrawRectangleLines(value args)
 {
@@ -1988,45 +1998,38 @@ value raylib_DrawRectangleLines(value args)
     return Val_unit;
 }
 
-/*
 value raylib_DrawRectangleLinesEx(value args)
 {
-    Rectangle _rec = UNKNOWN(Field(args, 0));
+    Rectangle _rec = Rectangle_val(Field(args, 0));
     float _lineThick = Double_val(Field(args, 1));
     Color _color = Colour_val(Field(args, 2));
     DrawRectangleLinesEx(_rec, _lineThick, _color);
     return Val_unit;
 }
-*/
 
-/*
 value raylib_DrawRectangleRounded(value args)
 {
-    Rectangle _rec = UNKNOWN(Field(args, 0));
+    Rectangle _rec = Rectangle_val(Field(args, 0));
     float _roundness = Double_val(Field(args, 1));
     int _segments = Int_val(Field(args, 2));
     Color _color = Colour_val(Field(args, 3));
     DrawRectangleRounded(_rec, _roundness, _segments, _color);
     return Val_unit;
 }
-*/
 
-/*
 value raylib_DrawRectangleRoundedLines(value args)
 {
-    Rectangle _rec = UNKNOWN(Field(args, 0));
+    Rectangle _rec = Rectangle_val(Field(args, 0));
     float _roundness = Double_val(Field(args, 1));
     int _segments = Int_val(Field(args, 2));
     Color _color = Colour_val(Field(args, 3));
     DrawRectangleRoundedLines(_rec, _roundness, _segments, _color);
     return Val_unit;
 }
-*/
 
-/*
 value raylib_DrawRectangleRoundedLinesEx(value args)
 {
-    Rectangle _rec = UNKNOWN(Field(args, 0));
+    Rectangle _rec = Rectangle_val(Field(args, 0));
     float _roundness = Double_val(Field(args, 1));
     int _segments = Int_val(Field(args, 2));
     float _lineThick = Double_val(Field(args, 3));
@@ -2034,7 +2037,6 @@ value raylib_DrawRectangleRoundedLinesEx(value args)
     DrawRectangleRoundedLinesEx(_rec, _roundness, _segments, _lineThick, _color);
     return Val_unit;
 }
-*/
 
 value raylib_DrawTriangle(value args)
 {
@@ -2281,15 +2283,13 @@ value raylib_GetSplinePointBezierCubic(value args)
     return Val_vector2(result);
 }
 
-/*
 value raylib_CheckCollisionRecs(value args)
 {
-    Rectangle _rec1 = UNKNOWN(Field(args, 0));
-    Rectangle _rec2 = UNKNOWN(Field(args, 1));
+    Rectangle _rec1 = Rectangle_val(Field(args, 0));
+    Rectangle _rec2 = Rectangle_val(Field(args, 1));
     bool result = CheckCollisionRecs(_rec1, _rec2);
     return Val_bool(result);
 }
-*/
 
 value raylib_CheckCollisionCircles(value args)
 {
@@ -2301,16 +2301,14 @@ value raylib_CheckCollisionCircles(value args)
     return Val_bool(result);
 }
 
-/*
 value raylib_CheckCollisionCircleRec(value args)
 {
     Vector2 _center = Vector2_val(Field(args, 0));
     float _radius = Double_val(Field(args, 1));
-    Rectangle _rec = UNKNOWN(Field(args, 2));
+    Rectangle _rec = Rectangle_val(Field(args, 2));
     bool result = CheckCollisionCircleRec(_center, _radius, _rec);
     return Val_bool(result);
 }
-*/
 
 value raylib_CheckCollisionCircleLine(value args)
 {
@@ -2322,15 +2320,13 @@ value raylib_CheckCollisionCircleLine(value args)
     return Val_bool(result);
 }
 
-/*
 value raylib_CheckCollisionPointRec(value args)
 {
     Vector2 _point = Vector2_val(Field(args, 0));
-    Rectangle _rec = UNKNOWN(Field(args, 1));
+    Rectangle _rec = Rectangle_val(Field(args, 1));
     bool result = CheckCollisionPointRec(_point, _rec);
     return Val_bool(result);
 }
-*/
 
 value raylib_CheckCollisionPointCircle(value args)
 {
@@ -2385,15 +2381,13 @@ value raylib_CheckCollisionLines(value args)
 }
 */
 
-/*
 value raylib_GetCollisionRec(value args)
 {
-    Rectangle _rec1 = UNKNOWN(Field(args, 0));
-    Rectangle _rec2 = UNKNOWN(Field(args, 1));
+    Rectangle _rec1 = Rectangle_val(Field(args, 0));
+    Rectangle _rec2 = Rectangle_val(Field(args, 1));
     Rectangle result = GetCollisionRec(_rec1, _rec2);
-    return UNKNOWN(result);
+    return Val_rectangle(result);
 }
-*/
 
 value raylib_LoadImage(value arg)
 {
@@ -2599,15 +2593,13 @@ value raylib_ImageCopy(value arg)
     return Val_image(result);
 }
 
-/*
 value raylib_ImageFromImage(value args)
 {
     Image _image = Image_val(Field(args, 0));
-    Rectangle _rec = UNKNOWN(Field(args, 1));
+    Rectangle _rec = Rectangle_val(Field(args, 1));
     Image result = ImageFromImage(_image, _rec);
     return Val_image(result);
 }
-*/
 
 value raylib_ImageFromChannel(value args)
 {
@@ -2663,7 +2655,7 @@ value raylib_ImageToPOT(value args)
 value raylib_ImageCrop(value args)
 {
     Image * _image = UNKNOWN(Field(args, 0));
-    Rectangle _crop = UNKNOWN(Field(args, 1));
+    Rectangle _crop = Rectangle_val(Field(args, 1));
     ImageCrop(_image, _crop);
     return Val_unit;
 }
@@ -2931,15 +2923,13 @@ value raylib_UnloadImagePalette(value arg)
 }
 */
 
-/*
 value raylib_GetImageAlphaBorder(value args)
 {
     Image _image = Image_val(Field(args, 0));
     float _threshold = Double_val(Field(args, 1));
     Rectangle result = GetImageAlphaBorder(_image, _threshold);
-    return UNKNOWN(result);
+    return Val_rectangle(result);
 }
-*/
 
 value raylib_GetImageColor(value args)
 {
@@ -3102,7 +3092,7 @@ value raylib_ImageDrawRectangleV(value args)
 value raylib_ImageDrawRectangleRec(value args)
 {
     Image * _dst = UNKNOWN(Field(args, 0));
-    Rectangle _rec = UNKNOWN(Field(args, 1));
+    Rectangle _rec = Rectangle_val(Field(args, 1));
     Color _color = Colour_val(Field(args, 2));
     ImageDrawRectangleRec(_dst, _rec, _color);
     return Val_unit;
@@ -3113,7 +3103,7 @@ value raylib_ImageDrawRectangleRec(value args)
 value raylib_ImageDrawRectangleLines(value args)
 {
     Image * _dst = UNKNOWN(Field(args, 0));
-    Rectangle _rec = UNKNOWN(Field(args, 1));
+    Rectangle _rec = Rectangle_val(Field(args, 1));
     int _thick = Int_val(Field(args, 2));
     Color _color = Colour_val(Field(args, 3));
     ImageDrawRectangleLines(_dst, _rec, _thick, _color);
@@ -3191,8 +3181,8 @@ value raylib_ImageDraw(value args)
 {
     Image * _dst = UNKNOWN(Field(args, 0));
     Image _src = Image_val(Field(args, 1));
-    Rectangle _srcRec = UNKNOWN(Field(args, 2));
-    Rectangle _dstRec = UNKNOWN(Field(args, 3));
+    Rectangle _srcRec = Rectangle_val(Field(args, 2));
+    Rectangle _dstRec = Rectangle_val(Field(args, 3));
     Color _tint = Colour_val(Field(args, 4));
     ImageDraw(_dst, _src, _srcRec, _dstRec, _tint);
     return Val_unit;
@@ -3308,7 +3298,7 @@ value raylib_UpdateTexture(value args)
 value raylib_UpdateTextureRec(value args)
 {
     Texture2D _texture = Texture_val(Field(args, 0));
-    Rectangle _rec = UNKNOWN(Field(args, 1));
+    Rectangle _rec = Rectangle_val(Field(args, 1));
     const void * _pixels = UNKNOWN(Field(args, 2));
     UpdateTextureRec(_texture, _rec, _pixels);
     return Val_unit;
@@ -3370,38 +3360,34 @@ value raylib_DrawTextureEx(value args)
     return Val_unit;
 }
 
-/*
 value raylib_DrawTextureRec(value args)
 {
     Texture2D _texture = Texture_val(Field(args, 0));
-    Rectangle _source = UNKNOWN(Field(args, 1));
+    Rectangle _source = Rectangle_val(Field(args, 1));
     Vector2 _position = Vector2_val(Field(args, 2));
     Color _tint = Colour_val(Field(args, 3));
     DrawTextureRec(_texture, _source, _position, _tint);
     return Val_unit;
 }
-*/
 
-/*
 value raylib_DrawTexturePro(value args)
 {
     Texture2D _texture = Texture_val(Field(args, 0));
-    Rectangle _source = UNKNOWN(Field(args, 1));
-    Rectangle _dest = UNKNOWN(Field(args, 2));
+    Rectangle _source = Rectangle_val(Field(args, 1));
+    Rectangle _dest = Rectangle_val(Field(args, 2));
     Vector2 _origin = Vector2_val(Field(args, 3));
     float _rotation = Double_val(Field(args, 4));
     Color _tint = Colour_val(Field(args, 5));
     DrawTexturePro(_texture, _source, _dest, _origin, _rotation, _tint);
     return Val_unit;
 }
-*/
 
 /*
 value raylib_DrawTextureNPatch(value args)
 {
     Texture2D _texture = Texture_val(Field(args, 0));
     NPatchInfo _nPatchInfo = UNKNOWN(Field(args, 1));
-    Rectangle _dest = UNKNOWN(Field(args, 2));
+    Rectangle _dest = Rectangle_val(Field(args, 2));
     Vector2 _origin = Vector2_val(Field(args, 3));
     float _rotation = Double_val(Field(args, 4));
     Color _tint = Colour_val(Field(args, 5));
@@ -3806,7 +3792,7 @@ value raylib_GetGlyphAtlasRec(value args)
     Font _font = UNKNOWN(Field(args, 0));
     int _codepoint = Int_val(Field(args, 1));
     Rectangle result = GetGlyphAtlasRec(_font, _codepoint);
-    return UNKNOWN(result);
+    return Val_rectangle(result);
 }
 */
 
@@ -4457,7 +4443,7 @@ value raylib_DrawBillboardRec(value args)
 {
     Camera _camera = UNKNOWN(Field(args, 0));
     Texture2D _texture = Texture_val(Field(args, 1));
-    Rectangle _source = UNKNOWN(Field(args, 2));
+    Rectangle _source = Rectangle_val(Field(args, 2));
     Vector3 _position = UNKNOWN(Field(args, 3));
     Vector2 _size = Vector2_val(Field(args, 4));
     Color _tint = Colour_val(Field(args, 5));
@@ -4471,7 +4457,7 @@ value raylib_DrawBillboardPro(value args)
 {
     Camera _camera = UNKNOWN(Field(args, 0));
     Texture2D _texture = Texture_val(Field(args, 1));
-    Rectangle _source = UNKNOWN(Field(args, 2));
+    Rectangle _source = Rectangle_val(Field(args, 2));
     Vector3 _position = UNKNOWN(Field(args, 3));
     Vector3 _up = UNKNOWN(Field(args, 4));
     Vector2 _size = Vector2_val(Field(args, 5));

@@ -2056,16 +2056,22 @@ static void ExportParsedData(const char *fileName, int format)
                     .c_to_value = "Val_colour",
                 },
                 {
-                    .c_type     = "Image",
-                    .sml_type   = "raylib_image",
-                    .value_to_c = "Image_val",
-                    .c_to_value = "Val_image",
-                },
-                {
                     .c_type     = "Vector2",
                     .sml_type   = "raylib_vector2",
                     .value_to_c = "Vector2_val",
                     .c_to_value = "Val_vector2",
+                },
+                {
+                    .c_type     = "Rectangle",
+                    .sml_type   = "raylib_rectangle",
+                    .value_to_c = "Rectangle_val",
+                    .c_to_value = "Val_rectangle",
+                },
+                {
+                    .c_type     = "Image",
+                    .sml_type   = "raylib_image",
+                    .value_to_c = "Image_val",
+                    .c_to_value = "Val_image",
                 },
                 {
                     .c_type     = "Texture2D",
@@ -2100,6 +2106,7 @@ static void ExportParsedData(const char *fileName, int format)
                 fprintf(outFile, "\n");
                 fprintf(outFile, "prim_type void_pointer\n");
                 fprintf(outFile, "type raylib_vector2 = {x: real, y: real}\n");
+                fprintf(outFile, "type raylib_rectangle = {x: real, y: real, width: real, height: real}\n");
                 fprintf(outFile, "type raylib_image = {data: void_pointer, width: int, height: int, mipmaps: int, format: int}\n");
                 fprintf(outFile, "type raylib_texture = {id: int, width: int, height: int, mipmaps: int, format: int}\n");
                 fprintf(outFile, "\n");
@@ -2155,6 +2162,27 @@ static void ExportParsedData(const char *fileName, int format)
                 fprintf(outCFile, "       .y = Double_val(Field(v, 1)),\n");
                 fprintf(outCFile, "    };\n");
                 fprintf(outCFile, "    return vec;\n");
+                fprintf(outCFile, "}\n");
+                // Moscow ML records are tuples with fields sorted by label
+                fprintf(outCFile, "static inline value Val_rectangle(Rectangle rect)\n");
+                fprintf(outCFile, "{\n");
+                fprintf(outCFile, "    value rec = alloc_tuple(4);\n");
+                fprintf(outCFile, "    modify(&Field(rec, 0), copy_double(rect.height));\n");
+                fprintf(outCFile, "    modify(&Field(rec, 1), copy_double(rect.width));\n");
+                fprintf(outCFile, "    modify(&Field(rec, 2), copy_double(rect.x));\n");
+                fprintf(outCFile, "    modify(&Field(rec, 3), copy_double(rect.y));\n");
+                fprintf(outCFile, "    return rec;\n");
+                fprintf(outCFile, "}\n");
+                fprintf(outCFile, "\n");
+                fprintf(outCFile, "static inline Rectangle Rectangle_val(value v)\n");
+                fprintf(outCFile, "{\n");
+                fprintf(outCFile, "    Rectangle rect = {\n");
+                fprintf(outCFile, "       .height = Double_val(Field(v, 0)),\n");
+                fprintf(outCFile, "       .width  = Double_val(Field(v, 1)),\n");
+                fprintf(outCFile, "       .x      = Double_val(Field(v, 2)),\n");
+                fprintf(outCFile, "       .y      = Double_val(Field(v, 3)),\n");
+                fprintf(outCFile, "    };\n");
+                fprintf(outCFile, "    return rect;\n");
                 fprintf(outCFile, "}\n");
                 // Moscow ML records are tuples with fields sorted by label
                 fprintf(outCFile, "static inline value Val_image(Image i)\n");
