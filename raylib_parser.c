@@ -2079,6 +2079,12 @@ static void ExportParsedData(const char *fileName, int format)
                     .value_to_c = "Texture_val",
                     .c_to_value = "Val_texture",
                 },
+                {
+                    .c_type     = "Sound",
+                    .sml_type   = "raylib_sound",
+                    .value_to_c = "Sound_val",
+                    .c_to_value = "Val_sound",
+                },
             };
 
             Type *get_c_type(const char *c_type)
@@ -2104,11 +2110,13 @@ static void ExportParsedData(const char *fileName, int format)
                 fprintf(outFile, "\n");
                 fprintf(outFile, "val dlh = dlopen { lib = \"%s\", flag = RTLD_LAZY, global = false }\n", dll_name);
                 fprintf(outFile, "\n");
-                fprintf(outFile, "prim_type void_pointer\n");
+                fprintf(outFile, "prim_type opaque\n");
                 fprintf(outFile, "type raylib_vector2 = {x: real, y: real}\n");
                 fprintf(outFile, "type raylib_rectangle = {x: real, y: real, width: real, height: real}\n");
-                fprintf(outFile, "type raylib_image = {data: void_pointer, width: int, height: int, mipmaps: int, format: int}\n");
+                fprintf(outFile, "type raylib_image = {data: opaque, width: int, height: int, mipmaps: int, format: int}\n");
                 fprintf(outFile, "type raylib_texture = {id: int, width: int, height: int, mipmaps: int, format: int}\n");
+                // The AudioStream struct is inlined for simplicity
+                fprintf(outFile, "type raylib_sound = {buffer: opaque, processor: opaque, sampleRate: word, sampleSize: word, channels: word, frameCount: word}\n");
                 fprintf(outFile, "\n");
             }
 
@@ -2229,6 +2237,41 @@ static void ExportParsedData(const char *fileName, int format)
                 fprintf(outCFile, "       .width   = Int_val(Field(v, 4)),\n");
                 fprintf(outCFile, "    };\n");
                 fprintf(outCFile, "    return tex;\n");
+                fprintf(outCFile, "}\n");
+                fprintf(outCFile, "\n");
+                // Moscow ML records are tuples with fields sorted by label
+                fprintf(outCFile, "static inline value Val_sound(Sound s)\n");
+                fprintf(outCFile, "{\n");
+                fprintf(outCFile, "    value rec = alloc_tuple(6);\n");
+                fprintf(outCFile, "    modify(&Field(rec, 0), Val_long(s.stream.buffer));\n");
+                fprintf(outCFile, "    modify(&Field(rec, 1), Val_long(s.stream.channels));\n");
+                fprintf(outCFile, "    modify(&Field(rec, 2), Val_long(s.frameCount));\n");
+                fprintf(outCFile, "    modify(&Field(rec, 3), Val_long(s.stream.processor));\n");
+                fprintf(outCFile, "    modify(&Field(rec, 4), Val_long(s.stream.sampleRate));\n");
+                fprintf(outCFile, "    modify(&Field(rec, 5), Val_long(s.stream.sampleSize));\n");
+                fprintf(outCFile, "    return rec;\n");
+                fprintf(outCFile, "}\n");
+                fprintf(outCFile, "\n");
+                fprintf(outCFile, "static inline Sound Sound_val(value v)\n");
+                fprintf(outCFile, "{\n");
+                fprintf(outCFile, "    rAudioBuffer *buffer = (rAudioBuffer*)Long_val(Field(v, 0));\n");
+                fprintf(outCFile, "    rAudioProcessor *processor = (rAudioProcessor*)Long_val(Field(v, 3));\n");
+                fprintf(outCFile, "    unsigned int sampleRate = (unsigned int)Long_val(Field(v, 4));\n");
+                fprintf(outCFile, "    unsigned int sampleSize = (unsigned int)Long_val(Field(v, 5));\n");
+                fprintf(outCFile, "    unsigned int channels = (unsigned int)Long_val(Field(v, 1));\n");
+                fprintf(outCFile, "    unsigned int frameCount = (unsigned int)Long_val(Field(v, 2));\n");
+                fprintf(outCFile, "    AudioStream stream = {\n");
+                fprintf(outCFile, "       .buffer     = buffer,\n");
+                fprintf(outCFile, "       .processor  = processor,\n");
+                fprintf(outCFile, "       .sampleRate = sampleRate,\n");
+                fprintf(outCFile, "       .sampleSize = sampleSize,\n");
+                fprintf(outCFile, "       .channels   = channels,\n");
+                fprintf(outCFile, "    };\n");
+                fprintf(outCFile, "    Sound snd = {\n");
+                fprintf(outCFile, "       .stream     = stream,\n");
+                fprintf(outCFile, "       .frameCount = frameCount,\n");
+                fprintf(outCFile, "    };\n");
+                fprintf(outCFile, "    return snd;\n");
                 fprintf(outCFile, "}\n");
                 fprintf(outCFile, "\n");
             }

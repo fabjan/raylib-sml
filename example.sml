@@ -89,14 +89,16 @@ fun ball_random_at (x, y: int): ball =
         {x = x, y = y, dx = dx, dy = dy, color = color, lifetime = lifetime}
     end
 
-fun loop (balltex: raylib_texture) (bs: ball list) (tutorial: bool) =
+fun loop (sound: raylib_sound) (balltex: raylib_texture) (bs: ball list) (tutorial: bool) =
     if WindowShouldClose () then ()
     else
         let
             val (bs, tutorial) = 
               if IsMouseButtonPressed MOUSE_BUTTON_LEFT
-              then (ball_random_at (GetMouseX (), GetMouseY ()) :: bs, false)
-              else (bs, tutorial)
+              then (
+                PlaySound sound;
+                (ball_random_at (GetMouseX (), GetMouseY ()) :: bs, false)
+              ) else (bs, tutorial)
         in
             BeginDrawing ();
             ClearBackground 0xFF181818;
@@ -115,17 +117,19 @@ fun loop (balltex: raylib_texture) (bs: ball list) (tutorial: bool) =
               end
             else app (ball_render balltex) bs;
             EndDrawing ();
-            loop balltex (List.mapPartial ball_update bs) tutorial
+            loop sound balltex (List.mapPartial ball_update bs) tutorial
         end
 
 val _ =
     let
         val _ = InitWindow (800, 600, "Hello from Moscow ML my comrades");
+        val _ = InitAudioDevice ()
         val img = LoadImage "SoccerBall.png"
+        val snd = LoadSound "sample.wav"
         val tex = LoadTextureFromImage img
     in
         SetTargetFPS 60;
-        loop tex [] true
+        loop snd tex [] true
     end
 
 (* Copyright 2026 Alexey Kutepov <reximkut@gmail.com>

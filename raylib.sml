@@ -2,11 +2,12 @@ open Dynlib;
 
 val dlh = dlopen { lib = "./libmraylib.so", flag = RTLD_LAZY, global = false }
 
-prim_type void_pointer
+prim_type opaque
 type raylib_vector2 = {x: real, y: real}
 type raylib_rectangle = {x: real, y: real, width: real, height: real}
-type raylib_image = {data: void_pointer, width: int, height: int, mipmaps: int, format: int}
+type raylib_image = {data: opaque, width: int, height: int, mipmaps: int, format: int}
 type raylib_texture = {id: int, width: int, height: int, mipmaps: int, format: int}
+type raylib_sound = {buffer: opaque, processor: opaque, sampleRate: word, sampleSize: word, channels: word, frameCount: word}
 
 type ConfigFlags = int
 val FLAG_VSYNC_HINT: ConfigFlags = 64
@@ -873,24 +874,24 @@ val GetMasterVolume: unit -> real = app1 (dlsym dlh "raylib_GetMasterVolume")
 (* val LoadWave: string -> UNKNOWN[Wave] = app1 (dlsym dlh "raylib_LoadWave") *)
 (* val LoadWaveFromMemory: string * UNKNOWN[const unsigned char *] * int -> UNKNOWN[Wave] = app1 (dlsym dlh "raylib_LoadWaveFromMemory") *)
 (* val IsWaveValid: UNKNOWN[Wave] -> bool = app1 (dlsym dlh "raylib_IsWaveValid") *)
-(* val LoadSound: string -> UNKNOWN[Sound] = app1 (dlsym dlh "raylib_LoadSound") *)
-(* val LoadSoundFromWave: UNKNOWN[Wave] -> UNKNOWN[Sound] = app1 (dlsym dlh "raylib_LoadSoundFromWave") *)
-(* val LoadSoundAlias: UNKNOWN[Sound] -> UNKNOWN[Sound] = app1 (dlsym dlh "raylib_LoadSoundAlias") *)
-(* val IsSoundValid: UNKNOWN[Sound] -> bool = app1 (dlsym dlh "raylib_IsSoundValid") *)
-(* val UpdateSound: UNKNOWN[Sound] * UNKNOWN[const void *] * int -> unit = app1 (dlsym dlh "raylib_UpdateSound") *)
+val LoadSound: string -> raylib_sound = app1 (dlsym dlh "raylib_LoadSound")
+(* val LoadSoundFromWave: UNKNOWN[Wave] -> raylib_sound = app1 (dlsym dlh "raylib_LoadSoundFromWave") *)
+val LoadSoundAlias: raylib_sound -> raylib_sound = app1 (dlsym dlh "raylib_LoadSoundAlias")
+val IsSoundValid: raylib_sound -> bool = app1 (dlsym dlh "raylib_IsSoundValid")
+(* val UpdateSound: raylib_sound * UNKNOWN[const void *] * int -> unit = app1 (dlsym dlh "raylib_UpdateSound") *)
 (* val UnloadWave: UNKNOWN[Wave] -> unit = app1 (dlsym dlh "raylib_UnloadWave") *)
-(* val UnloadSound: UNKNOWN[Sound] -> unit = app1 (dlsym dlh "raylib_UnloadSound") *)
-(* val UnloadSoundAlias: UNKNOWN[Sound] -> unit = app1 (dlsym dlh "raylib_UnloadSoundAlias") *)
+val UnloadSound: raylib_sound -> unit = app1 (dlsym dlh "raylib_UnloadSound")
+val UnloadSoundAlias: raylib_sound -> unit = app1 (dlsym dlh "raylib_UnloadSoundAlias")
 (* val ExportWave: UNKNOWN[Wave] * string -> bool = app1 (dlsym dlh "raylib_ExportWave") *)
 (* val ExportWaveAsCode: UNKNOWN[Wave] * string -> bool = app1 (dlsym dlh "raylib_ExportWaveAsCode") *)
-(* val PlaySound: UNKNOWN[Sound] -> unit = app1 (dlsym dlh "raylib_PlaySound") *)
-(* val StopSound: UNKNOWN[Sound] -> unit = app1 (dlsym dlh "raylib_StopSound") *)
-(* val PauseSound: UNKNOWN[Sound] -> unit = app1 (dlsym dlh "raylib_PauseSound") *)
-(* val ResumeSound: UNKNOWN[Sound] -> unit = app1 (dlsym dlh "raylib_ResumeSound") *)
-(* val IsSoundPlaying: UNKNOWN[Sound] -> bool = app1 (dlsym dlh "raylib_IsSoundPlaying") *)
-(* val SetSoundVolume: UNKNOWN[Sound] * real -> unit = app1 (dlsym dlh "raylib_SetSoundVolume") *)
-(* val SetSoundPitch: UNKNOWN[Sound] * real -> unit = app1 (dlsym dlh "raylib_SetSoundPitch") *)
-(* val SetSoundPan: UNKNOWN[Sound] * real -> unit = app1 (dlsym dlh "raylib_SetSoundPan") *)
+val PlaySound: raylib_sound -> unit = app1 (dlsym dlh "raylib_PlaySound")
+val StopSound: raylib_sound -> unit = app1 (dlsym dlh "raylib_StopSound")
+val PauseSound: raylib_sound -> unit = app1 (dlsym dlh "raylib_PauseSound")
+val ResumeSound: raylib_sound -> unit = app1 (dlsym dlh "raylib_ResumeSound")
+val IsSoundPlaying: raylib_sound -> bool = app1 (dlsym dlh "raylib_IsSoundPlaying")
+val SetSoundVolume: raylib_sound * real -> unit = app1 (dlsym dlh "raylib_SetSoundVolume")
+val SetSoundPitch: raylib_sound * real -> unit = app1 (dlsym dlh "raylib_SetSoundPitch")
+val SetSoundPan: raylib_sound * real -> unit = app1 (dlsym dlh "raylib_SetSoundPan")
 (* val WaveCopy: UNKNOWN[Wave] -> UNKNOWN[Wave] = app1 (dlsym dlh "raylib_WaveCopy") *)
 (* val WaveCrop: UNKNOWN[Wave *] * int * int -> unit = app1 (dlsym dlh "raylib_WaveCrop") *)
 (* val WaveFormat: UNKNOWN[Wave *] * int * int * int -> unit = app1 (dlsym dlh "raylib_WaveFormat") *)

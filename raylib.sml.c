@@ -111,6 +111,40 @@ static inline Texture2D Texture_val(value v)
     return tex;
 }
 
+static inline value Val_sound(Sound s)
+{
+    value rec = alloc_tuple(6);
+    modify(&Field(rec, 0), Val_long(s.stream.buffer));
+    modify(&Field(rec, 1), Val_long(s.stream.channels));
+    modify(&Field(rec, 2), Val_long(s.frameCount));
+    modify(&Field(rec, 3), Val_long(s.stream.processor));
+    modify(&Field(rec, 4), Val_long(s.stream.sampleRate));
+    modify(&Field(rec, 5), Val_long(s.stream.sampleSize));
+    return rec;
+}
+
+static inline Sound Sound_val(value v)
+{
+    rAudioBuffer *buffer = (rAudioBuffer*)Long_val(Field(v, 0));
+    rAudioProcessor *processor = (rAudioProcessor*)Long_val(Field(v, 3));
+    unsigned int sampleRate = (unsigned int)Long_val(Field(v, 4));
+    unsigned int sampleSize = (unsigned int)Long_val(Field(v, 5));
+    unsigned int channels = (unsigned int)Long_val(Field(v, 1));
+    unsigned int frameCount = (unsigned int)Long_val(Field(v, 2));
+    AudioStream stream = {
+       .buffer     = buffer,
+       .processor  = processor,
+       .sampleRate = sampleRate,
+       .sampleSize = sampleSize,
+       .channels   = channels,
+    };
+    Sound snd = {
+       .stream     = stream,
+       .frameCount = frameCount,
+    };
+    return snd;
+}
+
 value raylib_InitWindow(value args)
 {
     int _width = Int_val(Field(args, 0));
@@ -4952,46 +4986,40 @@ value raylib_IsWaveValid(value arg)
 }
 */
 
-/*
 value raylib_LoadSound(value arg)
 {
     const char * _fileName = String_val(arg);
     Sound result = LoadSound(_fileName);
-    return UNKNOWN(result);
+    return Val_sound(result);
 }
-*/
 
 /*
 value raylib_LoadSoundFromWave(value arg)
 {
     Wave _wave = UNKNOWN(arg);
     Sound result = LoadSoundFromWave(_wave);
-    return UNKNOWN(result);
+    return Val_sound(result);
 }
 */
 
-/*
 value raylib_LoadSoundAlias(value arg)
 {
-    Sound _source = UNKNOWN(arg);
+    Sound _source = Sound_val(arg);
     Sound result = LoadSoundAlias(_source);
-    return UNKNOWN(result);
+    return Val_sound(result);
 }
-*/
 
-/*
 value raylib_IsSoundValid(value arg)
 {
-    Sound _sound = UNKNOWN(arg);
+    Sound _sound = Sound_val(arg);
     bool result = IsSoundValid(_sound);
     return Val_bool(result);
 }
-*/
 
 /*
 value raylib_UpdateSound(value args)
 {
-    Sound _sound = UNKNOWN(Field(args, 0));
+    Sound _sound = Sound_val(Field(args, 0));
     const void * _data = UNKNOWN(Field(args, 1));
     int _sampleCount = Int_val(Field(args, 2));
     UpdateSound(_sound, _data, _sampleCount);
@@ -5008,23 +5036,19 @@ value raylib_UnloadWave(value arg)
 }
 */
 
-/*
 value raylib_UnloadSound(value arg)
 {
-    Sound _sound = UNKNOWN(arg);
+    Sound _sound = Sound_val(arg);
     UnloadSound(_sound);
     return Val_unit;
 }
-*/
 
-/*
 value raylib_UnloadSoundAlias(value arg)
 {
-    Sound _alias = UNKNOWN(arg);
+    Sound _alias = Sound_val(arg);
     UnloadSoundAlias(_alias);
     return Val_unit;
 }
-*/
 
 /*
 value raylib_ExportWave(value args)
@@ -5046,80 +5070,64 @@ value raylib_ExportWaveAsCode(value args)
 }
 */
 
-/*
 value raylib_PlaySound(value arg)
 {
-    Sound _sound = UNKNOWN(arg);
+    Sound _sound = Sound_val(arg);
     PlaySound(_sound);
     return Val_unit;
 }
-*/
 
-/*
 value raylib_StopSound(value arg)
 {
-    Sound _sound = UNKNOWN(arg);
+    Sound _sound = Sound_val(arg);
     StopSound(_sound);
     return Val_unit;
 }
-*/
 
-/*
 value raylib_PauseSound(value arg)
 {
-    Sound _sound = UNKNOWN(arg);
+    Sound _sound = Sound_val(arg);
     PauseSound(_sound);
     return Val_unit;
 }
-*/
 
-/*
 value raylib_ResumeSound(value arg)
 {
-    Sound _sound = UNKNOWN(arg);
+    Sound _sound = Sound_val(arg);
     ResumeSound(_sound);
     return Val_unit;
 }
-*/
 
-/*
 value raylib_IsSoundPlaying(value arg)
 {
-    Sound _sound = UNKNOWN(arg);
+    Sound _sound = Sound_val(arg);
     bool result = IsSoundPlaying(_sound);
     return Val_bool(result);
 }
-*/
 
-/*
 value raylib_SetSoundVolume(value args)
 {
-    Sound _sound = UNKNOWN(Field(args, 0));
+    Sound _sound = Sound_val(Field(args, 0));
     float _volume = Double_val(Field(args, 1));
     SetSoundVolume(_sound, _volume);
     return Val_unit;
 }
-*/
 
-/*
 value raylib_SetSoundPitch(value args)
 {
-    Sound _sound = UNKNOWN(Field(args, 0));
+    Sound _sound = Sound_val(Field(args, 0));
     float _pitch = Double_val(Field(args, 1));
     SetSoundPitch(_sound, _pitch);
     return Val_unit;
 }
-*/
 
-/*
 value raylib_SetSoundPan(value args)
 {
-    Sound _sound = UNKNOWN(Field(args, 0));
+    Sound _sound = Sound_val(Field(args, 0));
     float _pan = Double_val(Field(args, 1));
     SetSoundPan(_sound, _pan);
     return Val_unit;
 }
-*/
 
 /*
 value raylib_WaveCopy(value arg)
