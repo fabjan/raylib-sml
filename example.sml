@@ -129,7 +129,8 @@ val _ =
         val tex = LoadTextureFromImage img
     in
         SetTargetFPS 60;
-        loop snd tex [] true
+        loop snd tex [] true;
+        CloseAudioDevice ()
     end
 
 (* Copyright 2026 Alexey Kutepov <reximkut@gmail.com>
